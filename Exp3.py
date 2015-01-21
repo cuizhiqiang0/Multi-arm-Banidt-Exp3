@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Jan 20 15:12:00 2015
+
+@author: Summer
+"""
 
 from conf import *
 import time
@@ -26,7 +32,7 @@ class exp3Struct:
         self.gamma = gamma
         self.weights = weights
         self.learn_stats = articleAccess()
-        self.deploy_stats = articleAccess()
+        #self.deploy_stats = articleAccess()
           
     def initialize(self, pool_armID):
         n_arms = len(pool_armID)
@@ -78,60 +84,16 @@ class randomStruct:
 		self.learn_stats = articleAccess()
 		self.deploy_stats = articleAccess()
 
-# data structure for LinUCB for a single article; 
-class LinUCBStruct:
-	def __init__(self, d):
-		self.A = np.identity(n=d) 			# as given in the pseudo-code in the paper, d-dimensional identity matrix
-		self.b = np.zeros(d) 				# again the b vector from the paper 
-		self.A_inv = np.identity(n=d)		# the inverse
-		self.learn_stats = articleAccess()	# in paper the evaluation is done on two buckets; so the stats are saved for both of them separately; In this code I am not doing deployment, so the code learns on all examples
-		self.deploy_stats = articleAccess()
-		self.theta = np.zeros(d)			# the famous theta
-		self.pta = 0 						# the probability of this article being chosen
-
-	def reInitilize(self):
-		d = np.shape(self.A)[0]				# as theta is re-initialized some part of the structures are set to zero
-		self.A = np.identity(n=d)
-		self.b = np.zeros(d)
-		self.A_inv = np.identity(n=d)
-		self.theta = np.zeros(d)
-		self.pta = 0
-
-	def updateTheta(self):
-		self.theta = np.dot(self.A_inv, self.b) # as good software code a function to update internal variables
-
-	def updateInv(self):
-		self.A_inv = np.linalg.inv(self.A)		# update the inverse
-
-# this is for without context UCB. This is not used in this code. for future implementations
-class UCBStruct:								
-	def __init__(self):
-		self.learn_stats = articleAccess()
-		self.deploy_stats = articleAccess()
-		self.confInter = 0.0
-
-	def updateConfInter(self, alpha):
-		self.confInter = alpha * 1/np.sqrt(self.learn_stats.clicks)
-
-# this structure saves for the e-greedy algorithm
-class GreedyStruct:
-	def __init__(self):
-		self.learn_stats = articleAccess()
-		self.deploy_stats = articleAccess()
-
-
 # This code simply reads one line from the source files of Yahoo!. Please see the yahoo info file to understand the format. I tested this part; so should be good but second pair of eyes could help
 def parseLine(line):
 	line = line.split("|")
 
 	tim, articleID, click = line[0].strip().split(" ")
 	tim, articleID, click = int(tim), int(articleID), int(click)
-	# user_features = np.array([x for ind,x in enumerate(re.split(r"[: ]", line[1])) if ind%2==0][1:])
-	user_features = np.array([float(x.strip().split(':')[1]) for x in line[1].strip().split(' ')[1:]])
-
+ 
 	pool_articles = [l.strip().split(" ") for l in line[2:]]
 	pool_articles = np.array([[int(l[0])] + [float(x.split(':')[1]) for x in l[1:]] for l in pool_articles])
-	return tim, articleID, click, user_features, pool_articles
+	return tim, articleID, click, pool_articles
 	# returns time, id of selected article, if clicked i.e. the response, 
 
 # this code saves different parameters in the file for one batch; this code is written to meet special needs since we need to see statistics as they evolve; I record accumulative stats from which batch stats can be extracted easily
@@ -145,7 +107,7 @@ def save_to_file(fileNameWrite, dicts, recordedStats, epochArticles, epochSelect
 		f.write('data') # the observation line starts with data;
 		f.write(',' + str(tim))
 		f.write(',' + ';'.join([str(x) for x in recordedStats]))
-		f.write(',' + ';'.join([str(dicts[x].learn_stats.accesses) + ' ' + str(dicts[x].learn_stats.clicks) + ' ' + str(x) + ' ' + ' '.join(["{:0.4f}".format(y) for y in dicts[x].theta]) for x in epochSelectedArticles]))
+		f.write(',' + ';'.join([str(dicts[x].learn_stats.accesses) + ' ' + str(dicts[x].learn_stats.clicks) + ' ' + str(x)  for x in epochSelectedArticles]))
 		f.write(',' + ';'.join(str(x)+' ' + str(epochArticles[x]) for x in epochArticles))
 		f.write(',' + ';'.join(str(x)+' ' + str(epochSelectedArticles[x]) for x in epochSelectedArticles))
 
@@ -161,55 +123,26 @@ def file_len(fname):
 if __name__ == '__main__':
     def printWrite():
         randomLA = sum([articles_random[x].learn_stats.accesses for x in articles_random])
-        randomC = sum([articles_random[x].learn_stats.clicks for x in articles_random])
-        
+        randomC = sum([articles_random[x].learn_stats.clicks for x in articles_random]) 
         randomLearnCTR = sum([articles_random[x].learn_stats.clicks for x in articles_random]) / sum([articles_random[x].learn_stats.accesses for x in articles_random])
         
-        UCBLA = sum([articles_LinUCB[x].learn_stats.accesses for x in articles_LinUCB])
-        UCBC = sum([articles_LinUCB[x].learn_stats.clicks for x in articles_LinUCB])
-        
-        UCBLearnCTR = sum([articles_LinUCB[x].learn_stats.clicks for x in articles_LinUCB]) / sum([articles_LinUCB[x].learn_stats.accesses for x in articles_LinUCB])
-        
-        greedyLA = sum([articles_greedy[x].learn_stats.accesses for x in articles_greedy])
-        greedyC = sum([articles_greedy[x].learn_stats.clicks for x in articles_greedy])
-        
-        greedyLearnCTR = sum([articles_greedy[x].learn_stats.clicks for x in articles_greedy]) / sum([articles_greedy[x].learn_stats.accesses for x in articles_greedy])
-        
         exp3LA = sum([articles_exp3[x].learn_stats.accesses for x in articles_exp3])
-        exp3C = sum([articles_exp3[x].learn_stats.clicks for x in articles_exp3])
-        
+        exp3C = sum([articles_exp3[x].learn_stats.clicks for x in articles_exp3]) 
         exp3LearnCTR = sum([articles_exp3[x].learn_stats.clicks for x in articles_exp3]) / sum([articles_exp3[x].learn_stats.accesses for x in articles_exp3])
         
         print totalArticles,
-        print 'UCBLrn', UCBLearnCTR / randomLearnCTR,
-        print 'GreedLrn', greedyLearnCTR / randomLearnCTR,
         print 'Exp3Lrn', exp3LearnCTR / randomLearnCTR,
-        '''
-        with open(fileNameWriteCTR, 'a+') as f:
-            f.write(str(tim))
-            f.write(UCBLearnCTR / randomLearnCTR)
-            f.write(greedyLearnCTR / randomLearnCTR)
-            f.write(exp3LearnCTR / randomLearnCTR)
-        '''
+
         if p_learn < 1:
             randomDeployCTR = sum([articles_random[x].deploy_stats.clicks for x in articles_random]) / sum([articles_random[x].deploy_stats.accesses for x in articles_random])
-            UCBDeployCTR = sum([articles_LinUCB[x].deploy_stats.clicks for x in articles_LinUCB]) / sum([articles_LinUCB[x].deploy_stats.accesses for x in articles_LinUCB])
-            greedyDeployCTR = sum([articles_greedy[x].deploy_stats.clicks for x in articles_greedy]) / sum([articles_greedy[x].deploy_stats.accesses for x in articles_greedy])
             exp3DeployCTR = sum([articles_exp3[x].deploy_stats.clicks for x in articles_exp3]) / sum([articles_exp3[x].deploy_stats_accesses for x in articles_exp3])
-            
-            print 'UCBDep', UCBDeployCTR / randomDeployCTR,
-            print 'GreedDep', greedyDeployCTR / randomDeployCTR,
             print 'Exp3Dep', exp3DeployCTR / randomDeployCTR
         print ' '
         
-        recordedStats = [ UCBLA, UCBC, randomLA, randomC, greedyLA, greedyC, exp3LA, exp3C]
+        recordedStats = [randomLA, randomC, exp3LA, exp3C]
         # write to file
-        save_to_file(fileNameWrite, articles_LinUCB, recordedStats, epochArticles, epochSelectedArticles, tim)
+        save_to_file(fileNameWrite, articles_exp3, recordedStats, epochArticles, epochSelectedArticles, tim)
     
-    # this function reset theta for all articles   
-    def re_initialize_article_Structs():
-        for x in articles_LinUCB:
-            articles_LinUCB[x].reInitilize()
             
     # this function reset weight for all exp3
     def re_initialize_article_exp3Structs(ID):
@@ -228,8 +161,6 @@ if __name__ == '__main__':
     p_learn = 1 									# determined the size of learn and deployment bucket. since its 1; deployment bucked is empty
     
     # relative dictionaries for algorithms
-    articles_LinUCB = {} 
-    articles_greedy = {}
     articles_exp3 = {}
     articles_random = {}
     
@@ -255,24 +186,23 @@ if __name__ == '__main__':
 
         # should be self explaining
         if mode == 'single':
-            fileNameWrite = os.path.join(save_address, fileSig + dataDay + timeRun + '.csv')
-            re_initialize_article_Structs()
+            fileNameWrite = os.path.join(save_address, 'Exp3' + fileSig + dataDay + timeRun + '.csv')
             re_initialize_article_exp3Structs(pool_articleID)
             
             countNoArticle = 0
         elif mode == 'multiple':
-            fileNameWrite = os.path.join(save_address, fileSig +dataDay + timeRun + '.csv')
+            fileNameWrite = os.path.join(save_address, 'Exp3' + ileSig +dataDay + timeRun + '.csv')
         
         elif mode == 'hours':
             numObs = file_len(fileName)
             # resetInterval calcualtes after how many observations the count should be reset?
             resetInterval = int(numObs / reInitPerDay) + 1
-            fileNameWrite = os.path.join(save_address, fileSig + dataDay + '_' + str(hours) + timeRun + '.csv')
+            fileNameWrite = os.path.join(save_address, 'Exp3' + fileSig + dataDay + '_' + str(hours) + timeRun + '.csv')
             
         # put some new data in file for readability
         with open(fileNameWrite, 'a+') as f:
             f.write('\nNew Run at  ' + datetime.datetime.now().strftime('%m/%d/%Y %H:%M:%S'))
-            f.write('\n, Time, UCBLearnAccesses; UCBClicks; randomLearnAccesses; randomClicks; greedyLearnAccesses; greedyClicks; exp3LearnAccess; exp3Clicks, Article Access; Clicks; ID; Theta, ID; epochArticles, ID ;epochSelectedArticles \n')
+            f.write('\n, Time, randomLearnAccesses; randomClicks; exp3LearnAccess; exp3Clicks, Article Access; Clicks; ID; Theta, ID; epochArticles, ID ;epochSelectedArticles \n')
             print fileName, fileNameWrite, dataDay, resetInterval
         
         with open(fileName, 'r') as f:
@@ -286,7 +216,6 @@ if __name__ == '__main__':
                     fileNameWrite = os.path.join(save_address, fileSig + dataDay + '_' + str(hours) + timeRun + '.csv')
                     # re-initialize
                     countLine = 0
-                    re_initialize_article_Structs()
                     #re_initialize_article_exp3Structs(pool_articleID)     #Not sure whether to re-initialize exp3Struct
                     printWrite()
                     batchStartTime = tim
@@ -299,27 +228,17 @@ if __name__ == '__main__':
                 totalArticles = totalArticles + 1
                 
                 # read the observation
-                tim, article_chosen, click, user_features, pool_articles = parseLine(line)
+                tim, article_chosen, click, pool_articles = parseLine(line)
                 pool_articleID = pool_articles[:,0]
                 pool_articleID = np.transpose(pool_articleID)
                 
                 # article ids for articles in the current pool for this observation
                 currentArticles = []
-                for article in pool_articles:
-                    # featureVector = np.concatenate((user_features[:-1], article[1:-1]), axis = 0)
-                    # exclude 1 from feature vectors
-                    featureVector = user_features[:-1]
-                    # if there is a problem with the feature vector, skip this observation
-                    if len(featureVector) is not d:
-                        print 'feature_vector len mismatched'
-                        continue
-                    
+                for article in pool_articles:                    
                     article_id = article[0]
                     currentArticles.append(article_id)
                     
-                    if article_id not in articles_LinUCB: #if its a new article; add it to dictionaries
-                        articles_LinUCB[article_id] = LinUCBStruct(d)
-                        articles_greedy[article_id] = GreedyStruct()
+                    if article_id not in articles_exp3: #if its a new article; add it to dictionaries
                         articles_random[article_id] = randomStruct()
                         articles_exp3[article_id] = exp3Struct(gamma, [])
                         
@@ -331,8 +250,6 @@ if __name__ == '__main__':
                     
                     # Calculate LinUCB confidence bound; done in two steps for readability
                     # please check this code for correctness
-                    pta = np.dot(articles_LinUCB[article_id].theta, featureVector)
-                    articles_LinUCB[article_id].pta = pta + alpha * np.sqrt(np.dot(np.dot(featureVector,articles_LinUCB[article_id].A_inv), featureVector))
                     
                 articles_exp3[article_chosen].initialize(pool_articleID)
                 articles_exp3[article_chosen].update(pool_articleID, click, article_chosen)
@@ -344,16 +261,8 @@ if __name__ == '__main__':
                     epochSelectedArticles[article_chosen] = epochSelectedArticles[article_chosen] + 1					
                     # if articles_LinUCB[article_id].pta < 0: print 'PTA', articles_LinUCB[article_id].pta,
                 
-                # articles picked by LinUCB
-                ucbArticle = max([(x, articles_LinUCB[x].pta) for x in currentArticles], key=itemgetter(1))[0]
-                
                 # article picked by random strategy
                 randomArticle = choice(currentArticles)
-                
-                # article picked by greedy
-                greedyArticle = max([(x, articles_greedy[x].learn_stats.CTR) for x in currentArticles], key = itemgetter(1))[0] 
-                if random() < eta: 
-                    greedyArticle = choice(currentArticles)
                     
                 # article picked by exp3
                 exp3Article = max([(x, articles_exp3[x].select_arm) for x in currentArticles], key = itemgetter(1))[0]
@@ -369,29 +278,7 @@ if __name__ == '__main__':
                         articles_random[randomArticle].deploy_stats.clicks = articles_random[randomArticle].deploy_stats.clicks + click
                         articles_random[randomArticle].deploy_stats.accesses = articles_random[randomArticle].deploy_stats.accesses + 1
                         
-                # if LinUCB article is the chosen by evaluation strategy; update datastructure with results
-                if ucbArticle==article_chosen:
-                    if learn:
-                        articles_LinUCB[article_chosen].learn_stats.clicks = articles_LinUCB[article_chosen].learn_stats.clicks + click
-                        articles_LinUCB[article_chosen].learn_stats.accesses = articles_LinUCB[article_chosen].learn_stats.accesses + 1
-                        
-                        articles_LinUCB[article_chosen].A = articles_LinUCB[article_chosen].A + np.outer(featureVector, featureVector)
-                        if click:
-                            articles_LinUCB[article_chosen].b = articles_LinUCB[article_chosen].b + click * featureVector      
-                            articles_LinUCB[article_chosen].updateInv()
-                            articles_LinUCB[article_chosen].updateTheta()
-                    else:
-                        articles_LinUCB[article_chosen].deploy_stats.clicks = articles_LinUCB[article_chosen].deploy_stats.clicks + click
-                        articles_LinUCB[article_chosen].deploy_stats.accesses = articles_LinUCB[article_chosen].deploy_stats.accesses + 1
-                # if greedy article is chosen by evalution strategy
-                if greedyArticle == article_chosen:
-                    if learn:
-                        articles_greedy[article_chosen].learn_stats.clicks = articles_greedy[article_chosen].learn_stats.clicks + click
-                        articles_greedy[article_chosen].learn_stats.accesses = articles_greedy[article_chosen].learn_stats.accesses + 1
-                        articles_greedy[article_chosen].learn_stats.updateCTR()
-                    else:
-                        articles_greedy[article_chosen].deploy_stats.clicks = articles_greedy[article_chosen].deploy_stats.clicks + click
-                        articles_greedy[article_chosen].deploy_stats.accesses = articles_greedy[article_chosen].deploy_stats.accesses + 1
+               
                 # if exp3 article is chosen by evalution strategy
                 if exp3Article == article_chosen:
                     if learn:
@@ -427,3 +314,4 @@ if __name__ == '__main__':
 
   
     
+
