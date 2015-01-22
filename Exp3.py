@@ -33,16 +33,19 @@ class exp3Struct:
         self.weights = 1
         self.pta = 0
         self.learn_stats = articleAccess()
-        self.deploy_stats = articleAccess()
+        
+    def reInitilize(self):
+        self.weights = 1.0
+        self.pta=0.0
           
     def updatePta(self, n_arms, total_weight):
         n_arms = n_arms
         self.pta= (1-self.gamma) * (self.weights / total_weight)
         self.pta= self.pta + (self.gamma) * (1.0 / float(n_arms))
  
-    def updateWeight(self, n_arms, reward, chosen_arm_pta):
+    def updateWeight(self, n_arms, reward):
         n_arms = n_arms
-        X=reward/chosen_arm_pta
+        X=reward/self.pta
         growth_factor = math.exp((self.gamma/n_arms)*X)
         self.weights = self.weights * growth_factor
 
@@ -51,7 +54,7 @@ class exp3Struct:
 class randomStruct:
 	def __init__(self):
 		self.learn_stats = articleAccess()
-		self.deploy_stats = articleAccess()
+		#self.deploy_stats = articleAccess()
 
 # This code simply reads one line from the source files of Yahoo!. Please see the yahoo info file to understand the format. I tested this part; so should be good but second pair of eyes could help
 def parseLine(line):
@@ -102,10 +105,6 @@ if __name__ == '__main__':
         print totalArticles,
         print 'Exp3Lrn', exp3LearnCTR / randomLearnCTR,
 
-        if p_learn < 1:
-            randomDeployCTR = sum([articles_random[x].deploy_stats.clicks for x in articles_random]) / sum([articles_random[x].deploy_stats.accesses for x in articles_random])
-            exp3DeployCTR = sum([articles_exp3[x].deploy_stats.clicks for x in articles_exp3]) / sum([articles_exp3[x].deploy_stats_accesses for x in articles_exp3])
-            print 'Exp3Dep', exp3DeployCTR / randomDeployCTR
         print ' '
         
         recordedStats = [randomLA, randomC, exp3LA, exp3C]
@@ -114,19 +113,17 @@ if __name__ == '__main__':
     
             
     # this function reset weight for all exp3
-    def re_initialize_article_exp3Structs(ID):
+    def re_initialize_article_exp3Structs():
         for x in articles_exp3:
-            articles_exp3[x].initialize(ID)
+            articles_exp3[x].reInitilize()
             
     modes = {0:'multiple', 1:'single', 2:'hours'} 	# the possible modes that this code can be run in; 'multiple' means multiple days or all days so theta dont change; single means it is reset every day; hours is reset after some hours depending on the reInitPerDay. 
-    mode = 'hours' 									# the selected mode
-    fileSig = '2Hours'								# depending on further environment parameters a file signature to remember those. for example if theta is set every two hours i can have it '2hours'; for 
+    mode = 'multiple' 									# the selected mode
+    fileSig = 'Exp3_MultipleDay'								# depending on further environment parameters a file signature to remember those. for example if theta is set every two hours i can have it '2hours'; for 
     reInitPerDay = 12								# how many times theta is re-initialized per day
 
-    eta = .2 										# parameter in e-greedy algorithm
-    gamma = 0.1                                                    # parameter in exp3 
-    p_learn = 1 									# determined the size of learn and deployment bucket. since its 1; deployment bucked is empty
-    
+    gamma = 0.3                                                   # parameter in exp3 
+ 
     # relative dictionaries for algorithms
     articles_exp3 = {}
     articles_random = {}
@@ -154,11 +151,10 @@ if __name__ == '__main__':
         # should be self explaining
         if mode == 'single':
             fileNameWrite = os.path.join(save_address, 'Exp3' + fileSig + dataDay + timeRun + '.csv')
-            re_initialize_article_exp3Structs(pool_articleID)
-            
+            re_initialize_article_exp3Structs()
             countNoArticle = 0
         elif mode == 'multiple':
-            fileNameWrite = os.path.join(save_address, 'Exp3' + ileSig +dataDay + timeRun + '.csv')
+            fileNameWrite = os.path.join(save_address, 'Exp3' + fileSig +dataDay + timeRun + '.csv')
         
         elif mode == 'hours':
             numObs = file_len(fileName)
@@ -174,20 +170,20 @@ if __name__ == '__main__':
         
         with open(fileName, 'r') as f:
             # reading file line ie observations running one at a time
-                            # read the observation
-            tim, article_chosen, click, pool_articles = parseLine(line)
-            pool_articleID = pool_articles[:,0]
-            pool_articleNum = len(pool_articleID)
-            for line in f:
-                # fileNameWrite = os.path.join(save_address, 'theta' + dataDay + timeRun + '.csv')
-                # if mode is hours and time to reset theta
+                            
+            for line in f:             
+                # read the observation
+                tim, article_chosen, click, pool_articles = parseLine(line)
+                pool_articleID = pool_articles[:,0]
+                pool_articleNum = len(pool_articleID)
+
                 if mode=='hours' and countLine > resetInterval:
                     hours = hours + 1
                     # each time theta is reset, a new file is started.
                     fileNameWrite = os.path.join(save_address, fileSig + dataDay + '_' + str(hours) + timeRun + '.csv')
                     # re-initialize
                     countLine = 0
-                    #re_initialize_article_exp3Structs(pool_articleID)     #Not sure whether to re-initialize exp3Struct
+                    re_initialize_article_exp3Structs()     #Not sure whether to re-initialize exp3Struct
                     printWrite()
                     batchStartTime = tim
                     epochArticles = {}
@@ -215,9 +211,12 @@ if __name__ == '__main__':
                         # we also count the times article appeared in selection pool in this batch
                         epochArticles[article_id] = epochArticles[article_id] + 1
                     
-                    total_weight = sum([articles_exp3[x].weights for x in pool_articles[:0]])
-                    #total_weight = total_weight + articles_exp3[article_id].weights
-                    articles_exp3[article_id].updatePta(pool_articleNum, total_weight, click, article_chosen)
+                    #total_weight = sum([articles_exp3[x].weights for x in pool_articles[:0]])
+                    total_weight = total_weight + articles_exp3[article_id].weights
+                    
+                for article in pool_articles:
+                    article_id = article[0]
+                    articles_exp3[article_id].updatePta(pool_articleNum, total_weight)
       
                 
                 if article_chosen not in epochSelectedArticles:
@@ -230,35 +229,23 @@ if __name__ == '__main__':
                 randomArticle = choice(currentArticles)
                     
                 # article picked by exp3
-                exp3Article = max([(x, articles_exp3[x].select_arm) for x in currentArticles], key = itemgetter(1))[0]
+                exp3Article = max(np.linalg.permutation([(x, articles_exp3[x].pta) for x in currentArticles]), key = itemgetter(1))[0]
                 #articles_exp3[exp3Article].updateWeight(pool_articleNum, 1, articles_exp3[exp3Article].pta)
                     
-                learn = random()<p_learn
                 
                 # if random strategy article Picked by evaluation srategy
                 if randomArticle == article_chosen:
-                    if learn:
-                        articles_random[randomArticle].learn_stats.clicks = articles_random[randomArticle].learn_stats.clicks + click
-                        articles_random[randomArticle].learn_stats.accesses = articles_random[randomArticle].learn_stats.accesses + 1
-                    else:
-                        articles_random[randomArticle].deploy_stats.clicks = articles_random[randomArticle].deploy_stats.clicks + click
-                        articles_random[randomArticle].deploy_stats.accesses = articles_random[randomArticle].deploy_stats.accesses + 1
-                        
+                    articles_random[randomArticle].learn_stats.clicks = articles_random[randomArticle].learn_stats.clicks + click
+                    articles_random[randomArticle].learn_stats.accesses = articles_random[randomArticle].learn_stats.accesses + 1   
                
                 # if exp3 article is chosen by evalution strategy
                 if exp3Article == article_chosen:
-                    if learn:
-                        articles_exp3[article_chosen].learn_stats.clicks = articles_exp3[article_chosen].learn_stats.clicks + click
-                        articles_exp3[article_chosen].learn_stats.accesses = articles_exp3[article_chosen].learn_stats.accesses + 1
-                        if click:
-                            #articles_exp3[article_chosen].initialize(pool_articleID)
-                            articles_exp3[article_chosen].update(pool_articleID, click, article_chosen)
-                    else:
-                        articles_exp3[exp3Article].deploy_stats.clicks = articles_exp3[exp3Article].learn_stats.clicks + click
-                        articles_exp3[exp3Article].deploy_stats.accesses = articles_exp3[exp3Article].deploy_stats.accesses
-                 
+                    articles_exp3[article_chosen].learn_stats.clicks = articles_exp3[article_chosen].learn_stats.clicks + click
+                    articles_exp3[article_chosen].learn_stats.accesses = articles_exp3[article_chosen].learn_stats.accesses + 1
+                    if click:
+                        #articles_exp3[article_chosen].initialize(pool_articleID)
+                        articles_exp3[article_chosen].updateWeight(pool_articleNum, click)
 					
-                
                 if totalArticles%20000 ==0:
                     # write observations for this batch
                     printWrite()

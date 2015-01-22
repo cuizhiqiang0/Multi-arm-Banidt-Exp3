@@ -39,9 +39,9 @@ class exp3Struct:
         self.pta= (1-self.gamma) * (self.weights / total_weight)
         self.pta= self.pta + (self.gamma) * (1.0 / float(n_arms))
  
-    def updateWeight(self, n_arms, reward, chosen_arm_pta):
+    def updateWeight(self, n_arms, reward):
         n_arms = n_arms
-        X=reward/chosen_arm_pta
+        X=reward/self.pta
         growth_factor = math.exp((self.gamma/n_arms)*X)
         self.weights = self.weights * growth_factor
         
@@ -192,14 +192,14 @@ if __name__ == '__main__':
             articles_exp3[x].reInitilize()
         
     modes = {0:'multiple', 1:'single', 2:'hours'} 	# the possible modes that this code can be run in; 'multiple' means multiple days or all days so theta dont change; single means it is reset every day; hours is reset after some hours depending on the reInitPerDay. 
-    mode = 'hours' 									# the selected mode
-    fileSig = '2Hours'								# depending on further environment parameters a file signature to remember those. for example if theta is set every two hours i can have it '2hours'; for 
+    mode = 'singl' 									# the selected mode
+    fileSig = 'SingleDays'								# depending on further environment parameters a file signature to remember those. for example if theta is set every two hours i can have it '2hours'; for 
     reInitPerDay = 12								# how many times theta is re-initialized per day
 
     d = 5 											# dimension of the input sizes
     alpha = 1 										# alpha in LinUCB; see pseudo-code
     eta = .2 										# parameter in e-greedy algorithm
-    gamma = 0.1                                                    # parameter in exp3 
+    gamma = 0.3                                                    # parameter in exp3 
     p_learn = 1 									# determined the size of learn and deployment bucket. since its 1; deployment bucked is empty
     
     # relative dictionaries for algorithms
@@ -379,7 +379,7 @@ if __name__ == '__main__':
                         articles_exp3[article_chosen].learn_stats.accesses = articles_exp3[article_chosen].learn_stats.accesses + 1
                         if click:
                             #articles_exp3[article_chosen].initialize(pool_articleID)
-                            articles_exp3[article_chosen].updateWeight(pool_articleNum, click, articles_exp3[article_chosen].pta)
+                            articles_exp3[article_chosen].updateWeight(pool_articleNum, click)
                     else:
                         articles_exp3[exp3Article].deploy_stats.clicks = articles_exp3[exp3Article].learn_stats.clicks + click
                         articles_exp3[exp3Article].deploy_stats.accesses = articles_exp3[exp3Article].deploy_stats.accesses
