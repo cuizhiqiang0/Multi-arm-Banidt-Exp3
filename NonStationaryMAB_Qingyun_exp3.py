@@ -35,7 +35,7 @@ class exp3Struct:
         self.weights = [1.0 for i in range(n_arms)]
         return
     '''
-    def updatePta(self, n_arms, total_weight, reward, chosen_arm):
+    def updatePta(self, n_arms, total_weight):
         n_arms = n_arms
         self.pta= (1-self.gamma) * (self.weights / total_weight)
         self.pta= self.pta + (self.gamma) * (1.0 / float(n_arms))
@@ -188,9 +188,9 @@ if __name__ == '__main__':
             articles_LinUCB[x].reInitilize()
             
     # this function reset weight for all exp3
-    def re_initialize_article_exp3Structs(ID):
+    def re_initialize_article_exp3Structs():
         for x in articles_exp3:
-            articles_exp3[x].initialize(ID)
+            articles_exp3[x](gamma)
             
     modes = {0:'multiple', 1:'single', 2:'hours'} 	# the possible modes that this code can be run in; 'multiple' means multiple days or all days so theta dont change; single means it is reset every day; hours is reset after some hours depending on the reInitPerDay. 
     mode = 'hours' 									# the selected mode
@@ -233,9 +233,9 @@ if __name__ == '__main__':
         if mode == 'single':
             fileNameWrite = os.path.join(save_address, fileSig + dataDay + timeRun + '.csv')
             re_initialize_article_Structs()
-            re_initialize_article_exp3Structs(pool_articleID)
-            
+            re_initialize_article_exp3Structs()
             countNoArticle = 0
+            
         elif mode == 'multiple':
             fileNameWrite = os.path.join(save_address, fileSig +dataDay + timeRun + '.csv')
         
@@ -254,9 +254,6 @@ if __name__ == '__main__':
         with open(fileName, 'r') as f:
             # reading file line ie observations running one at a time
             for line in f:
-                # fileNameWrite = os.path.join(save_address, 'theta' + dataDay + timeRun + '.csv')
-                
-            
                 # read the observation
                 tim, article_chosen, click, user_features, pool_articles = parseLine(line)
                 pool_articleID = pool_articles[:,0]
@@ -270,7 +267,7 @@ if __name__ == '__main__':
                     # re-initialize
                     countLine = 0
                     re_initialize_article_Structs()
-                    #re_initialize_article_exp3Structs(pool_articleID)     #Not sure whether to re-initialize exp3Struct
+                    re_initialize_article_exp3Structs()     #Not sure whether to re-initialize exp3Struct
                     printWrite()
                     batchStartTime = tim
                     epochArticles = {}
@@ -314,7 +311,7 @@ if __name__ == '__main__':
                     articles_LinUCB[article_id].pta = pta + alpha * np.sqrt(np.dot(np.dot(featureVector,articles_LinUCB[article_id].A_inv), featureVector))
                     total_weight = sum([articles_exp3[x].weights for x in pool_articles[:0]])
                     #total_weight = total_weight + articles_exp3[article_id].weights
-                    articles_exp3[article_id].updatePta(pool_articleNum, total_weight, click, article_chosen)
+                    articles_exp3[article_id].updatePta(pool_articleNum, total_weight)
                     
                 #articles_exp3[article_chosen].initialize(pool_articleID)
                 #articles_exp3[article_chosen].update(pool_articleID, click, article_chosen)
@@ -339,7 +336,7 @@ if __name__ == '__main__':
                     
                 # article picked by exp3
                 exp3Article = max([(x, articles_exp3[x].pta) for x in currentArticles], key = itemgetter(1))[0]
-                articles_exp3[exp3Article].updateWeight(pool_articleNum, 1, articles_exp3[exp3Article].pta)
+                #articles_exp3[exp3Article].updateWeight(pool_articleNum, 1, articles_exp3[exp3Article].pta)
                     
                 learn = random()<p_learn
                 
