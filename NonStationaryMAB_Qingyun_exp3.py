@@ -24,17 +24,16 @@ class articleAccess():
 class exp3Struct:
     def __init__(self, gamma):
         self.gamma = gamma
-        self.weights = 1
-        self.pta = 0
+        self.weights = 1.0
+        self.pta = 0.0
         self.learn_stats = articleAccess()
         self.deploy_stats = articleAccess()
         
-    '''    
-    def initialize(self, pool_armID):
-        n_arms = len(pool_armID)
-        self.weights = [1.0 for i in range(n_arms)]
-        return
-    '''
+       
+    def reInitilize(self):
+        self.weights = 1.0
+        self.pta=0.0
+    
     def updatePta(self, n_arms, total_weight):
         n_arms = n_arms
         self.pta= (1-self.gamma) * (self.weights / total_weight)
@@ -186,12 +185,12 @@ if __name__ == '__main__':
     def re_initialize_article_Structs():
         for x in articles_LinUCB:
             articles_LinUCB[x].reInitilize()
-            
+           
     # this function reset weight for all exp3
     def re_initialize_article_exp3Structs():
         for x in articles_exp3:
-            articles_exp3[x](gamma)
-            
+            articles_exp3[x].reInitilize()
+        
     modes = {0:'multiple', 1:'single', 2:'hours'} 	# the possible modes that this code can be run in; 'multiple' means multiple days or all days so theta dont change; single means it is reset every day; hours is reset after some hours depending on the reInitPerDay. 
     mode = 'hours' 									# the selected mode
     fileSig = '2Hours'								# depending on further environment parameters a file signature to remember those. for example if theta is set every two hours i can have it '2hours'; for 
@@ -277,10 +276,9 @@ if __name__ == '__main__':
                 # number of observations seen in this batch; reset after start of new batch
                 countLine = countLine + 1
                 totalArticles = totalArticles + 1
-                
+                total_weight = 0
                 # article ids for articles in the current pool for this observation
                 currentArticles = []
-                total_weight = 0
                 for article in pool_articles:
                     # featureVector = np.concatenate((user_features[:-1], article[1:-1]), axis = 0)
                     # exclude 1 from feature vectors
@@ -309,8 +307,10 @@ if __name__ == '__main__':
                     # please check this code for correctness
                     pta = np.dot(articles_LinUCB[article_id].theta, featureVector)
                     articles_LinUCB[article_id].pta = pta + alpha * np.sqrt(np.dot(np.dot(featureVector,articles_LinUCB[article_id].A_inv), featureVector))
-                    total_weight = sum([articles_exp3[x].weights for x in pool_articles[:0]])
-                    #total_weight = total_weight + articles_exp3[article_id].weights
+                    #total_weight = sum([articles_exp3[x].weights for x in pool_articles[:0]])
+                    total_weight = total_weight + articles_exp3[article_id].weights
+                for article in pool_articles:
+                    article_id = article[0]
                     articles_exp3[article_id].updatePta(pool_articleNum, total_weight)
                     
                 #articles_exp3[article_chosen].initialize(pool_articleID)
