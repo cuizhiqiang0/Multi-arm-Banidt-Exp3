@@ -102,12 +102,12 @@ if __name__ == '__main__':
         exp3C = sum([articles_exp3[x].learn_stats.clicks for x in articles_exp3]) 
         exp3LearnCTR = sum([articles_exp3[x].learn_stats.clicks for x in articles_exp3]) / sum([articles_exp3[x].learn_stats.accesses for x in articles_exp3])
         
-        print totalArticles,
-        print 'Exp3Lrn', exp3LearnCTR / randomLearnCTR,
+        #print totalArticles,
+        #print 'Exp3Lrn', exp3LearnCTR / randomLearnCTR,
 
-        print ' '
+        #print ' '
         
-        recordedStats = [randomLA, randomC, exp3LA, exp3C]
+        recordedStats = [randomLA, randomC, exp3LA, exp3C, exp3LearnCTR / randomLearnCTR]
         # write to file
         save_to_file(fileNameWrite, articles_exp3, recordedStats, epochArticles, epochSelectedArticles, tim)
     
@@ -119,10 +119,10 @@ if __name__ == '__main__':
             
     modes = {0:'multiple', 1:'single', 2:'hours'} 	# the possible modes that this code can be run in; 'multiple' means multiple days or all days so theta dont change; single means it is reset every day; hours is reset after some hours depending on the reInitPerDay. 
     mode = 'multiple' 									# the selected mode
-    fileSig = 'Exp3_MultipleDay'								# depending on further environment parameters a file signature to remember those. for example if theta is set every two hours i can have it '2hours'; for 
+    fileSig = '1_MultipleDay'								# depending on further environment parameters a file signature to remember those. for example if theta is set every two hours i can have it '2hours'; for 
     reInitPerDay = 12								# how many times theta is re-initialized per day
 
-    gamma = 0.3                                                   # parameter in exp3 
+    gamma = 1                                                  # parameter in exp3 
  
     # relative dictionaries for algorithms
     articles_exp3 = {}
@@ -165,7 +165,7 @@ if __name__ == '__main__':
         # put some new data in file for readability
         with open(fileNameWrite, 'a+') as f:
             f.write('\nNew Run at  ' + datetime.datetime.now().strftime('%m/%d/%Y %H:%M:%S'))
-            f.write('\n, Time, randomLearnAccesses; randomClicks; exp3LearnAccess; exp3Clicks, Article Access; Clicks; ID; Theta, ID; epochArticles, ID ;epochSelectedArticles \n')
+            f.write('\n, Time, randomLearnAccesses; randomClicks; exp3LearnAccess; exp3Clicks; exp3CTRRatio, Article Access; Clicks; ID; Theta, ID; epochArticles, ID ;epochSelectedArticles \n')
             print fileName, fileNameWrite, dataDay, resetInterval
         
         with open(fileName, 'r') as f:
@@ -229,7 +229,7 @@ if __name__ == '__main__':
                 randomArticle = choice(currentArticles)
                     
                 # article picked by exp3
-                exp3Article = max(np.linalg.permutation([(x, articles_exp3[x].pta) for x in currentArticles]), key = itemgetter(1))[0]
+                exp3Article = max(np.random.permutation([(x, articles_exp3[x].pta) for x in currentArticles]), key = itemgetter(1))[0]
                 #articles_exp3[exp3Article].updateWeight(pool_articleNum, 1, articles_exp3[exp3Article].pta)
                     
                 
