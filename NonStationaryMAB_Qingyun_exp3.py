@@ -22,54 +22,30 @@ class articleAccess():
 
 # this structure saves for the exp3 algorithm
 class exp3Struct:
-    def __init__(self, gamma, weights):
+    def __init__(self, gamma):
         self.gamma = gamma
-        self.weights = weights
+        self.weights = 1
+        self.pta = 0
         self.learn_stats = articleAccess()
         self.deploy_stats = articleAccess()
-          
+        
+    '''    
     def initialize(self, pool_armID):
         n_arms = len(pool_armID)
         self.weights = [1.0 for i in range(n_arms)]
         return
-    
-    def select_arm(self, pool_armID):
-        n_arms = len(pool_armID)
-        total_weight = sum(self.weights)
-        #probs = [0.0 for i in range(n_arms)]
-        probs = dict.fromkeys(pool_armID)
-        i = 0
-        for arm in probs.iterkeys():
-            probs[arm] = (1-self.gamma) * (self.weights[i] / total_weight)
-            probs[arm] = probs[arm] + (self.gamma) * (1.0 / float(n_arms))
-            i = i + 1
-        return probs[arm]
+    '''
+    def updatePta(self, n_arms, total_weight, reward, chosen_arm):
+        n_arms = n_arms
+        self.pta= (1-self.gamma) * (self.weights / total_weight)
+        self.pta= self.pta + (self.gamma) * (1.0 / float(n_arms))
+ 
+    def updateWeight(self, n_arms, reward, chosen_arm_pta):
+        n_arms = n_arms
+        X=reward/chosen_arm_pta
+        growth_factor = math.exp((self.gamma/n_arms)*X)
+        self.weights = self.weights * growth_factor
         
-    def update(self, pool_armID, reward, chosen_arm):
-        n_arms = len(pool_armID)
-        total_weight = sum(self.weights)
-        #probs = [0.0 for i in range(n_arms)]
-        probs = dict.fromkeys(pool_armID)
-        wei = dict.fromkeys(pool_armID)
-        
-        i = 0
-        for w in wei.iterkeys():
-            wei[w] = self.weights[i]
-            i = i + 1
-
-        for arm in probs.iterkeys():
-            probs[arm]= (1-self.gamma) * (wei[arm] / total_weight)
-            probs[arm]= probs[arm] + (self.gamma) * (1.0 / float(n_arms))
-            #i = i + 1
-            #value = ccc
-        X = reward / probs[chosen_arm]
-        growth_factor = math.exp ((self.gamma / n_arms) * X)
-        wei[chosen_arm] = wei[chosen_arm] * growth_factor  
-        
-        j = 0
-        for w in wei.iterkeys():
-            self.weights[j] = wei[w]
-            j = j + 1
 
 
 # structure to save data from random strategy as mentioned in LiHongs paper
@@ -279,6 +255,13 @@ if __name__ == '__main__':
             # reading file line ie observations running one at a time
             for line in f:
                 # fileNameWrite = os.path.join(save_address, 'theta' + dataDay + timeRun + '.csv')
+                
+            
+                # read the observation
+                tim, article_chosen, click, user_features, pool_articles = parseLine(line)
+                pool_articleID = pool_articles[:,0]
+                pool_articleNum = len(pool_articleID)
+                
                 # if mode is hours and time to reset theta
                 if mode=='hours' and countLine > resetInterval:
                     hours = hours + 1
@@ -298,13 +281,9 @@ if __name__ == '__main__':
                 countLine = countLine + 1
                 totalArticles = totalArticles + 1
                 
-                # read the observation
-                tim, article_chosen, click, user_features, pool_articles = parseLine(line)
-                pool_articleID = pool_articles[:,0]
-                pool_articleID = np.transpose(pool_articleID)
-                
                 # article ids for articles in the current pool for this observation
                 currentArticles = []
+                total_weight = 0
                 for article in pool_articles:
                     # featureVector = np.concatenate((user_features[:-1], article[1:-1]), axis = 0)
                     # exclude 1 from feature vectors
@@ -321,7 +300,7 @@ if __name__ == '__main__':
                         articles_LinUCB[article_id] = LinUCBStruct(d)
                         articles_greedy[article_id] = GreedyStruct()
                         articles_random[article_id] = randomStruct()
-                        articles_exp3[article_id] = exp3Struct(gamma, [])
+                        articles_exp3[article_id] = exp3Struct(gamma)
                         
                     if article_id not in epochArticles:
                         epochArticles[article_id] = 1
@@ -333,10 +312,13 @@ if __name__ == '__main__':
                     # please check this code for correctness
                     pta = np.dot(articles_LinUCB[article_id].theta, featureVector)
                     articles_LinUCB[article_id].pta = pta + alpha * np.sqrt(np.dot(np.dot(featureVector,articles_LinUCB[article_id].A_inv), featureVector))
+                    total_weight = sum([articles_exp3[x].weights for x in pool_articles[:0]])
+                    #total_weight = total_weight + articles_exp3[article_id].weights
+                    articles_exp3[article_id].updatePta(pool_articleNum, total_weight, click, article_chosen)
                     
-                articles_exp3[article_chosen].initialize(pool_articleID)
-                articles_exp3[article_chosen].update(pool_articleID, click, article_chosen)
-                articles_exp3[article_chosen].select_arm(pool_articleID)
+                #articles_exp3[article_chosen].initialize(pool_articleID)
+                #articles_exp3[article_chosen].update(pool_articleID, click, article_chosen)
+                #articles_exp3[article_chosen].updateWeight(pool_articleNum,)
                 
                 if article_chosen not in epochSelectedArticles:
                     epochSelectedArticles[article_chosen] = 1
@@ -356,7 +338,8 @@ if __name__ == '__main__':
                     greedyArticle = choice(currentArticles)
                     
                 # article picked by exp3
-                exp3Article = max([(x, articles_exp3[x].select_arm) for x in currentArticles], key = itemgetter(1))[0]
+                exp3Article = max([(x, articles_exp3[x].pta) for x in currentArticles], key = itemgetter(1))[0]
+                articles_exp3[exp3Article].updateWeight(pool_articleNum, 1, articles_exp3[exp3Article].pta)
                     
                 learn = random()<p_learn
                 
@@ -398,8 +381,8 @@ if __name__ == '__main__':
                         articles_exp3[article_chosen].learn_stats.clicks = articles_exp3[article_chosen].learn_stats.clicks + click
                         articles_exp3[article_chosen].learn_stats.accesses = articles_exp3[article_chosen].learn_stats.accesses + 1
                         if click:
-                            articles_exp3[article_chosen].initialize(pool_articleID)
-                            articles_exp3[article_chosen].update(pool_articleID, click, article_chosen)
+                            #articles_exp3[article_chosen].initialize(pool_articleID)
+                            articles_exp3[article_chosen].updateWeight(pool_articleNum, click, articles_exp3[article_chosen].pta)
                     else:
                         articles_exp3[exp3Article].deploy_stats.clicks = articles_exp3[exp3Article].learn_stats.clicks + click
                         articles_exp3[exp3Article].deploy_stats.accesses = articles_exp3[exp3Article].deploy_stats.accesses
