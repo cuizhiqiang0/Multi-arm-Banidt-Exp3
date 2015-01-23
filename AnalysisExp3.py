@@ -1,11 +1,11 @@
-import nump as np
+import numpy as np
 import os
 from conf import *
 from matplotlib.pylab import *
 from operator import itemgetter
 
 if __name__ == '__main__':
-    filenames = [x for x in os.listdir(save_adress) if 'csv' in x]
+    filenames = [x for x in os.listdir(save_address) if 'csv' in x]
     for x in filenames:
         filename = os.path.join(save_address, x)
         if '0.5_Hour'in x:
