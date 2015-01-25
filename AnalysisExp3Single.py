@@ -25,8 +25,8 @@ if __name__ == '__main__':
                         continue
                     randa[i],randc[i],exp3a[i],exp3c[i],exp3CTRRatio[i] = [float(x) for x in words[2].split(';')]
                     tim[i] = int(words[1])
-                plt.plot(tim.values(),exp3CTRRatio.values(),label = '0.3Single')
-        '''
+                plt.plot(tim.values(),exp3CTRRatio.values(), linestyle = '--', marker = '+', label = '0.3Single')
+                
         if '0.5_Single'in x:
             with open(filename, 'r')as f:
                 randa = {}
@@ -43,8 +43,8 @@ if __name__ == '__main__':
                         continue
                     randa[i],randc[i],exp3a[i],exp3c[i],exp3CTRRatio[i] = [float(x) for x in words[2].split(';')]
                     tim[i] = int(words[1])
-                plt.plot(tim.values(),exp3CTRRatio.values(),label = '0.5Single')
-        
+                plt.plot(tim.values(),exp3CTRRatio.values(),linestyle = ':', marker = '.', label = '0.5Single')
+        '''
         if '0.7_Single'in x:
             with open(filename, 'r')as f:
                 randa = {}

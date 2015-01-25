@@ -52,7 +52,21 @@ class exp3Struct:
         self.weights = self.weights * growth_factor
         
 
-
+class UCB1:
+    def __init__(self):
+        self.averageReward = 0.0
+        self.numPlayed = 0
+        self.pta = 0.0
+        self.learn_stats = articleAccess()
+        self.deploy_stats = articleAccess()
+        
+    def reInitilize(self):
+        self.averageReward = 0.0
+        self.numPlayed = 0
+        
+    def updatePta(self, allNumPlayed, numPlayed, avgReward):
+        self.pta = avgReward + np.sqrt(2*np.log(allNumPlayed) / numPlayed)
+        
 # structure to save data from random strategy as mentioned in LiHongs paper
 class randomStruct:
 	def __init__(self):
