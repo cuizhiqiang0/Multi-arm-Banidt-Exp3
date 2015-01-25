@@ -279,6 +279,8 @@ if __name__ == '__main__':
                 if flag == 0:
                     ucb1Article = max(np.random.permutation([(x, articles_ucb1[x].pta) for x in currentArticles]), key = itemgetter(1))[0]
                 '''
+                
+                ucb1Article = max(np.random.permutation([(x, articles_ucb1[x].pta) for x in currentArticles]), key = itemgetter(1))[0]
                 articles_ucb1[ucb1Article].numPlayed = articles_ucb1[ucb1Article].numPlayed + 1
                  
                 # if random strategy article Picked by evaluation srategy
