@@ -52,7 +52,7 @@ class exp3Struct:
         self.weights = self.weights * growth_factor
         
 
-class UCB1:
+class UCB1Struct:
     def __init__(self):
         self.averageReward = 0.0
         self.numPlayed = 0
@@ -64,8 +64,8 @@ class UCB1:
         self.averageReward = 0.0
         self.numPlayed = 0
         
-    def updatePta(self, allNumPlayed, numPlayed, avgReward):
-        self.pta = avgReward + np.sqrt(2*np.log(allNumPlayed) / numPlayed)
+    def updatePta(self, allNumPlayed):
+        self.pta = self.averageReward + np.sqrt(2*np.log(allNumPlayed) / self.numPlayed)
         
 # structure to save data from random strategy as mentioned in LiHongs paper
 class randomStruct:
@@ -227,6 +227,7 @@ if __name__ == '__main__':
     articles_greedy = {}
     articles_exp3 = {}
     articles_random = {}
+    articlesPlayedByUCB1 = {}
     
     ctr = 1 				# overall ctr
     numArticlesChosen = 1 	# overall the articles that are same as for LinUCB and the random strategy that created Yahoo! dataset. I will call it evaluation strategy
@@ -253,6 +254,7 @@ if __name__ == '__main__':
             fileNameWrite = os.path.join(save_address, fileSig + dataDay + timeRun + '.csv')
             re_initialize_article_Structs()
             re_initialize_article_exp3Structs()
+            articlesPlayedByUCB1 = {}
             countNoArticle = 0
             
         elif mode == 'multiple':

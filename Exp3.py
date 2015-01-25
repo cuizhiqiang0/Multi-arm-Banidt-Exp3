@@ -49,7 +49,7 @@ class exp3Struct:
         growth_factor = math.exp((self.gamma/n_arms)*X)
         self.weights = self.weights * growth_factor
 
-class UCB1Struct:
+class ucb1Struct:
     def __init__(self):
         self.totalReward = 0.0
         self.numPlayed = 0
@@ -62,7 +62,10 @@ class UCB1Struct:
         self.numPlayed = 0        
         
     def updatePta(self, allNumPlayed):
-        self.pta = self.totalReward / self.numPlayed + np.sqrt(2*np.log(allNumPlayed) / self.numPlayed)
+        try:
+            self.pta = self.totalReward / self.numPlayed + np.sqrt(2*np.log(allNumPlayed) / self.numPlayed)
+        except ZeroDivisionError:
+            self.pta = 1.0
 
 
 
@@ -119,11 +122,12 @@ if __name__ == '__main__':
         exp3LearnCTR = sum([articles_exp3[x].learn_stats.clicks for x in articles_exp3]) / sum([articles_exp3[x].learn_stats.accesses for x in articles_exp3])
         
         ucb1LA = sum([articles_ucb1[x].learn_stats.accesses for x in articles_ucb1])
-        ucb1C = sum([articles_ucb1[x].learn_stats.click for x in articles_ucb1])
+        ucb1C = sum([articles_ucb1[x].learn_stats.clicks for x in articles_ucb1])
         ucb1LearnCTR = sum([articles_ucb1[x].learn_stats.clicks for x in articles_ucb1]) / sum([articles_ucb1[x].learn_stats.accesses for x in articles_ucb1])
                 
-        #print totalArticles,
-        #print 'Exp3Lrn', exp3LearnCTR / randomLearnCTR,
+        print totalArticles,
+        print 'Exp3Lrn', exp3LearnCTR / randomLearnCTR,
+        print 'UCB1', ucb1LearnCTR / randomLearnCTR
 
         #print ' '
         
@@ -152,6 +156,7 @@ if __name__ == '__main__':
     articles_exp3 = {}
     articles_ucb1 = {}
     articles_random = {}
+    articlesPlayedByUCB1 = {}
     
     ctr = 1 				# overall ctr
     numArticlesChosen = 1 	# overall the articles that are same as for LinUCB and the random strategy that created Yahoo! dataset. I will call it evaluation strategy
@@ -178,6 +183,7 @@ if __name__ == '__main__':
             fileNameWrite = os.path.join(save_address, 'Exp3' + fileSig + dataDay + timeRun + '.csv')
             re_initialize_article_exp3Structs()
             re_initialize_article_ucb1Structs()
+            articlesPlayedByUCB1 = {}
             countNoArticle = 0
             countLine = 0
         elif mode == 'multiple':
@@ -192,7 +198,7 @@ if __name__ == '__main__':
         # put some new data in file for readability
         with open(fileNameWrite, 'a+') as f:
             f.write('\nNew Run at  ' + datetime.datetime.now().strftime('%m/%d/%Y %H:%M:%S'))
-            f.write('\n, Time, randomLearnAccesses; randomClicks; exp3LearnAccess; exp3Clicks; exp3CTRRatio, Article Access; Clicks; ID; Theta, ID; epochArticles, ID ;epochSelectedArticles \n')
+            f.write('\n, Time, randomAccesses; randomClicks; exp3Access; exp3Clicks; ucb1Accesses; ucb1Clicks; exp3CTRRatio; ucb1CTRRatio, Article Access; Clicks; ID; Theta, ID; epochArticles, ID ;epochSelectedArticles \n')
             print fileName, fileNameWrite, dataDay, resetInterval
         
         with open(fileName, 'r') as f:
@@ -212,6 +218,7 @@ if __name__ == '__main__':
                     countLine = 0
                     re_initialize_article_exp3Structs()     #Not sure whether to re-initialize exp3Struct
                     re_initialize_article_ucb1Structs()
+                    articlesPlayedByUCB1 = {}
                     printWrite()
                     batchStartTime = tim
                     epochArticles = {}
@@ -247,9 +254,6 @@ if __name__ == '__main__':
                     article_id = article[0]
                     articles_exp3[article_id].updatePta(pool_articleNum, total_weight)
                     articles_ucb1[article_id].updatePta(countLine)
-                    
-                    
-      
                 
                 if article_chosen not in epochSelectedArticles:
                     epochSelectedArticles[article_chosen] = 1
@@ -262,9 +266,21 @@ if __name__ == '__main__':
                     
                 # article picked by exp3
                 exp3Article = max(np.random.permutation([(x, articles_exp3[x].pta) for x in currentArticles]), key = itemgetter(1))[0]
-                #articles_exp3[exp3Article].updateWeight(pool_articleNum, 1, articles_exp3[exp3Article].pta)
-                    
                 
+                # article picked by ucb1
+                '''
+                flag = 0
+                for article in np.random.permutation(currentArticles):
+                    if x not in articlesPlayedByUCB1:
+                        ucb1Article = article
+                        articlesPlayedByUCB1[ucb1Article] = ucb1Struct()
+                        flag = 1
+                        break
+                if flag == 0:
+                    ucb1Article = max(np.random.permutation([(x, articles_ucb1[x].pta) for x in currentArticles]), key = itemgetter(1))[0]
+                '''
+                articles_ucb1[ucb1Article].numPlayed = articles_ucb1[ucb1Article].numPlayed + 1
+                 
                 # if random strategy article Picked by evaluation srategy
                 if randomArticle == article_chosen:
                     articles_random[randomArticle].learn_stats.clicks = articles_random[randomArticle].learn_stats.clicks + click
@@ -277,6 +293,12 @@ if __name__ == '__main__':
                     if click:
                         #articles_exp3[article_chosen].initialize(pool_articleID)
                         articles_exp3[article_chosen].updateWeight(pool_articleNum, click)
+                
+                if ucb1Article == article_chosen:
+                    articles_ucb1[article_chosen].learn_stats.clicks = articles_ucb1[article_chosen].learn_stats.clicks + click
+                    articles_ucb1[article_chosen].learn_stats.accesses = articles_ucb1[article_chosen].learn_stats.accesses + 1
+                    if click:
+                        articles_ucb1[article_chosen].totalReward = articles_ucb1[article_chosen].totalReward + click
 					
                 if totalArticles%20000 ==0:
                     # write observations for this batch

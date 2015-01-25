@@ -1,6 +1,6 @@
 import os
 
-datasets_address = "/Users/Summer/Documents/Research/datasets/R6"
+datasets_address = "/Users/Summer/Documents/Research/datasets/"
 
 yahoo_address = os.path.join(datasets_address, "R6")
 
