@@ -8,7 +8,11 @@ if __name__ == '__main__':
     filenames = [x for x in os.listdir(save_address) if 'csv' in x]
     for x in filenames:
         filename = os.path.join(save_address, x)
+<<<<<<< HEAD
         if '0.5_Single'in x:
+=======
+        if '0.3_Single'in x:
+>>>>>>> daa48e6f139dcdf215c4be0164ec45c09cd57f9f
             with open(filename, 'r')as f:
                 
                 randa = {}
@@ -25,8 +29,13 @@ if __name__ == '__main__':
                         continue
                     randa[i],randc[i],exp3a[i],exp3c[i],exp3CTRRatio[i] = [float(x) for x in words[2].split(';')]
                     tim[i] = int(words[1])
+<<<<<<< HEAD
                 plt.plot(tim.values(),exp3CTRRatio.values(),label = '0.3Single')
 
+=======
+                plt.plot(tim.values(),exp3CTRRatio.values(), linestyle = '--', marker = '+', label = '0.3Single')
+                
+>>>>>>> daa48e6f139dcdf215c4be0164ec45c09cd57f9f
         if '0.5_Single'in x:
             with open(filename, 'r')as f:
                 randa = {}
@@ -43,8 +52,13 @@ if __name__ == '__main__':
                         continue
                     randa[i],randc[i],exp3a[i],exp3c[i],exp3CTRRatio[i] = [float(x) for x in words[2].split(';')]
                     tim[i] = int(words[1])
+<<<<<<< HEAD
                 plt.plot(tim.values(),exp3CTRRatio.values(),label = '0.5Single')
         
+=======
+                plt.plot(tim.values(),exp3CTRRatio.values(),linestyle = ':', marker = '.', label = '0.5Single')
+        '''
+>>>>>>> daa48e6f139dcdf215c4be0164ec45c09cd57f9f
         if '0.7_Single'in x:
             with open(filename, 'r')as f:
                 randa = {}
@@ -63,8 +77,13 @@ if __name__ == '__main__':
                     tim[i] = int(words[1])
                 plt.plot(tim.values(),exp3CTRRatio.values(),label = '0.7_Single') 
     
+<<<<<<< HEAD
         
   
+=======
+        '''
+        '''
+>>>>>>> daa48e6f139dcdf215c4be0164ec45c09cd57f9f
         if '0.5_Hour'in x:
             with open(filename, 'r')as f:
                 randa = {}
@@ -102,4 +121,8 @@ if __name__ == '__main__':
                     randa[i],randc[i],exp3a[i],exp3c[i],exp3CTRRatio[i] = [float(x) for x in words[2].split(';')]
                     tim[i] = int(words[1])
                 plt.plot(tim.values(),exp3CTRRatio.values(),label = '0.5Multiple')                
+<<<<<<< HEAD
 
+=======
+        '''
+>>>>>>> daa48e6f139dcdf215c4be0164ec45c09cd57f9f
