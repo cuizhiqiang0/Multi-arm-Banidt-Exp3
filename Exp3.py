@@ -111,28 +111,28 @@ def file_len(fname):
         for i, l in enumerate(f):
             pass
     return i + 1
-
+    
 if __name__ == '__main__':
     def printWrite():
         randomLA = sum([articles_random[x].learn_stats.accesses for x in articles_random])
         randomC = sum([articles_random[x].learn_stats.clicks for x in articles_random]) 
-        randomLearnCTR = sum([articles_random[x].learn_stats.clicks for x in articles_random]) / sum([articles_random[x].learn_stats.accesses for x in articles_random])
+        randomCTR = sum([articles_random[x].learn_stats.clicks for x in articles_random]) / sum([articles_random[x].learn_stats.accesses for x in articles_random])
         
         exp3LA = sum([articles_exp3[x].learn_stats.accesses for x in articles_exp3])
         exp3C = sum([articles_exp3[x].learn_stats.clicks for x in articles_exp3]) 
-        exp3LearnCTR = sum([articles_exp3[x].learn_stats.clicks for x in articles_exp3]) / sum([articles_exp3[x].learn_stats.accesses for x in articles_exp3])
+        exp3CTR = sum([articles_exp3[x].learn_stats.clicks for x in articles_exp3]) / sum([articles_exp3[x].learn_stats.accesses for x in articles_exp3])
         
         ucb1LA = sum([articles_ucb1[x].learn_stats.accesses for x in articles_ucb1])
         ucb1C = sum([articles_ucb1[x].learn_stats.clicks for x in articles_ucb1])
-        ucb1LearnCTR = sum([articles_ucb1[x].learn_stats.clicks for x in articles_ucb1]) / sum([articles_ucb1[x].learn_stats.accesses for x in articles_ucb1])
+        ucb1CTR = sum([articles_ucb1[x].learn_stats.clicks for x in articles_ucb1]) / sum([articles_ucb1[x].learn_stats.accesses for x in articles_ucb1])
                 
         print totalArticles,
-        print 'Exp3Lrn', exp3LearnCTR / randomLearnCTR,
-        print 'UCB1', ucb1LearnCTR / randomLearnCTR
+        print 'Exp3Lrn', exp3CTR / randomCTR,
+        print 'UCB1', ucb1CTR / randomCTR
 
         #print ' '
         
-        recordedStats = [randomLA, randomC, exp3LA, exp3C, ucb1LA, ucb1C, exp3LearnCTR / randomLearnCTR, ucb1LearnCTR / randomLearnCTR]
+        recordedStats = [randomLA, randomC, exp3LA, exp3C, ucb1LA, ucb1C, exp3CTR / randomCTR, ucb1CTR / randomCTR]
         # write to file
         save_to_file(fileNameWrite, articles_exp3, recordedStats, epochArticles, epochSelectedArticles, tim)
     
@@ -145,6 +145,15 @@ if __name__ == '__main__':
     def re_initialize_article_ucb1Structs():
         for x in articles_ucb1:
             articles_ucb1[x].reInitilize()
+    
+    def categorical_draw(articles):
+        z = random.random()
+        cum_pta = 0.0
+        #flag = 0
+        for x in articles:
+            cum_pta = cum_pta + articles_exp3[x].pta
+            if cum_pta > z:
+                return x
             
     modes = {0:'multiple', 1:'single', 2:'hours'} 	# the possible modes that this code can be run in; 'multiple' means multiple days or all days so theta dont change; single means it is reset every day; hours is reset after some hours depending on the reInitPerDay. 
     mode = 'multiple' 									# the selected mode
@@ -163,13 +172,11 @@ if __name__ == '__main__':
     numArticlesChosen = 1 	# overall the articles that are same as for LinUCB and the random strategy that created Yahoo! dataset. I will call it evaluation strategy
     totalArticles = 0 		# total articles seen whether part of evaluation strategy or not
     totalClicks = 0 		# total clicks 
-    randomNum = 1 			# random articles chosen
-    count = 0 				# not very usefull
     countNoArticle = 0 		# total articles in the pool 
     countLine = 0 			# number of articles in this batch. should be same as batch size; not so usefull
     resetInterval = 0 		# initialize; value assigned later; determined when 
     timeRun = datetime.datetime.now().strftime('_%m_%d_%H_%M') 	# the current data time
-    dataDays = ['03', '04', '05', '06', '07', '08', '09', '10'] # the files from Yahoo that the algorithms will be run on; these files are indexed by days starting from May 1, 2009. this array starts from day 3 as also in the test data in the paper
+    dataDays = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'] # the files from Yahoo that the algorithms will be run on; these files are indexed by days starting from May 1, 2009. this array starts from day 3 as also in the test data in the paper
     fileNameWriteCTR = os.path.join(save_address,'CTR.csv')
     
     for dataDay in dataDays:
@@ -181,20 +188,20 @@ if __name__ == '__main__':
 
         # should be self explaining
         if mode == 'single':
-            fileNameWrite = os.path.join(save_address, 'Exp3' + fileSig + dataDay + timeRun + '.csv')
+            fileNameWrite = os.path.join(save_address, fileSig + dataDay + timeRun + '.csv')
             re_initialize_article_exp3Structs()
             re_initialize_article_ucb1Structs()
             articlesPlayedByUCB1 = {}
             countNoArticle = 0
             countLine = 0
         elif mode == 'multiple':
-            fileNameWrite = os.path.join(save_address, 'Exp3' + fileSig +dataDay + timeRun + '.csv')
+            fileNameWrite = os.path.join(save_address,  fileSig +dataDay + timeRun + '.csv')
         
         elif mode == 'hours':
             numObs = file_len(fileName)
             # resetInterval calcualtes after how many observations the count should be reset?
             resetInterval = int(numObs / reInitPerDay) + 1
-            fileNameWrite = os.path.join(save_address, 'Exp3' + fileSig + dataDay + '_' + str(hours) + timeRun + '.csv')
+            fileNameWrite = os.path.join(save_address,  fileSig + dataDay + '_' + str(hours) + timeRun + '.csv')
             
         # put some new data in file for readability
         with open(fileNameWrite, 'a+') as f:
@@ -263,30 +270,10 @@ if __name__ == '__main__':
                     # if articles_LinUCB[article_id].pta < 0: print 'PTA', articles_LinUCB[article_id].pta,
                 
                 # article picked by random strategy
-                randomArticle = choice(currentArticles)
-                    
-                # article picked by exp3              
-                #exp3Article = max(np.random.permutation([(x, articles_exp3[x].pta) for x in currentArticles]), key = itemgetter(1))[0]
-                # pick article in exp3
-                z = random.random()
-                cum_pta = 0.0
-                for x in currentArticles:
-                    cum_pta = cum_pta + articles_exp3[x].pta
-                    if cum_pta > z:
-                        exp3Article = x
-                # article picked by ucb1
-                '''
-                flag = 0
-                for article in np.random.permutation(currentArticles):
-                    if x not in articlesPlayedByUCB1:
-                        ucb1Article = article
-                        articlesPlayedByUCB1[ucb1Article] = ucb1Struct()
-                        flag = 1
-                        break
-                if flag == 0:
-                    ucb1Article = max(np.random.permutation([(x, articles_ucb1[x].pta) for x in currentArticles]), key = itemgetter(1))[0]
-                '''
-                
+                randomArticle = choice(currentArticles)                  
+                # article picked by exp3
+                exp3Article = categorical_draw(currentArticles)
+                # article picked by ucb1               
                 ucb1Article = max(np.random.permutation([(x, articles_ucb1[x].pta) for x in currentArticles]), key = itemgetter(1))[0]
                 articles_ucb1[ucb1Article].numPlayed = articles_ucb1[ucb1Article].numPlayed + 1
                  
