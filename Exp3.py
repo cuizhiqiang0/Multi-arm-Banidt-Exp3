@@ -13,6 +13,7 @@ from operator import itemgetter
 import datetime
 import numpy as np
 import math
+import random
 
 class articleAccess():
     def __init__(self):
@@ -266,7 +267,13 @@ if __name__ == '__main__':
                     
                 # article picked by exp3
                 exp3Article = max(np.random.permutation([(x, articles_exp3[x].pta) for x in currentArticles]), key = itemgetter(1))[0]
-                
+                # pick article in exp3
+                z = random.random()
+                cum_pta = 0.0
+                for x in currentArticles:
+                    cum_pta = cum_pta + articles_exp3[x].pta
+                    if cum_pta > z:
+                        exp3Article = x
                 # article picked by ucb1
                 '''
                 flag = 0
