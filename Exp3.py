@@ -265,8 +265,8 @@ if __name__ == '__main__':
                 # article picked by random strategy
                 randomArticle = choice(currentArticles)
                     
-                # article picked by exp3
-                exp3Article = max(np.random.permutation([(x, articles_exp3[x].pta) for x in currentArticles]), key = itemgetter(1))[0]
+                # article picked by exp3              
+                #exp3Article = max(np.random.permutation([(x, articles_exp3[x].pta) for x in currentArticles]), key = itemgetter(1))[0]
                 # pick article in exp3
                 z = random.random()
                 cum_pta = 0.0
