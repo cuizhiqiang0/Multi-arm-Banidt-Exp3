@@ -66,9 +66,7 @@ class ucb1Struct:
         try:
             self.pta = self.totalReward / self.numPlayed + np.sqrt(2*np.log(allNumPlayed) / self.numPlayed)
         except ZeroDivisionError:
-            self.pta = 1.0
-
-
+            self.pta = 0.0
 
 # structure to save data from random strategy as mentioned in LiHongs paper
 class randomStruct:
@@ -154,6 +152,14 @@ if __name__ == '__main__':
             cum_pta = cum_pta + articles_exp3[x].pta
             if cum_pta > z:
                 return x
+    def ucb1SelectArm(articles):
+        flag = 0
+        for x in articles:
+            if articles_ucb1[x].numPlayed ==0:
+                flag = 1
+                return x
+        if flag == 0:
+            return max(np.random.permutation([(x, articles_ucb1[x].pta) for x in articles]), key = itemgetter(1))[0]
             
     modes = {0:'multiple', 1:'single', 2:'hours'} 	# the possible modes that this code can be run in; 'multiple' means multiple days or all days so theta dont change; single means it is reset every day; hours is reset after some hours depending on the reInitPerDay. 
     mode = 'multiple' 									# the selected mode
@@ -273,8 +279,8 @@ if __name__ == '__main__':
                 randomArticle = choice(currentArticles)                  
                 # article picked by exp3
                 exp3Article = categorical_draw(currentArticles)
-                # article picked by ucb1               
-                ucb1Article = max(np.random.permutation([(x, articles_ucb1[x].pta) for x in currentArticles]), key = itemgetter(1))[0]
+                # article picked by ucb1
+                ucb1Article = ucb1SelectArm(currentArticles)
                 articles_ucb1[ucb1Article].numPlayed = articles_ucb1[ucb1Article].numPlayed + 1
                  
                 # if random strategy article Picked by evaluation srategy
