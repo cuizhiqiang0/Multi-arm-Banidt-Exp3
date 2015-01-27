@@ -31,8 +31,8 @@ class articleAccess():
 class exp3Struct:
     def __init__(self, gamma):
         self.gamma = gamma
-        self.weights = 1
-        self.pta = 0
+        self.weights = 1.0
+        self.pta = 0.0
         self.learn_stats = articleAccess()
         
     def reInitilize(self):
@@ -197,7 +197,6 @@ if __name__ == '__main__':
             fileNameWrite = os.path.join(save_address, fileSig + dataDay + timeRun + '.csv')
             re_initialize_article_exp3Structs()
             re_initialize_article_ucb1Structs()
-            articlesPlayedByUCB1 = {}
             countNoArticle = 0
             countLine = 0
         elif mode == 'multiple':
@@ -232,7 +231,6 @@ if __name__ == '__main__':
                     countLine = 0
                     re_initialize_article_exp3Structs()     #Not sure whether to re-initialize exp3Struct
                     re_initialize_article_ucb1Structs()
-                    articlesPlayedByUCB1 = {}
                     printWrite()
                     batchStartTime = tim
                     epochArticles = {}
