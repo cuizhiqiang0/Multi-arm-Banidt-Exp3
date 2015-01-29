@@ -10,3 +10,4 @@ yahoo_address_ExternalDrive = "/Volumes/My Passport/GradSchool/MSThesis/datasets
 save_address = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result"
 save_addressExp3 = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/GreedyExp3"
 save_addressUCB1 = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/UCB1"
+save_addressQueue = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/Queue"

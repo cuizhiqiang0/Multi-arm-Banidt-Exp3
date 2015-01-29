@@ -5,6 +5,9 @@ Created on Sun Jan 25 22:03:19 2015
 @author: Summer
 """
 
+
+# SingleDay: Performance---0.3 > 0.5 > 0.7
+
 import numpy as np
 import os
 from conf import *
@@ -41,8 +44,8 @@ if __name__ == '__main__':
                     randa[i],randc[i],exp3a[i],exp3c[i], ucb1a[i], ucb1c[i], greedya[i], greedyc[i],exp3CTRRatio[i], ucb1CTRRatio[i], greedyCTRRatio[i]= [float(x) for x in words[2].split(';')]
                     tim[i] = int(words[1])
                 plt.plot(tim.values(),exp3CTRRatio.values(), label = 'Exp31_0.3MultipleDay')
-                plt.plot(tim.values(), ucb1CTRRatio.values(), label = 'UCB1_0.3MultipleDay')
-                plt.plot(tim.values(), greedyCTRRatio.values(), label = 'greedyMultipleDay')
+                #plt.plot(tim.values(), ucb1CTRRatio.values(), label = 'UCB1_0.3MultipleDay')
+                #plt.plot(tim.values(), greedyCTRRatio.values(), label = 'greedyMultipleDay')
                 plt.xlabel('Time')
                 plt.ylabel('CTR-Ratio')
         
@@ -71,8 +74,8 @@ if __name__ == '__main__':
                     randa[i],randc[i],exp3a[i],exp3c[i], ucb1a[i], ucb1c[i], greedya[i], greedyc[i], exp3CTRRatio[i], ucb1CTRRatio[i], greedyCTRRatio[i]= [float(x) for x in words[2].split(';')]
                     tim[i] = int(words[1])
                 plt.plot(tim.values(),exp3CTRRatio.values(), label = 'Exp31_0.3MultipleDay')
-                plt.plot(tim.values(), ucb1CTRRatio.values(), label = 'UCB1_0.3MultipleDay')
-                plt.plot(tim.values(), greedyCTRRatio.values(), label = 'greedyMultipleDay')
+                #plt.plot(tim.values(), ucb1CTRRatio.values(), label = 'UCB1_0.3MultipleDay')
+                #plt.plot(tim.values(), greedyCTRRatio.values(), label = 'greedyMultipleDay')
         
         
         if '0.7_Single'in x:
@@ -98,8 +101,8 @@ if __name__ == '__main__':
                     randa[i],randc[i],exp3a[i],exp3c[i], ucb1a[i], ucb1c[i], greedya[i], greedyc[i], exp3CTRRatio[i], ucb1CTRRatio[i], greedyCTRRatio[i]= [float(x) for x in words[2].split(';')]
                     tim[i] = int(words[1])
                 plt.plot(tim.values(),exp3CTRRatio.values(), label = 'Exp31_0.7MultipleDay')
-                plt.plot(tim.values(), ucb1CTRRatio.values(), linestyle = ':',label = 'UCB1_0.3MultipleDay')
-                plt.plot(tim.values(), greedyCTRRatio.values(), label = 'greedyMultipleDay')
+                #plt.plot(tim.values(), ucb1CTRRatio.values(), linestyle = ':',label = 'UCB1_0.3MultipleDay')
+                #plt.plot(tim.values(), greedyCTRRatio.values(), label = 'greedyMultipleDay')
                 #plt.legend('1')
     
     

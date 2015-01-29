@@ -4,6 +4,10 @@ Created on Sun Jan 25 22:09:48 2015
 
 @author: Summer
 """
+#Analysis: Multipleday(reset) performs better than SingleDay(reset), and SingleDay performs better than Hours
+
+
+
 
 import numpy as np
 import os
@@ -41,10 +45,10 @@ if __name__ == '__main__':
                     tim[i] = int(words[1])                
                 #plt.plot(tim.values(),exp3CTRRatio.values(),label = 'Exp31_0.3SingleDay')
                 plt.plot(tim.values(), ucb1CTRRatio.values(), label = 'Hour')
-                plt.plot(tim.values(), greedyCTRRatio.values(), label = 'UCB1_0.3MultipleDay')
+                #plt.plot(tim.values(), greedyCTRRatio.values(), label = 'UCB1_0.3MultipleDay')
                 #plt.legend('H')
                 
-        if '0.5_SingleDay'in x:
+        if '0.3_SingleDay'in x:
             with open(filename, 'r')as f:
                 randa = {}
                 randc = {}
@@ -68,12 +72,12 @@ if __name__ == '__main__':
                     tim[i] = int(words[1])
                 #plt.plot(tim.values(),exp3CTRRatio.values(),label = 'Exp31_0.3SingleDay')
                 plt.plot(tim.values(), ucb1CTRRatio.values(), label = 'UCB1_0.3SingleDay')
-                plt.plot(tim.values(), greedyCTRRatio.values(), label = 'UCB1_0.3MultipleDay')
+                #plt.plot(tim.values(), greedyCTRRatio.values(), label = 'UCB1_0.3MultipleDay')
                 plt.xlabel('Time')
                 plt.ylabel('CTR-Ratio')
         
         
-        if '0.7_MultipleDay'in x:
+        if '0.3_MultipleDay'in x:
             with open(filename, 'r')as f:
                 randa = {}
                 randc = {}
@@ -97,7 +101,7 @@ if __name__ == '__main__':
                     tim[i] = int(words[1])
                 #plt.plot(tim.values(),exp3CTRRatio.values(),label = 'Exp31_0.3SingleDay')
                 plt.plot(tim.values(), ucb1CTRRatio.values(), label = 'UCB1_0.3SingleDay')
-                plt.plot(tim.values(), greedyCTRRatio.values(), label = 'UCB1_0.3MultipleDay')
+                #plt.plot(tim.values(), greedyCTRRatio.values(), label = 'UCB1_0.3MultipleDay')
                 plt.xlabel('Time')
                 plt.ylabel('CTR-Ratio')
                 
