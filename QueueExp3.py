@@ -168,7 +168,7 @@ if __name__ == '__main__':
         for x in articles_ucb1:
             articles_ucb1[x].reInitilize()
     
-    def re_initialzie_article_greedyStructs():
+    def re_initialize_article_greedyStructs():
         for x in articles_greedy:
             articles_greedy[x].reInitilize()
     
@@ -198,7 +198,7 @@ if __name__ == '__main__':
             
     modes = {0:'multiple', 1:'single', 2:'hours'} 	# the possible modes that this code can be run in; 'multiple' means multiple days or all days so theta dont change; single means it is reset every day; hours is reset after some hours depending on the reInitPerDay. 
     mode = 'multiple' 									# the selected mode
-    fileSig = '1_MultipleDay'								# depending on further environment parameters a file signature to remember those. for example if theta is set every two hours i can have it '2hours'; for 
+    fileSig = '0.3_MultipleDay'								# depending on further environment parameters a file signature to remember those. for example if theta is set every two hours i can have it '2hours'; for 
     reInitPerDay = 12								# how many times theta is re-initialized per day
 
     gamma = 0.3                                                  # parameter in exp3
@@ -206,7 +206,7 @@ if __name__ == '__main__':
  
     # relative dictionaries for algorithms
     articles_exp3 = {}
-    recentArticles = Queue.Queue(maxsize = 200000)
+    recentArticles = Queue.Queue(maxsize = 2000000)
     articles_ucb1 = {}
     articles_greedy = {}
     articles_random = {}
@@ -257,7 +257,7 @@ if __name__ == '__main__':
         with open(fileName, 'r') as f:
             # reading file line ie observations running one at a time
                             
-            for line in f:             
+            for line in f:
                 # read the observation
                 tim, article_chosen, click, pool_articles = parseLine(line)
                 if mode=='hours' and countLine > resetInterval:
@@ -282,17 +282,23 @@ if __name__ == '__main__':
                 # article ids for articles in the current pool for this observation
                 currentArticles = []
                 total_weight = 0
-                for article in pool_articles:                    
+                for article in pool_articles:
                     article_id = article[0]
                     currentArticles.append(article_id)
                     
                     if article_id not in recentArticles.queue:
+                        #print "good"
                         articles_random[article_id] = randomStruct()
                         articles_exp3[article_id] = exp3Struct(gamma)
                         articles_ucb1[article_id] = ucb1Struct()
                         articles_greedy[article_id] = greedyStruct()
+                    #print 'second'
+                    if recentArticles.full():
+                        recentArticles.get()
                         
                     recentArticles.put(article_id)
+                    
+                    #print "yyyyy"
                         
                     '''
                     if article_id not in articles_exp3: #if its a new article; add it to dictionaries
@@ -312,6 +318,7 @@ if __name__ == '__main__':
                     total_weight = total_weight + articles_exp3[article_id].weights
                     
                 pool_articleNum = len(currentArticles)
+                #print "third"
                     
                 for article in pool_articles:
                     article_id = article[0]
@@ -324,7 +331,7 @@ if __name__ == '__main__':
                 else:
                     epochSelectedArticles[article_chosen] = epochSelectedArticles[article_chosen] + 1					
                     # if articles_LinUCB[article_id].pta < 0: print 'PTA', articles_LinUCB[article_id].pta,
-                
+                #print "Fourth"
                 # article picked by random strategy
                 randomArticle = choice(currentArticles)                  
                 # article picked by exp3
@@ -359,17 +366,25 @@ if __name__ == '__main__':
                     articles_greedy[article_chosen].learn_stats.accesses = articles_greedy[article_chosen].learn_stats.accesses + 1
                     articles_greedy[article_chosen].totalReward = articles_greedy[article_chosen].totalReward + click
                     articles_greedy[greedyArticle].numPlayed = articles_greedy[greedyArticle].numPlayed + 1
-				
-                if totalArticles%20000 ==0:
+                #print "Five"
+                #print totalArticles
+                '''
+                if totalArticles ==20000:
+                    print 'Yes'
+			'''	
+                if (totalArticles % 20000) == 0:
                     # write observations for this batch
+                    print "Yes"
                     printWrite()
+                    print "NO"
                     batchStartTime = tim
                     epochArticles = {}
                     epochSelectedArticles = {}
-                    
+                    #print "zzzz"
                     totalClicks = totalClicks + click
             # print stuff to screen and save parameters to file when the Yahoo! dataset file endd
             printWrite()
+            #print "zzzz"
                 
                 
             

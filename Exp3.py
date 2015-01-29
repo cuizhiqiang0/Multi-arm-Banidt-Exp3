@@ -349,9 +349,11 @@ if __name__ == '__main__':
                     articles_greedy[article_chosen].learn_stats.accesses = articles_greedy[article_chosen].learn_stats.accesses + 1
                     articles_greedy[article_chosen].totalReward = articles_greedy[article_chosen].totalReward + click
                     articles_greedy[greedyArticle].numPlayed = articles_greedy[greedyArticle].numPlayed + 1
+                    
 				
                 if totalArticles%20000 ==0:
                     # write observations for this batch
+                    print "zzzzz"
                     printWrite()
                     batchStartTime = tim
                     epochArticles = {}
@@ -360,6 +362,7 @@ if __name__ == '__main__':
                     totalClicks = totalClicks + click
             # print stuff to screen and save parameters to file when the Yahoo! dataset file endd
             printWrite()
+            print 'YYYYYY'
                 
                 
             
