@@ -33,4 +33,11 @@ if __name__ == "__main__":
         
         
     a = recent.get()
+    b = recent.get()
     print a
+    print b
+    recent.put(32)
+    recent.put(20)
+    
+    for i in range(19):
+        print recent.get()

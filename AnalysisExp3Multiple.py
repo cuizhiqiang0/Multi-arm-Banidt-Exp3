@@ -42,7 +42,7 @@ if __name__ == '__main__':
                     tim[i] = int(words[1])
                 plt.plot(tim.values(),exp3CTRRatio.values(), label = 'Exp31_0.3MultipleDay')
                 #plt.plot(tim.values(), ucb1CTRRatio.values(), label = 'UCB1_0.3MultipleDay')
-                #plt.plot(tim.values(), greedyCTRRatio.values(), linestyle = ':',label = 'greedyMultipleDay')
+                plt.plot(tim.values(), greedyCTRRatio.values(), linestyle = ':',label = 'greedyMultipleDay')
                 plt.xlabel('Time')
                 plt.ylabel('CTR-Ratio')
         
@@ -70,6 +70,7 @@ if __name__ == '__main__':
                         continue
                     randa[i],randc[i],exp3a[i],exp3c[i], ucb1a[i], ucb1c[i],greedya[i], greedyc[i], exp3CTRRatio[i], ucb1CTRRatio[i], greedyCTRRatio[i]= [float(x) for x in words[2].split(';')]
                     tim[i] = int(words[1])
+                
                 plt.plot(tim.values(),exp3CTRRatio.values(), label = 'Exp31_0.3MultipleDay')
                 #plt.plot(tim.values(), ucb1CTRRatio.values(), label = 'UCB1_0.3MultipleDay')
                 #plt.plot(tim.values(), greedyCTRRatio.values(), label = 'UCB1_0.3MultipleDay')

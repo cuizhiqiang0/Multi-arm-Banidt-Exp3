@@ -45,7 +45,7 @@ if __name__ == '__main__':
                     tim[i] = int(words[1])
                 plt.plot(tim.values(),exp3CTRRatio.values(), label = 'Exp31_0.3MultipleDay')
                 #plt.plot(tim.values(), ucb1CTRRatio.values(), label = 'UCB1_0.3MultipleDay')
-                #plt.plot(tim.values(), greedyCTRRatio.values(), label = 'greedyMultipleDay')
+                plt.plot(tim.values(), greedyCTRRatio.values(), label = 'greedyMultipleDay')
                 plt.xlabel('Time')
                 plt.ylabel('CTR-Ratio')
         

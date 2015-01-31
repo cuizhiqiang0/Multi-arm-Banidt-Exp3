@@ -2,7 +2,7 @@
 """
 Created on Tue Jan 20 15:12:00 2015
 
-@author: Summer
+@author: Qingyun Wu
 """
 
 from conf import *
@@ -92,6 +92,13 @@ class randomStruct:
 	def __init__(self):
 		self.learn_stats = articleAccess()
 		#self.deploy_stats = articleAccess()
+
+class MyPriorityQueue(PriorityQueue):
+    def __init__(self):
+        PriorityQueue.__init__(self)
+        self.counter = 0
+    def put(self, item):
+        PriorityQueue.put(self, ())
 
 # This code simply reads one line from the source files of Yahoo!. Please see the yahoo info file to understand the format. I tested this part; so should be good but second pair of eyes could help
 def parseLine(line):
