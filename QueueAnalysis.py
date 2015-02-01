@@ -2,14 +2,22 @@
 """
 Created on Thu Jan 29 14:38:45 2015
 
+<<<<<<< HEAD
 @author: Summer
+=======
+@author: Qingyun Wu
+>>>>>>> cda2480e37c6817a19d09b24822fd576a2c892f6
 """
 
 # -*- coding: utf-8 -*-
 """
 Created on Sun Jan 25 22:09:48 2015
 
+<<<<<<< HEAD
 @author: Summer
+=======
+@author: Qingyun Wu
+>>>>>>> cda2480e37c6817a19d09b24822fd576a2c892f6
 """
 
 import numpy as np
@@ -49,7 +57,11 @@ if __name__ == '__main__':
                     tim[i] = int(words[1])                
                 plt.plot(tim.values(),exp3CTRRatio.values(),label = 'Exp31_0.3SingleDay')
                 #plt.plot(tim.values(), ucb1CTRRatio.values(), label = 'Hour')
+<<<<<<< HEAD
                 #plt.plot(tim.values(), greedyCTRRatio.values(), label = 'UCB1_0.3MultipleDay')
+=======
+                plt.plot(tim.values(), greedyCTRRatio.values(), label = 'UCB1_0.3MultipleDay')
+>>>>>>> cda2480e37c6817a19d09b24822fd576a2c892f6
                 #plt.legend('H')
         
     for x in filenamesQueue:
@@ -78,7 +90,11 @@ if __name__ == '__main__':
                     tim[i] = int(words[1])                
                 plt.plot(tim.values(),exp3CTRRatio.values(),linestyle = ":", label = 'Exp31_0.3SingleDay')
                 #plt.plot(tim.values(), ucb1CTRRatio.values(), linestyle = ":", label = 'Hour')
+<<<<<<< HEAD
                 #plt.plot(tim.values(), greedyCTRRatio.values(), linestyle= ":", label = 'UCB1_0.3MultipleDay')
+=======
+                plt.plot(tim.values(), greedyCTRRatio.values(), linestyle= ":", label = 'UCB1_0.3MultipleDay')
+>>>>>>> cda2480e37c6817a19d09b24822fd576a2c892f6
                 #plt.legend('H')
         
         '''        

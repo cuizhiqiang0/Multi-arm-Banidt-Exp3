@@ -33,4 +33,15 @@ if __name__ == "__main__":
         
         
     a = recent.get()
+<<<<<<< HEAD
     print a
+=======
+    b = recent.get()
+    print a
+    print b
+    recent.put(32)
+    recent.put(20)
+    
+    for i in range(19):
+        print recent.get()
+>>>>>>> cda2480e37c6817a19d09b24822fd576a2c892f6

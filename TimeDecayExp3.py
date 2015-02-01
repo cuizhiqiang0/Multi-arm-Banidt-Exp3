@@ -49,6 +49,9 @@ class exp3Struct:
         X=reward/self.pta
         growth_factor = math.exp((self.gamma/n_arms)*X)
         self.weights = self.weights * growth_factor
+        
+    def applyDecay(self, decay):
+        self.weight = decay * self.weight
 
 class ucb1Struct:
     def __init__(self):
