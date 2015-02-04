@@ -76,11 +76,12 @@ class greedyStruct:
         self.totalReward = 0.0
         self.numPlayed = 0.0
         self.averageReward = 0.0
-    
+
     def reInitilize(self):
         self.totalReward = 0.0
         self.numPlayed = 0.0
         self.averageReward = 0.0
+
     def updateReward(self):
         try:
             self.averageReward = self.totalReward / self.numPlayed
@@ -169,7 +170,7 @@ if __name__ == '__main__':
         for x in articles_ucb1:
             articles_ucb1[x].reInitilize()
     
-    def re_initialzie_article_greedyStructs():
+    def re_initialize_article_greedyStructs():
         for x in articles_greedy:
             articles_greedy[x].reInitilize()
     
@@ -190,7 +191,11 @@ if __name__ == '__main__':
         if flag == 0:
             return max(np.random.permutation([(x, articles_ucb1[x].pta) for x in articles]), key = itemgetter(1))[0]
     
-    def greedySelectArm(epsilon, articles):
+    def greedySelectArm(cd, K, n, articles):
+        if n == 0:
+            epsilon = 1
+        else:
+            epsilon = (cd * K) /n
         if random.random() < epsilon:
             return choice(articles)
         else:
@@ -203,7 +208,7 @@ if __name__ == '__main__':
     reInitPerDay = 12								# how many times theta is re-initialized per day
 
     gamma = 0.3                                                  # parameter in exp3
-    epsilon = 0.2                                               # parameter in e-greedy
+    cd = 10                                               # parameter in e-greedy
  
     # relative dictionaries for algorithms
     articles_exp3 = {}
@@ -214,10 +219,7 @@ if __name__ == '__main__':
     
     
     ctr = 1 				# overall ctr
-    numArticlesChosen = 1 	# overall the articles that are same as for LinUCB and the random strategy that created Yahoo! dataset. I will call it evaluation strategy
     totalArticles = 0 		# total articles seen whether part of evaluation strategy or not
-    totalClicks = 0 		# total clicks 
-    countNoArticle = 0 		# total articles in the pool 
     countLine = 0 			# number of articles in this batch. should be same as batch size; not so usefull
     resetInterval = 0 		# initialize; value assigned later; determined when 
     timeRun = datetime.datetime.now().strftime('_%m_%d_%H_%M') 	# the current data time
@@ -225,6 +227,7 @@ if __name__ == '__main__':
     fileNameWriteCTR = os.path.join(save_address,'CTR.csv')
     
     for dataDay in dataDays:
+        start_time = time.time()
         fileName = yahoo_address + "/ydata-fp-td-clicks-v1_0.200905" + dataDay
         epochArticles = {} 			# the articles that are present in this batch or epoch
         epochSelectedArticles = {} 	# the articles selected in this epoch
@@ -256,7 +259,7 @@ if __name__ == '__main__':
         
         with open(fileName, 'r') as f:
             # reading file line ie observations running one at a time
-                            
+            time_oneFile = time.time()                
             for line in f:             
                 # read the observation
                 tim, article_chosen, click, pool_articles = parseLine(line)
@@ -323,7 +326,7 @@ if __name__ == '__main__':
                 ucb1Article = ucb1SelectArm(currentArticles)
                 #articles_ucb1[ucb1Article].numPlayed = articles_ucb1[ucb1Article].numPlayed + 1
                 
-                greedyArticle = greedySelectArm(epsilon, currentArticles)
+                greedyArticle = greedySelectArm(cd, len(currentArticles), totalArticles, currentArticles)
                 #articles_greedy[greedyArticle].numPlayed = articles_greedy[greedyArticle].numPlayed + 1
                  
                 # if random strategy article Picked by evaluation srategy
@@ -358,8 +361,8 @@ if __name__ == '__main__':
                     batchStartTime = tim
                     epochArticles = {}
                     epochSelectedArticles = {}
-                    
-                    totalClicks = totalClicks + click
+
+            print time.time() - time_oneFile
             # print stuff to screen and save parameters to file when the Yahoo! dataset file endd
             printWrite()
             print 'YYYYYY'
