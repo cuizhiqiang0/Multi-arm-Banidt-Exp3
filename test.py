@@ -16,7 +16,44 @@ import math
 import random
 import Queue
 
+
+def parseLine(line):
+	line = line.split("|")
+
+	tim, articleID, click = line[0].strip().split(" ")
+	tim, articleID, click = int(tim), int(articleID), int(click)
+ 
+	pool_articles = [l.strip().split(" ") for l in line[2:]]
+	pool_articles = np.array([[int(l[0])] + [float(x.split(':')[1]) for x in l[1:]] for l in pool_articles])
+	return tim, articleID, click, pool_articles
+
+
 if __name__ == "__main__":
+    totalArticles = {}
+    timeRun = datetime.datetime.now().strftime('_%m_%d_%H_%M') 
+    dataDays = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10']
+    for dataDay in dataDays:
+        start_time = time.time()
+        fileName = yahoo_address + "/ydata-fp-td-clicks-v1_0.200905" + dataDay
+        with open(fileName, 'r') as f:
+            for line in f:
+                tim, article_chosen, click, pool_articles = parseLine(line)
+                for article in pool_articles:
+                    article_id = article[0]
+                    if article_id not in totalArticles:
+                        totalArticles[article_id] = 1
+                    else:
+                        totalArticles[article_id] = totalArticles[article_id] + 1
+        print time.time() - start_time
+    print len(totalArticles)
+                        
+                    
+                    
+                
+    
+    
+    
+    '''
     recent = Queue.Queue(maxsize = 20)
     for i in range(50):
         recent.put(i)
@@ -33,9 +70,7 @@ if __name__ == "__main__":
         
         
     a = recent.get()
-<<<<<<< HEAD
     print a
-=======
     b = recent.get()
     print a
     print b
@@ -44,4 +79,4 @@ if __name__ == "__main__":
     
     for i in range(19):
         print recent.get()
->>>>>>> cda2480e37c6817a19d09b24822fd576a2c892f6
+    '''
