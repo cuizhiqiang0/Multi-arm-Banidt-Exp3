@@ -591,7 +591,15 @@ if __name__ == '__main__':
                 for article in pool_articles:
                     article_id = article[0]
                     articles_ucb1[article_id].updatePta(countLine)
-                    articles_greedy[article_id].updateReward()
+                    articles_greedy_1[article_id].updateReward()
+                    articles_greedy_2[article_id].updateReward()
+                    articles_greedy_3[article_id].updateReward()
+                    articles_greedy_4[article_id].updateReward()
+                    articles_greedy_5[article_id].updateReward()
+                    articles_greedy_6[article_id].updateReward()
+                    articles_greedy_7[article_id].updateReward()
+                    articles_greedy_8[article_id].updateReward()
+                    articles_greedy_9[article_id].updateReward()
                     #articles_exp3[article_id].updatePta(gamma, pool_articleNum, total_weight)
                     articles_exp3_1[article_id].updatePta(gamma[0], pool_articleNum, total_weight_1)
                     articles_exp3_2[article_id].updatePta(gamma[1], pool_articleNum, total_weight_2)
@@ -622,14 +630,14 @@ if __name__ == '__main__':
                 #articles_ucb1[ucb1Article].numPlayed = articles_ucb1[ucb1Article].numPlayed + 1
                 
                 greedyArticle_1 = greedySelectArm_1(cd[0], len(currentArticles), totalArticles, currentArticles)
-                greedyArticle_2 = greedySelectArm_2(cd[0], len(currentArticles), totalArticles, currentArticles)
-                greedyArticle_3 = greedySelectArm_3(cd[0], len(currentArticles), totalArticles, currentArticles)
-                greedyArticle_4 = greedySelectArm_4(cd[0], len(currentArticles), totalArticles, currentArticles)
-                greedyArticle_5 = greedySelectArm_5(cd[0], len(currentArticles), totalArticles, currentArticles)
-                greedyArticle_6 = greedySelectArm_6(cd[0], len(currentArticles), totalArticles, currentArticles)
-                greedyArticle_7 = greedySelectArm_7(cd[0], len(currentArticles), totalArticles, currentArticles)
-                greedyArticle_8 = greedySelectArm_8(cd[0], len(currentArticles), totalArticles, currentArticles)
-                greedyArticle_9 = greedySelectArm_9(cd[0], len(currentArticles), totalArticles, currentArticles)
+                greedyArticle_2 = greedySelectArm_2(cd[1], len(currentArticles), totalArticles, currentArticles)
+                greedyArticle_3 = greedySelectArm_3(cd[2], len(currentArticles), totalArticles, currentArticles)
+                greedyArticle_4 = greedySelectArm_4(cd[3], len(currentArticles), totalArticles, currentArticles)
+                greedyArticle_5 = greedySelectArm_5(cd[4], len(currentArticles), totalArticles, currentArticles)
+                greedyArticle_6 = greedySelectArm_6(cd[5], len(currentArticles), totalArticles, currentArticles)
+                greedyArticle_7 = greedySelectArm_7(cd[6], len(currentArticles), totalArticles, currentArticles)
+                greedyArticle_8 = greedySelectArm_8(cd[7], len(currentArticles), totalArticles, currentArticles)
+                greedyArticle_9 = greedySelectArm_9(cd[8], len(currentArticles), totalArticles, currentArticles)
                 #articles_greedy[greedyArticle].numPlayed = articles_greedy[greedyArticle].numPlayed + 1
                  
                 # if random strategy article Picked by evaluation srategy

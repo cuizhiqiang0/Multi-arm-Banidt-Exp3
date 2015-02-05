@@ -217,6 +217,11 @@ if __name__ == '__main__':
     articles_random = {}
     articlesPlayedByUCB1 = {}
     
+    UCBChosenNum = 0
+    Exp3ChosenNum = 0
+    GreedyChosenNum = 0
+    RandomChsenNum = 0
+    
     
     ctr = 1 				# overall ctr
     totalArticles = 0 		# total articles seen whether part of evaluation strategy or not
@@ -227,7 +232,14 @@ if __name__ == '__main__':
     fileNameWriteCTR = os.path.join(save_address,'CTR.csv')
     
     for dataDay in dataDays:
+        
         start_time = time.time()
+        
+        Exp3ChosenNum = 0
+        UCB1ChosenNum = 0
+        GreedyChosenNum = 0
+        RandomChosenNum = 0
+        
         fileName = yahoo_address + "/ydata-fp-td-clicks-v1_0.200905" + dataDay
         epochArticles = {} 			# the articles that are present in this batch or epoch
         epochSelectedArticles = {} 	# the articles selected in this epoch
@@ -331,23 +343,27 @@ if __name__ == '__main__':
                  
                 # if random strategy article Picked by evaluation srategy
                 if randomArticle == article_chosen:
+                    RandomChosenNum = RandomChosenNum + 1
                     articles_random[randomArticle].learn_stats.clicks = articles_random[randomArticle].learn_stats.clicks + click
                     articles_random[randomArticle].learn_stats.accesses = articles_random[randomArticle].learn_stats.accesses + 1   
                
                 # if exp3 article is chosen by evalution strategy
                 if exp3Article == article_chosen:
+                    Exp3ChosenNum = Exp3ChosenNum + 1
                     articles_exp3[article_chosen].learn_stats.clicks = articles_exp3[article_chosen].learn_stats.clicks + click
                     articles_exp3[article_chosen].learn_stats.accesses = articles_exp3[article_chosen].learn_stats.accesses + 1
                     if click:
                         articles_exp3[article_chosen].updateWeight(pool_articleNum, click)
                 
                 if ucb1Article == article_chosen:
+                    UCB1ChosenNum = UCB1ChosenNum + 1
                     articles_ucb1[article_chosen].learn_stats.clicks = articles_ucb1[article_chosen].learn_stats.clicks + click
                     articles_ucb1[article_chosen].learn_stats.accesses = articles_ucb1[article_chosen].learn_stats.accesses + 1
                     articles_ucb1[article_chosen].totalReward = articles_ucb1[article_chosen].totalReward + click
                     articles_ucb1[ucb1Article].numPlayed = articles_ucb1[ucb1Article].numPlayed + 1
  
                 if greedyArticle == article_chosen:
+                    GreedyChosenNum = GreedyChosenNum + 1
                     articles_greedy[article_chosen].learn_stats.clicks = articles_greedy[article_chosen].learn_stats.clicks + click
                     articles_greedy[article_chosen].learn_stats.accesses = articles_greedy[article_chosen].learn_stats.accesses + 1
                     articles_greedy[article_chosen].totalReward = articles_greedy[article_chosen].totalReward + click
@@ -356,7 +372,6 @@ if __name__ == '__main__':
 				
                 if totalArticles%20000 ==0:
                     # write observations for this batch
-                    print "zzzzz"
                     printWrite()
                     batchStartTime = tim
                     epochArticles = {}
@@ -365,8 +380,10 @@ if __name__ == '__main__':
             print time.time() - time_oneFile
             # print stuff to screen and save parameters to file when the Yahoo! dataset file endd
             printWrite()
-            print 'YYYYYY'
-                
+            print 'UCb1ChosenNum', UCB1ChosenNum
+            print 'Exp3ChosenNum', Exp3ChosenNum
+            print 'GreedyChosenNum', GreedyChosenNum
+            print 'RandomChosenNum', RandomChosenNum
                 
             
 
