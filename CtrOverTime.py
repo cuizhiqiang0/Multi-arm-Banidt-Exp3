@@ -350,84 +350,56 @@ if __name__ == '__main__':
         if flag == 0:
             return max(np.random.permutation([(x, articles_ucb1[x].pta) for x in articles]), key = itemgetter(1))[0]
     
-    def greedySelectArm_1(cd, K, n, articles):
-        if n == 0:
-            epsilon = 1
-        else:
-            epsilon = cd * K /n
+    def greedySelectArm_1(epsilon, articles):
         if random.random() < epsilon:
             return choice(articles)
         else:
             return max(np.random.permutation([(x, articles_greedy_1[x].averageReward) for x in articles]), key = itemgetter(1))[0]
     
-    def greedySelectArm_2(cd, K, n, articles):
-        if n == 0:
-            epsilon = 1
-        else:
-            epsilon = cd * K /n
+    def greedySelectArm_2(epsilon, articles):
+
         if random.random() < epsilon:
             return choice(articles)
         else:
             return max(np.random.permutation([(x, articles_greedy_2[x].averageReward) for x in articles]), key = itemgetter(1))[0]
-    def greedySelectArm_3(cd, K, n, articles):
-        if n == 0:
-            epsilon = 1
-        else:
-            epsilon = cd * K /n
+            
+    def greedySelectArm_3(epsilon, articles):
         if random.random() < epsilon:
             return choice(articles)
         else:
             return max(np.random.permutation([(x, articles_greedy_3[x].averageReward) for x in articles]), key = itemgetter(1))[0]
-    def greedySelectArm_4(cd, K, n, articles):
-        if n == 0:
-            epsilon = 1
-        else:
-            epsilon = cd * K /n
+            
+    def greedySelectArm_4(epsilon, articles):
         if random.random() < epsilon:
             return choice(articles)
         else:
             return max(np.random.permutation([(x, articles_greedy_4[x].averageReward) for x in articles]), key = itemgetter(1))[0]
-    def greedySelectArm_5(cd, K, n, articles):
-        if n == 0:
-            epsilon = 1
-        else:
-            epsilon = cd * K /n
+            
+    def greedySelectArm_5(epsilon, articles):
         if random.random() < epsilon:
             return choice(articles)
         else:
             return max(np.random.permutation([(x, articles_greedy_5[x].averageReward) for x in articles]), key = itemgetter(1))[0]
-    def greedySelectArm_6(cd, K, n, articles):
-        if n == 0:
-            epsilon = 1
-        else:
-            epsilon = cd * K /n
+            
+    def greedySelectArm_6(epsilon, articles):
         if random.random() < epsilon:
             return choice(articles)
         else:
             return max(np.random.permutation([(x, articles_greedy_6[x].averageReward) for x in articles]), key = itemgetter(1))[0]
-    def greedySelectArm_7(cd, K, n, articles):
-        if n == 0:
-            epsilon = 1
-        else:
-            epsilon = cd * K /n
+            
+    def greedySelectArm_7(epsilon, articles):
         if random.random() < epsilon:
             return choice(articles)
         else:
             return max(np.random.permutation([(x, articles_greedy_7[x].averageReward) for x in articles]), key = itemgetter(1))[0]
-    def greedySelectArm_8(cd, K, n, articles):
-        if n == 0:
-            epsilon = 1
-        else:
-            epsilon = cd * K /n
+            
+    def greedySelectArm_8(epsilon, articles):
         if random.random() < epsilon:
             return choice(articles)
         else:
             return max(np.random.permutation([(x, articles_greedy_8[x].averageReward) for x in articles]), key = itemgetter(1))[0]
-    def greedySelectArm_9(cd, K, n, articles):
-        if n == 0:
-            epsilon = 1
-        else:
-            epsilon = cd * K /n
+            
+    def greedySelectArm_9(epsilon, articles):
         if random.random() < epsilon:
             return choice(articles)
         else:
@@ -444,7 +416,7 @@ if __name__ == '__main__':
     #gamma = 0.3
     #cd = 10
     gamma = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]                                                # parameter in exp3
-    cd = [5,10,20,50,70,80,100,200,300]                                              # parameter in e-greedy
+    epsilon = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8]                                              # parameter in e-greedy
  
     # relative dictionaries for algorithms
     articles_exp3_1 = {}
@@ -508,7 +480,7 @@ if __name__ == '__main__':
         # put some new data in file for readability
         with open(fileNameWrite, 'a+') as f:
             f.write('\nNew Run at  ' + datetime.datetime.now().strftime('%m/%d/%Y %H:%M:%S'))
-            f.write('\n, Time,  exp3CTRRatio_1; exp3CTRRatio_2; exp3CTRRatio_3; exp3CTRRatio_4; exp3CTRRatio_5; exp3CTRRatio_6; exp3CTRRatio_7; exp3CTRRatio_8; exp3CTRRatio_9; ucb1CTRRatio; greedyCTRRatio \n')
+            f.write('\n, Time,  exp3CTRRatio_1; exp3CTRRatio_2; exp3CTRRatio_3; exp3CTRRatio_4; exp3CTRRatio_5; exp3CTRRatio_6; exp3CTRRatio_7; exp3CTRRatio_8; exp3CTRRatio_9; ucb1CTRRatio; greedyCTRRatio_1, greedyCTRRatio_2, greedyCTRRatio_3, greedyCTRRatio_4, greedyCTRRatio_5, greedyCTRRatio_6, greedyCTRRatio_7, greedyCTRRatio_8, greedyCTRRatio_9  \n')
             print fileName, fileNameWrite, dataDay, resetInterval
         
         with open(fileName, 'r') as f:
@@ -629,15 +601,15 @@ if __name__ == '__main__':
                 ucb1Article = ucb1SelectArm(currentArticles)
                 #articles_ucb1[ucb1Article].numPlayed = articles_ucb1[ucb1Article].numPlayed + 1
                 
-                greedyArticle_1 = greedySelectArm_1(cd[0], len(currentArticles), totalArticles, currentArticles)
-                greedyArticle_2 = greedySelectArm_2(cd[1], len(currentArticles), totalArticles, currentArticles)
-                greedyArticle_3 = greedySelectArm_3(cd[2], len(currentArticles), totalArticles, currentArticles)
-                greedyArticle_4 = greedySelectArm_4(cd[3], len(currentArticles), totalArticles, currentArticles)
-                greedyArticle_5 = greedySelectArm_5(cd[4], len(currentArticles), totalArticles, currentArticles)
-                greedyArticle_6 = greedySelectArm_6(cd[5], len(currentArticles), totalArticles, currentArticles)
-                greedyArticle_7 = greedySelectArm_7(cd[6], len(currentArticles), totalArticles, currentArticles)
-                greedyArticle_8 = greedySelectArm_8(cd[7], len(currentArticles), totalArticles, currentArticles)
-                greedyArticle_9 = greedySelectArm_9(cd[8], len(currentArticles), totalArticles, currentArticles)
+                greedyArticle_1 = greedySelectArm_1(epsilon[0], currentArticles)
+                greedyArticle_2 = greedySelectArm_2(epsilon[1], currentArticles)
+                greedyArticle_3 = greedySelectArm_3(epsilon[2], currentArticles)
+                greedyArticle_4 = greedySelectArm_4(epsilon[3], currentArticles)
+                greedyArticle_5 = greedySelectArm_5(epsilon[4], currentArticles)
+                greedyArticle_6 = greedySelectArm_6(epsilon[5], currentArticles)
+                greedyArticle_7 = greedySelectArm_7(epsilon[6], currentArticles)
+                greedyArticle_8 = greedySelectArm_8(epsilon[7], currentArticles)
+                greedyArticle_9 = greedySelectArm_9(epsilon[8], currentArticles)
                 #articles_greedy[greedyArticle].numPlayed = articles_greedy[greedyArticle].numPlayed + 1
                  
                 # if random strategy article Picked by evaluation srategy
