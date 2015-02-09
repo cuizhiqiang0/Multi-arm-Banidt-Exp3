@@ -56,24 +56,6 @@ class exp3Struct:
         growth_factor = math.exp((gamma/n_arms)*X)
         self.weights = self.weights * growth_factor
 
-class ucb1Struct:
-    def __init__(self):
-        self.totalReward = 0.0
-        self.numPlayed = 0
-        self.pta = 0.0
-        self.learn_stats = articleAccess()
-        self.deploy_stats = articleAccess()
-        
-    def reInitilize(self): 
-        self.totalReward = 0.0
-        self.numPlayed = 0.0  
-        self.pta=0.0
-        
-    def updatePta(self, allNumPlayed):
-        try:
-            self.pta = self.totalReward / self.numPlayed + np.sqrt(2*np.log(allNumPlayed) / self.numPlayed)
-        except ZeroDivisionError:
-            self.pta = 0.0
             
 class greedyStruct:
     def __init__(self):
@@ -174,11 +156,7 @@ if __name__ == '__main__':
         exp3LA_9 = sum([articles_exp3_9[x].learn_stats.accesses for x in articles_exp3_9])
         exp3C_9 = sum([articles_exp3_9[x].learn_stats.clicks for x in articles_exp3_9]) 
         exp3CTR_9 = sum([articles_exp3_9[x].learn_stats.clicks for x in articles_exp3_9]) / sum([articles_exp3_9[x].learn_stats.accesses for x in articles_exp3_9])
-        
-        ucb1LA = sum([articles_ucb1[x].learn_stats.accesses for x in articles_ucb1])
-        ucb1C = sum([articles_ucb1[x].learn_stats.clicks for x in articles_ucb1])
-        ucb1CTR = sum([articles_ucb1[x].learn_stats.clicks for x in articles_ucb1]) / sum([articles_ucb1[x].learn_stats.accesses for x in articles_ucb1])
-        
+               
         greedyLA_1 = sum([articles_greedy_1[x].learn_stats.accesses for x in articles_greedy_1])
         greedyC_1 = sum([articles_greedy_1[x].learn_stats.clicks for x in articles_greedy_1])
         greedyCTR_1 = sum([articles_greedy_1[x].learn_stats.clicks for x in articles_greedy_1]) / sum([articles_greedy_1[x].learn_stats.accesses for x in articles_greedy_1])
@@ -214,7 +192,7 @@ if __name__ == '__main__':
         greedyLA_9 = sum([articles_greedy_9[x].learn_stats.accesses for x in articles_greedy_9])
         greedyC_9 = sum([articles_greedy_9[x].learn_stats.clicks for x in articles_greedy_9])
         greedyCTR_9 = sum([articles_greedy_9[x].learn_stats.clicks for x in articles_greedy_9]) / sum([articles_greedy_9[x].learn_stats.accesses for x in articles_greedy_9])
-        '''
+        
         print totalArticles,
         print 'Exp3Lrn_1', exp3CTR_1 / randomCTR,
         print 'Exp3Lrn_2', exp3CTR_2 / randomCTR,
@@ -225,12 +203,11 @@ if __name__ == '__main__':
         print 'Exp3Lrn_7', exp3CTR_7 / randomCTR,
         print 'Exp3Lrn_8', exp3CTR_8 / randomCTR,
         print 'Exp3Lrn_9', exp3CTR_9 / randomCTR,
-        print 'UCB1', ucb1CTR / randomCTR,
-        print 'Greedy', greedyCTR / randomCTR,
+        #print 'Greedy', greedyCTR_1 / randomCTR_2,
 
-        #print ' '
-        '''
-        recordedStats = [exp3CTR_1 / randomCTR, exp3CTR_2 / randomCTR, exp3CTR_3 / randomCTR, exp3CTR_4 / randomCTR, exp3CTR_5 / randomCTR, exp3CTR_6 / randomCTR, exp3CTR_7 / randomCTR, exp3CTR_8 / randomCTR, exp3CTR_9 / randomCTR,  ucb1CTR / randomCTR, greedyCTR_1 / randomCTR, greedyCTR_2 / randomCTR, greedyCTR_3 / randomCTR, greedyCTR_4 / randomCTR, greedyCTR_5 / randomCTR, greedyCTR_6 / randomCTR, greedyCTR_7 / randomCTR, greedyCTR_8 / randomCTR, greedyCTR_9 / randomCTR ]
+        print ' '
+        
+        recordedStats = [exp3CTR_1 / randomCTR, exp3CTR_2 / randomCTR, exp3CTR_3 / randomCTR, exp3CTR_4 / randomCTR, exp3CTR_5 / randomCTR, exp3CTR_6 / randomCTR, exp3CTR_7 / randomCTR, exp3CTR_8 / randomCTR, exp3CTR_9 / randomCTR,  greedyCTR_1 / randomCTR, greedyCTR_2 / randomCTR, greedyCTR_3 / randomCTR, greedyCTR_4 / randomCTR, greedyCTR_5 / randomCTR, greedyCTR_6 / randomCTR, greedyCTR_7 / randomCTR, greedyCTR_8 / randomCTR, greedyCTR_9 / randomCTR ]
         # write to file
         save_to_file(fileNameWrite, recordedStats,tim)
     
@@ -265,11 +242,6 @@ if __name__ == '__main__':
             articles_exp3_9[x].reInitilize()
     
     
-            
-    def re_initialize_article_ucb1Structs():
-        for x in articles_ucb1:
-            articles_ucb1[x].reInitilize()
-    
     def re_initialize_article_greedyStructs():
         for x in articles_greedy_1:
             articles_greedy_1[x].reInitilize()
@@ -298,58 +270,96 @@ if __name__ == '__main__':
         for x in articles_greedy_9:
             articles_greedy_9[x].reInitilize()
     
-    def categorical_draw(articles):
+    def categorical_draw_1(articles):
         z = random.random()
         cum_pta = 0.0
-        a = range(9)
+        #a = range(9)
         #flag = 0
         for x in articles:
             cum_pta = cum_pta + articles_exp3_1[x].pta
             if cum_pta > z:
-                a[0] = x
+                return x
+    def categorical_draw_2(articles):
+        z = random.random()
+        cum_pta = 0.0
+        #a = range(9)
+        #flag = 0
         for x in articles:
             cum_pta = cum_pta + articles_exp3_2[x].pta
             if cum_pta > z:
-                a[1] = x
+                return x
+    
+    def categorical_draw_3(articles):
+        z = random.random()
+        cum_pta = 0.0
+        #a = range(9)
+        #flag = 0
         for x in articles:
             cum_pta = cum_pta + articles_exp3_3[x].pta
             if cum_pta > z:
-                a[2] = x
+                return x
+                
+    def categorical_draw_4(articles):
+        z = random.random()
+        cum_pta = 0.0
+        #a = range(9)
+        #flag = 0
         for x in articles:
-            cum_pta = cum_pta + articles_exp3_4[x].pta
+            cum_pta = cum_pta + articles_exp3_1[x].pta
             if cum_pta > z:
-                a[3] = x          
+                return x
+    
+    def categorical_draw_5(articles):
+        z = random.random()
+        cum_pta = 0.0
+        #a = range(9)
+        #flag = 0
         for x in articles:
             cum_pta = cum_pta + articles_exp3_5[x].pta
             if cum_pta > z:
-                a[4] = x
+                return x
+    
+    def categorical_draw_6(articles):
+        z = random.random()
+        cum_pta = 0.0
+        #a = range(9)
+        #flag = 0
         for x in articles:
             cum_pta = cum_pta + articles_exp3_6[x].pta
             if cum_pta > z:
-                a[5] = x
+                return x
+    
+    def categorical_draw_7(articles):
+        z = random.random()
+        cum_pta = 0.0
+        #a = range(9)
+        #flag = 0
         for x in articles:
             cum_pta = cum_pta + articles_exp3_7[x].pta
             if cum_pta > z:
-                a[6] = x
+                return x   
+    
+    def categorical_draw_8(articles):
+        z = random.random()
+        cum_pta = 0.0
+        #a = range(9)
+        #flag = 0
         for x in articles:
             cum_pta = cum_pta + articles_exp3_8[x].pta
             if cum_pta > z:
-                a[7] = x
+                return x
+    
+    def categorical_draw_9(articles):
+        z = random.random()
+        cum_pta = 0.0
+        #a = range(9)
+        #flag = 0
         for x in articles:
             cum_pta = cum_pta + articles_exp3_9[x].pta
             if cum_pta > z:
-                a[8] = x
-        return a
-        
-    def ucb1SelectArm(articles):
-        flag = 0
-        for x in articles:
-            if articles_ucb1[x].numPlayed ==0:
-                flag = 1
                 return x
-        if flag == 0:
-            return max(np.random.permutation([(x, articles_ucb1[x].pta) for x in articles]), key = itemgetter(1))[0]
-    
+        
+        
     def greedySelectArm_1(epsilon, articles):
         if random.random() < epsilon:
             return choice(articles)
@@ -407,8 +417,8 @@ if __name__ == '__main__':
 
             
     modes = {0:'multiple', 1:'single', 2:'hours'} 	# the possible modes that this code can be run in; 'multiple' means multiple days or all days so theta dont change; single means it is reset every day; hours is reset after some hours depending on the reInitPerDay. 
-    mode = 'multiple' 									# the selected mode
-    fileSig = '1_MultipleDay'								# depending on further environment parameters a file signature to remember those. for example if theta is set every two hours i can have it '2hours'; for 
+    mode = 'single' 									# the selected mode
+    fileSig = 'CTROverTime_Single'								# depending on further environment parameters a file signature to remember those. for example if theta is set every two hours i can have it '2hours'; for 
     reInitPerDay = 12								# how many times theta is re-initialized per day
     
     
@@ -437,9 +447,7 @@ if __name__ == '__main__':
     articles_greedy_7 = {}
     articles_greedy_8 = {}
     articles_greedy_9 = {}
-    articles_ucb1 = {}
     articles_random = {}
-    articlesPlayedByUCB1 = {}
     
     
     
@@ -464,7 +472,6 @@ if __name__ == '__main__':
         if mode == 'single':
             fileNameWrite = os.path.join(save_address, 'All'+ fileSig + dataDay + timeRun + '.csv')
             re_initialize_article_exp3Structs()
-            re_initialize_article_ucb1Structs()
             re_initialize_article_greedyStructs()
             countNoArticle = 0
             countLine = 0
@@ -480,7 +487,7 @@ if __name__ == '__main__':
         # put some new data in file for readability
         with open(fileNameWrite, 'a+') as f:
             f.write('\nNew Run at  ' + datetime.datetime.now().strftime('%m/%d/%Y %H:%M:%S'))
-            f.write('\n, Time,  exp3CTRRatio_1; exp3CTRRatio_2; exp3CTRRatio_3; exp3CTRRatio_4; exp3CTRRatio_5; exp3CTRRatio_6; exp3CTRRatio_7; exp3CTRRatio_8; exp3CTRRatio_9; ucb1CTRRatio; greedyCTRRatio_1, greedyCTRRatio_2, greedyCTRRatio_3, greedyCTRRatio_4, greedyCTRRatio_5, greedyCTRRatio_6, greedyCTRRatio_7, greedyCTRRatio_8, greedyCTRRatio_9  \n')
+            f.write('\n, Time,  exp3CTRRatio_1; exp3CTRRatio_2; exp3CTRRatio_3; exp3CTRRatio_4; exp3CTRRatio_5; exp3CTRRatio_6; exp3CTRRatio_7; exp3CTRRatio_8; exp3CTRRatio_9; greedyCTRRatio_1, greedyCTRRatio_2, greedyCTRRatio_3, greedyCTRRatio_4, greedyCTRRatio_5, greedyCTRRatio_6, greedyCTRRatio_7, greedyCTRRatio_8, greedyCTRRatio_9  \n')
             print fileName, fileNameWrite, dataDay, resetInterval
         
         with open(fileName, 'r') as f:
@@ -496,7 +503,6 @@ if __name__ == '__main__':
                     # re-initialize
                     countLine = 0
                     re_initialize_article_exp3Structs()     #Not sure whether to re-initialize exp3Struct
-                    re_initialize_article_ucb1Structs()
                     re_initialize_article_greedyStructs()
                     printWrite()
                     batchStartTime = tim
@@ -526,8 +532,7 @@ if __name__ == '__main__':
                     
                     if article_id not in articles_exp3_1: #if its a new article; add it to dictionaries
                         articles_random[article_id] = randomStruct()
-                        #articles_exp3[article_id] = exp3Struct()
-                        articles_ucb1[article_id] = ucb1Struct()
+
                         articles_greedy_1[article_id] = greedyStruct()
                         articles_greedy_2[article_id] = greedyStruct()
                         articles_greedy_3[article_id] = greedyStruct()
@@ -562,7 +567,6 @@ if __name__ == '__main__':
                     
                 for article in pool_articles:
                     article_id = article[0]
-                    articles_ucb1[article_id].updatePta(countLine)
                     articles_greedy_1[article_id].updateReward()
                     articles_greedy_2[article_id].updateReward()
                     articles_greedy_3[article_id].updateReward()
@@ -587,19 +591,15 @@ if __name__ == '__main__':
                 # article picked by random strategy
                 randomArticle = choice(currentArticles)                  
                 # article picked by exp3
-                exp3Article_1 = categorical_draw(currentArticles)[0]
-                exp3Article_2 = categorical_draw(currentArticles)[0]
-                exp3Article_3 = categorical_draw(currentArticles)[0]
-                exp3Article_4 = categorical_draw(currentArticles)[0]
-                exp3Article_5 = categorical_draw(currentArticles)[0]
-                exp3Article_6 = categorical_draw(currentArticles)[0]
-                exp3Article_7 = categorical_draw(currentArticles)[0]
-                exp3Article_8 = categorical_draw(currentArticles)[0]
-                exp3Article_9 = categorical_draw(currentArticles)[0]
-                
-                # article picked by ucb1
-                ucb1Article = ucb1SelectArm(currentArticles)
-                #articles_ucb1[ucb1Article].numPlayed = articles_ucb1[ucb1Article].numPlayed + 1
+                exp3Article_1 = categorical_draw_1(currentArticles)
+                exp3Article_2 = categorical_draw_2(currentArticles)
+                exp3Article_3 = categorical_draw_3(currentArticles)
+                exp3Article_4 = categorical_draw_4(currentArticles)
+                exp3Article_5 = categorical_draw_5(currentArticles)
+                exp3Article_6 = categorical_draw_6(currentArticles)
+                exp3Article_7 = categorical_draw_7(currentArticles)
+                exp3Article_8 = categorical_draw_8(currentArticles)
+                exp3Article_9 = categorical_draw_9(currentArticles)
                 
                 greedyArticle_1 = greedySelectArm_1(epsilon[0], currentArticles)
                 greedyArticle_2 = greedySelectArm_2(epsilon[1], currentArticles)
@@ -673,12 +673,6 @@ if __name__ == '__main__':
                     if click:
                         articles_exp3_9[article_chosen].updateWeight(gamma[8], pool_articleNum, click)
                 
-                if ucb1Article == article_chosen:
-                    articles_ucb1[article_chosen].learn_stats.clicks = articles_ucb1[article_chosen].learn_stats.clicks + click
-                    articles_ucb1[article_chosen].learn_stats.accesses = articles_ucb1[article_chosen].learn_stats.accesses + 1
-                    articles_ucb1[article_chosen].totalReward = articles_ucb1[article_chosen].totalReward + click
-                    articles_ucb1[ucb1Article].numPlayed = articles_ucb1[ucb1Article].numPlayed + 1
- 
                 if greedyArticle_1 == article_chosen:
                     articles_greedy_1[article_chosen].learn_stats.clicks = articles_greedy_1[article_chosen].learn_stats.clicks + click
                     articles_greedy_1[article_chosen].learn_stats.accesses = articles_greedy_1[article_chosen].learn_stats.accesses + 1
