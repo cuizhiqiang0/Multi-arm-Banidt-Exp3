@@ -214,7 +214,7 @@ if __name__ == '__main__':
         greedyLA_9 = sum([articles_greedy_9[x].learn_stats.accesses for x in articles_greedy_9])
         greedyC_9 = sum([articles_greedy_9[x].learn_stats.clicks for x in articles_greedy_9])
         greedyCTR_9 = sum([articles_greedy_9[x].learn_stats.clicks for x in articles_greedy_9]) / sum([articles_greedy_9[x].learn_stats.accesses for x in articles_greedy_9])
-        
+        '''
         print totalArticles,
         print 'Exp3Lrn_1', exp3CTR_1 / randomCTR,
         print 'Exp3Lrn_2', exp3CTR_2 / randomCTR,
@@ -229,7 +229,7 @@ if __name__ == '__main__':
         print 'Greedy', greedyCTR / randomCTR,
 
         #print ' '
-        
+        '''
         recordedStats = [exp3CTR_1 / randomCTR, exp3CTR_2 / randomCTR, exp3CTR_3 / randomCTR, exp3CTR_4 / randomCTR, exp3CTR_5 / randomCTR, exp3CTR_6 / randomCTR, exp3CTR_7 / randomCTR, exp3CTR_8 / randomCTR, exp3CTR_9 / randomCTR,  ucb1CTR / randomCTR, greedyCTR_1 / randomCTR, greedyCTR_2 / randomCTR, greedyCTR_3 / randomCTR, greedyCTR_4 / randomCTR, greedyCTR_5 / randomCTR, greedyCTR_6 / randomCTR, greedyCTR_7 / randomCTR, greedyCTR_8 / randomCTR, greedyCTR_9 / randomCTR ]
         # write to file
         save_to_file(fileNameWrite, recordedStats,tim)
@@ -724,8 +724,7 @@ if __name__ == '__main__':
                     articles_greedy_9[article_chosen].learn_stats.accesses = articles_greedy_9[article_chosen].learn_stats.accesses + 1
                     articles_greedy_9[article_chosen].totalReward = articles_greedy_9[article_chosen].totalReward + click
                     articles_greedy_9[article_chosen].numPlayed = articles_greedy_9[article_chosen].numPlayed + 1
-                    
-                    
+                                   
             print time.time() - time_oneFile
             printWrite()
                 

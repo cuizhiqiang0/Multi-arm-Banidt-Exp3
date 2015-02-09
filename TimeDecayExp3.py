@@ -2,7 +2,7 @@
 """
 Created on Tue Jan 20 15:12:00 2015
 
-@author: Summer
+@author: Qingyun
 """
 
 from conf import *
@@ -29,11 +29,12 @@ class articleAccess():
 
 # this structure saves for the exp3 algorithm
 class exp3Struct:
-    def __init__(self, gamma):
+    def __init__(self, gamma, tim = None):
         self.gamma = gamma
         self.weights = 1.0
         self.pta = 0.0
         self.learn_stats = articleAccess()
+        self.last_ccess_time = tim
         
     def reInitilize(self):
         self.weights = 1.0
@@ -50,8 +51,13 @@ class exp3Struct:
         growth_factor = math.exp((self.gamma/n_arms)*X)
         self.weights = self.weights * growth_factor
         
-    def applyDecay(self, decay):
-        self.weight = decay * self.weight
+    def applyDecay(self, decay, duration):
+        self.weight *= (decay**duration)
+    
+    def decayAverage(self, decay, previousInsts, newInstance, current_time):
+        if current_time:
+            results = decay **(current_time - self.last_ccess_time)* previousInsts + newInstance
+        
 
 class ucb1Struct:
     def __init__(self):
