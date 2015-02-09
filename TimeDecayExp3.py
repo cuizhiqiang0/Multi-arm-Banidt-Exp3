@@ -52,12 +52,16 @@ class exp3Struct:
         self.weights = self.weights * growth_factor
         
     def applyDecay(self, decay, duration):
-        self.weight *= (decay**duration)
+        self.weights *= (decay**duration)
     
+    '''
     def decayAverage(self, decay, previousInsts, newInstance, current_time):
         if current_time:
             results = decay **(current_time - self.last_ccess_time)* previousInsts + newInstance
-        
+            self.last_ccess_time = current_time
+            return results
+        return decay*previousInsts + newInstance
+     '''   
 
 class ucb1Struct:
     def __init__(self):
@@ -138,6 +142,11 @@ def file_len(fname):
         for i, l in enumerate(f):
             pass
     return i + 1
+
+def applyDecayToAll(articles_exp3, decay, duration):
+    for key in articles_exp3:
+        articles_exp3[key].applyDecay(decay, duration)
+    return True
     
 if __name__ == '__main__':
     def printWrite():
@@ -221,7 +230,13 @@ if __name__ == '__main__':
     articles_random = {}
     articlesPlayedByUCB1 = {}
     
+    UCB1ChosenNum = 0
+    Exp3ChosenNum = 0
+    GreedyChosenNum = 0
+    RandomChosenNum = 0
     
+    last_time = 0 
+    decay = 0.7
     ctr = 1 				# overall ctr
     numArticlesChosen = 1 	# overall the articles that are same as for LinUCB and the random strategy that created Yahoo! dataset. I will call it evaluation strategy
     totalArticles = 0 		# total articles seen whether part of evaluation strategy or not
@@ -242,20 +257,25 @@ if __name__ == '__main__':
 
         # should be self explaining
         if mode == 'single':
-            fileNameWrite = os.path.join(save_address, fileSig + dataDay + timeRun + '.csv')
+            fileNameWrite = os.path.join(save_address, "Decay0.7"+fileSig + dataDay + timeRun + '.csv')
             re_initialize_article_exp3Structs()
             re_initialize_article_ucb1Structs()
             re_initialize_article_greedyStructs()
             countNoArticle = 0
             countLine = 0
+            UCB1ChosenNum = 0
+            Exp3ChosenNum = 0
+            GreedyChosenNum = 0
+            RandomChosenNum = 0
+            
         elif mode == 'multiple':
-            fileNameWrite = os.path.join(save_address,  fileSig +dataDay + timeRun + '.csv')
+            fileNameWrite = os.path.join(save_address,  "Decay0.7"+fileSig +dataDay + timeRun + '.csv')
         
         elif mode == 'hours':
             numObs = file_len(fileName)
             # resetInterval calcualtes after how many observations the count should be reset?
             resetInterval = int(numObs / reInitPerDay) + 1
-            fileNameWrite = os.path.join(save_address,  fileSig + dataDay + '_' + str(hours) + timeRun + '.csv')
+            fileNameWrite = os.path.join(save_address,  "Decay0.7"+fileSig + dataDay + '_' + str(hours) + timeRun + '.csv')
             
         # put some new data in file for readability
         with open(fileNameWrite, 'a+') as f:
@@ -269,6 +289,9 @@ if __name__ == '__main__':
             for line in f:             
                 # read the observation
                 tim, article_chosen, click, pool_articles = parseLine(line)
+                if tim != last_time:
+                    applyDecayToAll(articles_exp3, decay, tim-last_time)
+                    last_time = tim
                 if mode=='hours' and countLine > resetInterval:
                     hours = hours + 1
                     # each time theta is reset, a new file is started.
@@ -282,6 +305,10 @@ if __name__ == '__main__':
                     batchStartTime = tim
                     epochArticles = {}
                     epochSelectedArticles = {}
+                    UCB1ChosenNum = 0
+                    Exp3ChosenNum = 0
+                    GreedyChosenNum = 0
+                    RandomChosenNum = 0
                     print "hours thing fired!!"
                     
                 # number of observations seen in this batch; reset after start of new batch
@@ -315,7 +342,7 @@ if __name__ == '__main__':
                 for article in pool_articles:
                     article_id = article[0]
                     articles_exp3[article_id].updatePta(pool_articleNum, total_weight)
-                    articles_ucb1[article_id].updatePta(countLine)
+                    articles_ucb1[article_id].updatePta(UCB1ChosenNum)
                     articles_greedy[article_id].updateReward()
                 
                 if article_chosen not in epochSelectedArticles:
@@ -342,18 +369,21 @@ if __name__ == '__main__':
                
                 # if exp3 article is chosen by evalution strategy
                 if exp3Article == article_chosen:
+                    Exp3ChosenNum = Exp3ChosenNum + 1
                     articles_exp3[article_chosen].learn_stats.clicks = articles_exp3[article_chosen].learn_stats.clicks + click
                     articles_exp3[article_chosen].learn_stats.accesses = articles_exp3[article_chosen].learn_stats.accesses + 1
                     if click:
                         articles_exp3[article_chosen].updateWeight(pool_articleNum, click)
                 
                 if ucb1Article == article_chosen:
+                    UCB1ChosenNum = UCB1ChosenNum + 1
                     articles_ucb1[article_chosen].learn_stats.clicks = articles_ucb1[article_chosen].learn_stats.clicks + click
                     articles_ucb1[article_chosen].learn_stats.accesses = articles_ucb1[article_chosen].learn_stats.accesses + 1
                     articles_ucb1[article_chosen].totalReward = articles_ucb1[article_chosen].totalReward + click
                     articles_ucb1[ucb1Article].numPlayed = articles_ucb1[ucb1Article].numPlayed + 1
  
                 if greedyArticle == article_chosen:
+                    GreedyChosenNum = GreedyChosenNum + 1
                     articles_greedy[article_chosen].learn_stats.clicks = articles_greedy[article_chosen].learn_stats.clicks + click
                     articles_greedy[article_chosen].learn_stats.accesses = articles_greedy[article_chosen].learn_stats.accesses + 1
                     articles_greedy[article_chosen].totalReward = articles_greedy[article_chosen].totalReward + click
