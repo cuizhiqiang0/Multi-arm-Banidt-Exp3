@@ -187,7 +187,7 @@ if __name__ == '__main__':
         for x in articles_ucb1:
             articles_ucb1[x].reInitilize()
     
-    def re_initialzie_article_greedyStructs():
+    def re_initialize_article_greedyStructs():
         for x in articles_greedy:
             articles_greedy[x].reInitilize()
     
