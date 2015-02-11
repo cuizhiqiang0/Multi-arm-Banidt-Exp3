@@ -203,7 +203,7 @@ if __name__ == '__main__':
         print 'Exp3Lrn_7', exp3CTR_7 / randomCTR,
         print 'Exp3Lrn_8', exp3CTR_8 / randomCTR,
         print 'Exp3Lrn_9', exp3CTR_9 / randomCTR,
-        #print 'Greedy', greedyCTR_1 / randomCTR_2,
+        #print 'Greedy', greedyCTR_1 / randomCTR,
 
         print ' '
         

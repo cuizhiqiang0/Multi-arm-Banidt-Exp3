@@ -235,7 +235,7 @@ if __name__ == '__main__':
     reInitPerDay = 12								# how many times theta is re-initialized per day
 
     gamma = 0.3                                                  # parameter in exp3
-    cd = 10                                               # parameter in e-greedy
+    cd = 20                                               # parameter in e-greedy
  
     # relative dictionaries for algorithms
     articles_exp3 = {}
@@ -260,7 +260,6 @@ if __name__ == '__main__':
     fileNameWriteCTR = os.path.join(save_address,'CTR.csv')
     
     for dataDay in dataDays:
-        
         start_time = time.time()
         fileName = yahoo_address + "/ydata-fp-td-clicks-v1_0.200905" + dataDay
         epochArticles = {} 			# the articles that are present in this batch or epoch
@@ -291,19 +290,23 @@ if __name__ == '__main__':
             # resetInterval calcualtes after how many observations the count should be reset?
             resetInterval = int(numObs / reInitPerDay) + 1
             fileNameWrite = os.path.join(save_address,  fileSig + dataDay + '_' + str(hours) + timeRun + '.csv')
-            
+        time_open= time.time()    
         # put some new data in file for readability
         with open(fileNameWrite, 'a+') as f:
             f.write('\nNew Run at  ' + datetime.datetime.now().strftime('%m/%d/%Y %H:%M:%S'))
             f.write('\n, Time, randomAccesses; randomClicks; exp3Access; exp3Clicks; ucb1Accesses; ucb1Clicks; greedyAccesses; greedyClicks; exp3CTRRatio; ucb1CTRRatio; greedyCTRRatio; extremeGreedyCTRRatio, Article Access; Clicks; ID; Theta, ID; epochArticles, ID ;epochSelectedArticles \n')
             print fileName, fileNameWrite, dataDay, resetInterval
+        print 'opentime', time.time() - time_open
         
         with open(fileName, 'r') as f:
             # reading file line ie observations running one at a time
-            time_oneFile = time.time()                
-            for line in f:             
+            
+            for line in f:  
+                line_time = time.time()
                 # read the observation
+                time_read = time.time()
                 tim, article_chosen, click, pool_articles = parseLine(line)
+                print "parse time", time.time() - time_read
                 if mode=='hours' and countLine > resetInterval:
                     hours = hours + 1
                     # each time theta is reset, a new file is started.
@@ -332,6 +335,7 @@ if __name__ == '__main__':
                 # article ids for articles in the current pool for this observation
                 currentArticles = []
                 total_weight = 0
+                time_firstLoop = time.time()
                 for article in pool_articles:                    
                     article_id = article[0]
                     currentArticles.append(article_id)
@@ -353,14 +357,19 @@ if __name__ == '__main__':
                     total_weight = total_weight + articles_exp3[article_id].weights
                     
                 pool_articleNum = len(currentArticles)
-                    
+                print "firstLoop", time.time() - time_firstLoop
+                
+                time_secondeLoop = time.time()
+                
                 for article in pool_articles:
                     article_id = article[0]
                     articles_exp3[article_id].updatePta(pool_articleNum, total_weight)
                     articles_ucb1[article_id].updatePta(UCB1ChosenNum)
                     articles_greedy[article_id].updateReward()
                     articles_extremeGreedy[article_id].updateReward()
+                print "secondLoop", time.time() - time_secondeLoop
                 
+                time_selection = time.time()
                 if article_chosen not in epochSelectedArticles:
                     epochSelectedArticles[article_chosen] = 1
                 else:
@@ -379,7 +388,10 @@ if __name__ == '__main__':
                 #articles_greedy[greedyArticle].numPlayed = articles_greedy[greedyArticle].numPlayed + 1
                 
                 extremeGreedyArticle = extremeGreedySelectArm(currentArticles)
-                 
+                
+                print "SelectionTIme", time.time() - time_selection
+                
+                time_chose = time.time()
                 # if random strategy article Picked by evaluation srategy
                 if randomArticle == article_chosen:
                     RandomChosenNum = RandomChosenNum + 1
@@ -413,14 +425,16 @@ if __name__ == '__main__':
                     articles_extremeGreedy[article_chosen].learn_stats.accesses = articles_extremeGreedy[article_chosen].learn_stats.accesses + 1
                     articles_extremeGreedy[article_chosen].totalReward = articles_extremeGreedy[article_chosen].totalReward + click
                     articles_extremeGreedy[article_chosen].numPlayed = articles_extremeGreedy[article_chosen].numPlayed + 1
-                                  
-				
+                print "chosen time", time.time() - time_chose            
                 if totalArticles%20000 ==0:
                     # write observations for this batch
+                    write_time = time.time()
                     printWrite()
+                    print "write time", time.time() - write_time
                     batchStartTime = tim
                     epochArticles = {}
                     epochSelectedArticles = {}
+                print 'oneLineTotalTime', time.time() - line_time
 
             print time.time() - time_oneFile
             # print stuff to screen and save parameters to file when the Yahoo! dataset file endd
