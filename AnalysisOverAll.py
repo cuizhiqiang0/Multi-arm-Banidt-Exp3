@@ -37,7 +37,7 @@ if __name__ == '__main__':
                 ucb1CTRRatio = {}
                 greedyCTRRatio = {}
                 tim = {}
-                gamma = [0.1,0.2,0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+                gamma = [ 0.1,0.2,0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
                 i = -1
                 for line in f:
                     i = i + 1
@@ -45,9 +45,9 @@ if __name__ == '__main__':
                     if words[0].strip()!='data':
                         continue
                     AllResults= [float(x) for x in words[2].split(';')]
-                    print AllResults[0:8]
+                    print AllResults[0:1]
                     tim[i] = int(words[1])
-                plt.plot(gamma, AllResults[0:9],'o', label = 'Single01')
+                plt.plot(gamma, AllResults[0:9], label = 'Single01')
                 #plt.plot(tim.values(),exp3CTRRatio.values(), linestyle = ":", label = 'Exp31_0.3SingleDay')
                 #plt.plot(tim.values(), ucb1CTRRatio.values(), label = 'Hour')
                 #plt.plot(tim.values(), greedyCTRRatio.values(), linestyle = ":", label = 'greedy_Hour')
@@ -55,7 +55,7 @@ if __name__ == '__main__':
                 plt.xlabel('gamma')
                 plt.ylabel('CTR-Ratio')
         
-        if 'Single02'in x:
+        if 'Single02' in x:
             with open(filename, 'r')as f:
                 randa = {}
                 randc = {}
@@ -69,7 +69,7 @@ if __name__ == '__main__':
                 ucb1CTRRatio = {}
                 greedyCTRRatio = {}
                 tim = {}
-                gamma = [0.1,0.2,0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+                gamma = [ 0.1,0.2,0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
                 i = -1
                 for line in f:
                     i = i + 1
@@ -77,9 +77,9 @@ if __name__ == '__main__':
                     if words[0].strip()!='data':
                         continue
                     AllResults= [float(x) for x in words[2].split(';')]
-                    print AllResults[0:8]
+                    print AllResults[0:9]
                     tim[i] = int(words[1])
-                plt.plot(gamma, AllResults[0:9], 'o', label = 'Single02')
+                plt.plot(gamma, AllResults[0:9],  label = 'Single02')
                 #plt.plot(tim.values(),exp3CTRRatio.values(), linestyle = ":", label = 'Exp31_0.3SingleDay')
                 #plt.plot(tim.values(), ucb1CTRRatio.values(), label = 'Hour')
                 #plt.plot(tim.values(), greedyCTRRatio.values(), linestyle = ":", label = 'greedy_Hour')
@@ -101,7 +101,7 @@ if __name__ == '__main__':
                 ucb1CTRRatio = {}
                 greedyCTRRatio = {}
                 tim = {}
-                gamma = [0.1,0.2,0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+                gamma = [0.1,0.2,0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9 ]
                 i = -1
                 for line in f:
                     i = i + 1
@@ -109,13 +109,13 @@ if __name__ == '__main__':
                     if words[0].strip()!='data':
                         continue
                     AllResults= [float(x) for x in words[2].split(';')]
-                    print AllResults[0:8]
+                    print AllResults[0:9]
                     tim[i] = int(words[1])
-                plt.plot(gamma, AllResults[0:9], 'o', label = 'Single03')
+                plt.plot(gamma, AllResults[0:9],  label = 'Single03')
                 #plt.plot(tim.values(),exp3CTRRatio.values(), linestyle = ":", label = 'Exp31_0.3SingleDay')
                 #plt.plot(tim.values(), ucb1CTRRatio.values(), label = 'Hour')
                 #plt.plot(tim.values(), greedyCTRRatio.values(), linestyle = ":", label = 'greedy_Hour')
-                plt.legend()
+                #plt.legend()
                 plt.xlabel('gamma')
                 plt.ylabel('CTR-Ratio')
                 
@@ -135,7 +135,7 @@ if __name__ == '__main__':
                 ucb1CTRRatio = {}
                 greedyCTRRatio = {}
                 tim = {}
-                gamma = [0.1,0.2,0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+                gamma = [ 0.1,0.2,0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9 ]
                 i = -1
                 for line in f:
                     i = i + 1
@@ -143,9 +143,9 @@ if __name__ == '__main__':
                     if words[0].strip()!='data':
                         continue
                     AllResults= [float(x) for x in words[2].split(';')]
-                    print AllResults[0:8]
+                    print AllResults[0:9]
                     tim[i] = int(words[1])
-                plt.plot(gamma, AllResults[0:9], 'o', label = 'Single04')
+                plt.plot(gamma, AllResults[0:9],  label = 'Single04')
                 #plt.plot(tim.values(),exp3CTRRatio.values(), linestyle = ":", label = 'Exp31_0.3SingleDay')
                 #plt.plot(tim.values(), ucb1CTRRatio.values(), label = 'Hour')
                 #plt.plot(tim.values(), greedyCTRRatio.values(), linestyle = ":", label = 'greedy_Hour')
@@ -167,7 +167,7 @@ if __name__ == '__main__':
                 ucb1CTRRatio = {}
                 greedyCTRRatio = {}
                 tim = {}
-                gamma = [0.1,0.2,0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+                gamma = [ 0.1,0.2,0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
                 i = -1
                 for line in f:
                     i = i + 1
@@ -175,9 +175,9 @@ if __name__ == '__main__':
                     if words[0].strip()!='data':
                         continue
                     AllResults= [float(x) for x in words[2].split(';')]
-                    print AllResults[0:8]
+                    print AllResults[0:11]
                     tim[i] = int(words[1])
-                plt.plot(gamma, AllResults[0:9], label = 'Multiple10')
+                plt.plot(gamma, AllResults[0:9],  label = 'Multiple10')
                 #plt.plot(tim.values(),exp3CTRRatio.values(), linestyle = ":", label = 'Exp31_0.3SingleDay')
                 #plt.plot(tim.values(), ucb1CTRRatio.values(), label = 'Hour')
                 #plt.plot(tim.values(), greedyCTRRatio.values(), linestyle = ":", label = 'greedy_Hour')

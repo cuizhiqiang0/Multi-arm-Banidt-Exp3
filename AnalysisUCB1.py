@@ -21,10 +21,11 @@ if __name__ == '__main__':
     filenamesExp3Greedy = [x for x in os.listdir(save_addressExp3Greedy) if 'csv' in x]
     filenamesQueue = [x for x in os.listdir(save_addressQueue) if 'csv' in x]
     filenamesTimeDecay = [x for x in os.listdir(save_addressTimeDecay) if 'csv' in x]
+    filenamesDebugUCB1 = [x for x in os.listdir(save_addressDebugUCB1) if 'csv' in x]
     
     for x in filenamesExp3:
         filename = os.path.join(save_addressExp3, x)
-        if 'Multiple'in x:
+        if '0.3_Single'in x:
             with open(filename, 'r')as f:
                 randa = {}
                 randc = {}
@@ -46,7 +47,7 @@ if __name__ == '__main__':
                         continue
                     randa[i],randc[i],exp3a[i],exp3c[i], ucb1a[i], ucb1c[i], greedya[i], greedyc[i], exp3CTRRatio[i], ucb1CTRRatio[i], greedyCTRRatio[i] = [float(x) for x in words[2].split(';')]
                     tim[i] = int(words[1])                
-                #plt.plot(tim.values(),exp3CTRRatio.values(), linestyle = ":", label = 'Exp31_0.3SingleDay')
+                plt.plot(tim.values(),exp3CTRRatio.values(), linestyle = ":", label = 'Exp31_0.3SingleDay')
                 #plt.plot(tim.values(), ucb1CTRRatio.values(), linestyle = ":",  label = 'Hour')
                 #plt.plot(tim.values(), greedyCTRRatio.values(), linestyle = ":", label = 'greedy_Hour')
                 #plt.legend('H')
@@ -107,7 +108,7 @@ if __name__ == '__main__':
                     randa[i],randc[i],exp3a[i],exp3c[i], ucb1a[i], ucb1c[i], greedya[i], greedyc[i], exp3CTRRatio[i], ucb1CTRRatio[i], greedyCTRRatio[i]= [float(x) for x in words[2].split(';')]
                     tim[i] = int(words[1]) 
                 
-                #plt.plot(tim.values(),exp3CTRRatio.values(), label = 'Exp31_0.3SingleDay')
+                plt.plot(tim.values(),exp3CTRRatio.values(), label = 'Exp31_0.3SingleDay')
                 #plt.plot(tim.values(), ucb1CTRRatio.values(), label = 'Hour')
                 #plt.plot(tim.values(), greedyCTRRatio.values(), linestyle = ":",  label = 'greedy_0.3MultipleDay')
                 #plt.legend('H')
@@ -169,11 +170,37 @@ if __name__ == '__main__':
                         continue
                     randa[i],randc[i],exp3a[i],exp3c[i], ucb1a[i], ucb1c[i], greedya[i], greedyc[i], exp3CTRRatio[i], ucb1CTRRatio[i], greedyCTRRatio[i], extremeGreedyCTRRatio[i] = [float(x) for x in words[2].split(';')]
                     tim[i] = int(words[1]) 
-                plt.plot(tim.values(),exp3CTRRatio.values(), linestyle = ":", label = 'Exp31_0.3SingleDay')
-                plt.plot(tim.values(), ucb1CTRRatio.values(), linestyle = ":",  label = 'UCB1_0.3SingleDay')
+                #plt.plot(tim.values(),exp3CTRRatio.values(), linestyle = ":", label = 'Exp31_0.3SingleDay')
+                #plt.plot(tim.values(), ucb1CTRRatio.values(), linestyle = ":",  label = 'UCB1_0.3SingleDay')
                 #plt.plot(tim.values(), greedyCTRRatio.values())
-                plt.plot(tim.values(), extremeGreedyCTRRatio.values(), label = 'MultipleDay')
-                plt.xlabel('Multiple_e0.2')
+                #plt.plot(tim.values(), extremeGreedyCTRRatio.values(), label = 'MultipleDay')
+                plt.xlabel('Multiple_gamma0.3_Queue50')
+                plt.ylabel('CTR-Ratio')
+    
+    for x in filenamesDebugUCB1:
+        filename = os.path.join(save_addressDebugUCB1, x)
+        if 'Multiple'in x:
+            with open(filename, 'r')as f:
+                randa = {}
+                randc = {}
+                ucb1a = {}
+                ucb1c = {}
+                ucb1CTRRatio = {}
+                ucb1_1CTRRatio = {}
+                ucb1AlphaCTRRatio = {}
+                tim = {}
+                i = -1
+                for line in f:
+                    i = i + 1
+                    words = line.split(',')
+                    if words[0].strip()!='data':
+                        continue
+                    randa[i],randc[i], ucb1a[i], ucb1c[i], ucb1CTRRatio[i], ucb1_1CTRRatio[i],ucb1AlphaCTRRatio[i] = [float(x) for x in words[2].split(';')]
+                    tim[i] = int(words[1]) 
+                #plt.plot(tim.values(),ucb1CTRRatio.values(), linestyle = ":", label = 'Exp31_0.3SingleDay')
+                #plt.plot(tim.values(), ucb1_1CTRRatio.values(), label = 'UCB1_0.3SingleDay')
+                #plt.plot(tim.values(), ucb1AlphaCTRRatio.values(), 'o')
+                plt.xlabel('Single_r0.3_decay0.7')
                 plt.ylabel('CTR-Ratio')
                 
                 
