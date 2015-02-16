@@ -50,7 +50,7 @@ if __name__ == '__main__':
                 plt.plot(gamma, AllResults[0:9], label = 'Single01')
                 #plt.plot(tim.values(),exp3CTRRatio.values(), linestyle = ":", label = 'Exp31_0.3SingleDay')
                 #plt.plot(tim.values(), ucb1CTRRatio.values(), label = 'Hour')
-                #plt.plot(tim.values(), greedyCTRRatio.values(), linestyle = ":", label = 'greedy_Hour')
+                plt.plot(tim.values(), greedyCTRRatio.values(), linestyle = ":", label = 'greedy_Hour')
                 plt.legend()
                 plt.xlabel('gamma')
                 plt.ylabel('CTR-Ratio')
