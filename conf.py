@@ -7,7 +7,7 @@ yahoo_address = os.path.join(datasets_address, "R6")
 # for my personal external drive if i want to run code from dataset stored on my drive.
 yahoo_address_ExternalDrive = "/Volumes/My Passport/GradSchool/MSThesis/datasets/Yahoo/"
 
-save_address = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result"
+save_address = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/0216/Queue30"
 save_addressExp3 = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/GreedyExp3"
 #save_addressExp3Greedy = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/extremeGreedy"
 save_addressExp3Greedy = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/02_08-09/Greedy20"
