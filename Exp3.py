@@ -347,12 +347,6 @@ if __name__ == '__main__':
                         articles_greedy[article_id] = greedyStruct()
                         articles_extremeGreedy[article_id] = extremeGreedyStruct()
                         
-                    if article_id not in epochArticles:
-                        epochArticles[article_id] = 1
-                    else:
-                        # we also count the times article appeared in selection pool in this batch
-                        epochArticles[article_id] = epochArticles[article_id] + 1
-                    
                     #total_weight = sum([articles_exp3[x].weights for x in pool_articles[:0]])
                     total_weight = total_weight + articles_exp3[article_id].weights
                     

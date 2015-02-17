@@ -47,7 +47,7 @@ if __name__ == '__main__':
                         continue
                     randa[i],randc[i],exp3a[i],exp3c[i], ucb1a[i], ucb1c[i], greedya[i], greedyc[i], exp3CTRRatio[i], ucb1CTRRatio[i], greedyCTRRatio[i] = [float(x) for x in words[2].split(';')]
                     tim[i] = int(words[1])                
-                plt.plot(tim.values(),exp3CTRRatio.values(), linestyle = "--", label = 'Exp31_0.3SingleDay')
+                #plt.plot(tim.values(),exp3CTRRatio.values(), linestyle = "--", label = 'Exp31_0.3SingleDay')
                 #plt.annotate('Exp3', xy=(1.24e+09, 1.04479), xytext=(1.242e+09, 0.94), arrowprops=dict(facecolor='black', shrink=0.05),)
                 #plt.plot(tim.values(), ucb1CTRRatio.values(), linestyle = ":",  label = 'Hour')
                 #plt.plot(tim.values(), greedyCTRRatio.values(),linestyle = "--", label = 'greedy_Hour')
@@ -110,7 +110,7 @@ if __name__ == '__main__':
                     randa[i],randc[i],exp3a[i],exp3c[i], ucb1a[i], ucb1c[i], greedya[i], greedyc[i], exp3CTRRatio[i], ucb1CTRRatio[i], greedyCTRRatio[i]= [float(x) for x in words[2].split(';')]
                     tim[i] = int(words[1]) 
                 
-                #plt.plot(tim.values(),exp3CTRRatio.values(), linestyle= "--", label = 'Exp31_0.3SingleDay')
+                plt.plot(tim.values(),exp3CTRRatio.values(), linestyle= "--", label = 'Exp31_0.3SingleDay')
                 #plt.annotate('Exp3', xy=(1.24e+09, 1.04479), xytext=(1.242e+09, 0.94), arrowprops=dict(facecolor='black', shrink=0.05),)
                 #plt.plot(tim.values(), ucb1CTRRatio.values(), linestyle = "--",  label = 'Hour')
                 #plt.plot(tim.values(), greedyCTRRatio.values(), linestyle = "--",  label = 'greedy_0.3MultipleDay')
@@ -120,7 +120,7 @@ if __name__ == '__main__':
     
     for x in filenamesQueue:
         filename = os.path.join(save_addressQueue, x)
-        if 'Multiple'in x:
+        if 'Queue30_Multiple'in x:
             with open(filename, 'r')as f:
                 randa = {}
                 randc = {}
@@ -206,7 +206,7 @@ if __name__ == '__main__':
                 plt.annotate('Exp3', xy=(1.24e+09, 1.04479), xytext=(1.242e+09, 0.94), arrowprops=dict(facecolor='black', shrink=0.05),)
                 plt.xlabel('Time')
                 plt.ylabel('CTR-Ratio')
-                plt.title('Exp3 reset every2Hours')
+                plt.title('Exp3_Multiple with Queue')
                 plt.annotate('Exp3', xy=(1.24e+09, 1.04479), xytext=(1.242e+09, 0.94), arrowprops=dict(facecolor='black', shrink=0.05),)
                 
                 

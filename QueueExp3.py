@@ -242,7 +242,7 @@ if __name__ == '__main__':
     articles_greedy = {}
     articles_random = {}
     articlesPlayedByUCB1 = {}
-    MyQ = myQueue
+    MyQ = myQueue()
     QueueSize = 30
     
     
@@ -397,9 +397,6 @@ if __name__ == '__main__':
                 greedyArticle = greedySelectArm(epsilon, currentArticles)
                 #articles_greedy[greedyArticle].numPlayed = articles_greedy[greedyArticle].numPlayed + 1
                 
-             
-                print "SelectionTIme", time.time() - time_selection
-                
                 time_chose = time.time()
                 # if random strategy article Picked by evaluation srategy
                 if randomArticle == article_chosen:
@@ -437,8 +434,7 @@ if __name__ == '__main__':
                     batchStartTime = tim
                     epochArticles = {}
                     epochSelectedArticles = {}
-        
-            print time.time() - time_oneFile
+
             # print stuff to screen and save parameters to file when the Yahoo! dataset file endd
             printWrite()
             

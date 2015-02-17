@@ -174,7 +174,7 @@ if __name__ == '__main__':
         print 'UCB1', ucb1CTR / randomCTR,
         print 'Greedy', greedyCTR / randomCTR,
 
-        #print ' '
+        print ' '
         
         recordedStats = [randomLA, randomC, exp3LA, exp3C, ucb1LA, ucb1C, greedyLA, greedyC, exp3CTR / randomCTR, ucb1CTR / randomCTR, greedyCTR / randomCTR]
         # write to file
@@ -240,7 +240,7 @@ if __name__ == '__main__':
     
     last_time = 0 
     #decay = 0.7
-    decay_range = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+    decay_range = [0.7, 0.1, 0.3]
     ctr = 1 				# overall ctr
     numArticlesChosen = 1 	# overall the articles that are same as for LinUCB and the random strategy that created Yahoo! dataset. I will call it evaluation strategy
     totalArticles = 0 		# total articles seen whether part of evaluation strategy or not
@@ -295,7 +295,8 @@ if __name__ == '__main__':
                     # read the observation
                     tim, article_chosen, click, pool_articles = parseLine(line)
                     if tim != last_time:
-                        applyDecayToAll(articles_exp3, decay, tim-last_time)
+                        applyDecayToAll(articles_exp3, decay, 1)
+                        #print "Duration", tim-last_time
                         last_time = tim
                     if mode=='hours' and countLine > resetInterval:
                         hours = hours + 1
