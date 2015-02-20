@@ -84,6 +84,8 @@ class ucb1Struct:
             self.pta = self.totalReward / self.numPlayed + np.sqrt(2*np.log(allNumPlayed) / self.numPlayed)
         except ZeroDivisionError:
             self.pta = 0.0
+    def applyDecay(self, decay, duration):
+        self.totalReward *=(decay**duration)
             
 class greedyStruct:
     def __init__(self):
@@ -102,6 +104,8 @@ class greedyStruct:
             self.averageReward = self.totalReward / self.numPlayed
         except ZeroDivisionError:
             self.averageReward = 0.0
+    def applyDecay(self, decay, duration):
+        self.totalReward *=(decay**duration)
         
 
 # structure to save data from random strategy as mentioned in LiHongs paper
@@ -146,10 +150,7 @@ def file_len(fname):
             pass
     return i + 1
 
-def applyDecayToAll(articles_exp3, decay, duration):
-    for key in articles_exp3:
-        articles_exp3[key].applyDecay(decay, duration)
-    return True
+
     
 if __name__ == '__main__':
     def printWrite():
@@ -217,10 +218,16 @@ if __name__ == '__main__':
         else:
             return max(np.random.permutation([(x, articles_greedy[x].averageReward) for x in articles]), key = itemgetter(1))[0]
         
+    def applyDecayToAll( decay, duration):
+        for key in articles_exp3:
+            articles_exp3[key].applyDecay(decay, duration)
+            articles_ucb1[key].applyDecay(decay, duration)
+            articles_greedy[key].applyDecay(decay, duration)
+            return True
             
     modes = {0:'multiple', 1:'single', 2:'hours'} 	# the possible modes that this code can be run in; 'multiple' means multiple days or all days so theta dont change; single means it is reset every day; hours is reset after some hours depending on the reInitPerDay. 
     mode = 'multiple' 									# the selected mode
-    fileSig = '1_MultipleDay'								# depending on further environment parameters a file signature to remember those. for example if theta is set every two hours i can have it '2hours'; for 
+    fileSig = 'MultipleDay'								# depending on further environment parameters a file signature to remember those. for example if theta is set every two hours i can have it '2hours'; for 
     reInitPerDay = 12								# how many times theta is re-initialized per day
 
     gamma = 0.3                                                  # parameter in exp3
@@ -240,7 +247,7 @@ if __name__ == '__main__':
     
     last_time = 0 
     #decay = 0.7
-    decay_range = [0.7, 0.1, 0.3]
+    decay_range = [0.7, 0.3, 0.1, 0.5]
     ctr = 1 				# overall ctr
     numArticlesChosen = 1 	# overall the articles that are same as for LinUCB and the random strategy that created Yahoo! dataset. I will call it evaluation strategy
     totalArticles = 0 		# total articles seen whether part of evaluation strategy or not
@@ -295,7 +302,7 @@ if __name__ == '__main__':
                     # read the observation
                     tim, article_chosen, click, pool_articles = parseLine(line)
                     if tim != last_time:
-                        applyDecayToAll(articles_exp3, decay, 1)
+                        applyDecayToAll(decay, 1)
                         #print "Duration", tim-last_time
                         last_time = tim
                     if mode=='hours' and countLine > resetInterval:
