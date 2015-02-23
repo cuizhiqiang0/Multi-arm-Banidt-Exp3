@@ -335,7 +335,8 @@ if __name__ == '__main__':
                 currentArticles = []
                 total_weight = 0
                 time_firstLoop = time.time()
-                MyQ.decreaseAll() # every time when you need to choose one article from the pool
+                if countLine%10 == 0:
+                    MyQ.decreaseAll() # every time when you need to choose one article from the pool
                 
                 for article in pool_articles:                    
                     article_id = article[0]
