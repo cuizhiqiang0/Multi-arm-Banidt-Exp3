@@ -218,13 +218,12 @@ if __name__ == '__main__':
         else:
             return max(np.random.permutation([(x, articles_greedy[x].averageReward) for x in articles]), key = itemgetter(1))[0]
         
-    def applyDecayToAll( decay, duration):
-        for key in articles_exp3:
-            articles_exp3[key].applyDecay(decay, duration)
-            articles_ucb1[key].applyDecay(decay, duration)
-            articles_greedy[key].applyDecay(decay, duration)
+    def applyDecayToAll(articlesDic, decay, duration):
+        for key in articlesDic:
+            articlesDic[key].applyDecay(decay, duration)
             return True
             
+
     modes = {0:'multiple', 1:'single', 2:'hours'} 	# the possible modes that this code can be run in; 'multiple' means multiple days or all days so theta dont change; single means it is reset every day; hours is reset after some hours depending on the reInitPerDay. 
     mode = 'multiple' 									# the selected mode
     fileSig = 'MultipleDay'								# depending on further environment parameters a file signature to remember those. for example if theta is set every two hours i can have it '2hours'; for 
@@ -302,7 +301,9 @@ if __name__ == '__main__':
                     # read the observation
                     tim, article_chosen, click, pool_articles = parseLine(line)
                     if tim != last_time:
-                        applyDecayToAll(decay, 1)
+                        applyDecayToAll(articles_exp3, decay, 1)
+                        applyDecayToAll(articles_ucb1, decay, 1)
+                        applyDecayToAll(articles_greedy, decay, 1)
                         #print "Duration", tim-last_time
                         last_time = tim
                     if mode=='hours' and countLine > resetInterval:

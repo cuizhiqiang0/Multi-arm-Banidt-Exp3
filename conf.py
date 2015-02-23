@@ -14,6 +14,6 @@ save_addressExp3Greedy = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/0
 
 save_addressUCB1 = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/UCB1"
 save_addressQueue = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/0216/AgeQueue20"
-save_addressTimeDecay = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/0216/Decay0.1"
+save_addressTimeDecay = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/0216/Decay0.7"
 save_addressCTROverall = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/02_08-09/CTROverTime"
 save_addressDebugUCB1 = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/02_08-09/DebugUCB1"
