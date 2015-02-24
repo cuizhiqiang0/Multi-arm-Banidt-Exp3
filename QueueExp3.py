@@ -104,8 +104,9 @@ class myQueue:
         else:
             self.dic[articleID] = 0
     def pop(self):
-        a = copy.copy(min(self.dic, key=self.dic.get))
-        del self.dic[min(self.dic, key=self.dic.get)]
+        removed = min(self.dic, key=self.dic.get)
+        a = copy.copy(removed)
+        del self.dic[removed]
         return a
     def decreaseAll(self):
         for article in self.dic:
@@ -352,6 +353,8 @@ if __name__ == '__main__':
                         
                     if MyQ.QueueLength < QueueSize:
                         MyQ.push(article_id)
+                    elif article_id in MyQ.dic:
+                        MyQ.dic[article_id] += 1
                     else:
                         a=MyQ.pop()
                         articles_random[a] = randomStruct()

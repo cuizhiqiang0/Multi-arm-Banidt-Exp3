@@ -244,6 +244,7 @@ class simulateOnlineData:
         return diff
         
     def getArticleAbsDiff(self, alg, article):
+        
         return sum(map(abs, article.theta - alg.getLearntParams(article.id))
                
 if __name__ == '__main__':

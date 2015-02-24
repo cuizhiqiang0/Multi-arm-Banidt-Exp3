@@ -206,7 +206,7 @@ if __name__ == '__main__':
                 plt.annotate('Exp3', xy=(1.24e+09, 1.04479), xytext=(1.242e+09, 0.94), arrowprops=dict(facecolor='black', shrink=0.05),)
                 plt.xlabel('Time')
                 plt.ylabel('CTR-Ratio')
-                plt.title('Greedy_Multiple with AgeQueue20')
+                plt.title('Exp3_Multiple with Freq10_AgeQueue25')
                 plt.annotate('Exp3', xy=(1.24e+09, 1.04479), xytext=(1.242e+09, 0.94), arrowprops=dict(facecolor='black', shrink=0.05),)
                 
                 

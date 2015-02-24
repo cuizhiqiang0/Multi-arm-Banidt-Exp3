@@ -148,6 +148,9 @@ if __name__ == '__main__':
     # relative dictionaries for algorithms
     articles_exp3 = {}
     articles_random = {}
+    articles_chosenByExp3 = {}
+    articles_chosenClick = {}
+    articles_chosenNoClick = {}
    
     ctr = 1 				# overall ctr
     numArticlesChosen = 1 	# overall the articles that are same as for LinUCB and the random strategy that created Yahoo! dataset. I will call it evaluation strategy
@@ -255,17 +258,25 @@ if __name__ == '__main__':
                
                 # if exp3 article is chosen by evalution strategy
                 if exp3Article == article_chosen:
+                    #print "chosenArticle", article_chosen 
+                    articles_chosenByExp3[article_chosen] = articles_exp3[article_chosen].weights
                     articles_exp3[article_chosen].learn_stats.clicks = articles_exp3[article_chosen].learn_stats.clicks + click
                     articles_exp3[article_chosen].learn_stats.accesses = articles_exp3[article_chosen].learn_stats.accesses + 1
                     if click:
                         articles_exp3[article_chosen].updateWeight(pool_articleNum, click)
+                        articles_chosenClick[article_chosen] = articles_exp3[article_chosen].weights                 
+                        #print "clickArticle", article_chosen, "weights", articles_exp3[article_chosen].weights
+                        #print "pta", articles_exp3[article_chosen].pta
                     else:
-                        articles_exp3[article_chosen].updateWeight(pool_articleNum, -1)
+                        #print "BeforeDecay", article_chosen, "weights",articles_exp3[article_chosen].weights
+                        articles_exp3[article_chosen].updateWeight(pool_articleNum, -0.5)
+                        articles_chosenNoClick[article_chosen] = articles_exp3[article_chosen].weights
+                        #print "NoClickArticle", article_chosen, "weights", articles_exp3[article_chosen].weights
+                        #print "pta", articles_exp3[article_chosen].pta
      
 				
                 if totalArticles%20000 ==0:
                     # write observations for this batch
-                    print "zzzzz"
                     printWrite()
                     batchStartTime = tim
                     epochArticles = {}
