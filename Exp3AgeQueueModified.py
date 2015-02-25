@@ -234,10 +234,10 @@ if __name__ == '__main__':
                 # article ids for articles in the current pool for this observation
                 currentArticles = []
                 total_weight = 0
-                
+                '''
                 if countLine%20 == 0:
                     MyQ.decreaseAll() # every time when you need to choose one article from the pool
-  
+                '''
                 for article in pool_articles:                    
                     article_id = article[0]
                     currentArticles.append(article_id)
@@ -245,7 +245,7 @@ if __name__ == '__main__':
                     if article_id not in articles_exp3: #if its a new article; add it to dictionaries
                         articles_random[article_id] = randomStruct()
                         articles_exp3[article_id] = exp3Struct(gamma)
-                    
+                    '''
                     if MyQ.QueueLength < QueueSize:
                         MyQ.push(article_id)
                     elif article_id in MyQ.dic:
@@ -253,15 +253,15 @@ if __name__ == '__main__':
                     else:
                         a=MyQ.pop()
                         articles_exp3[a].reInitilize()
-                        '''
-                        articles_random[a] = randomStruct()
-                        articles_exp3[a] = exp3Struct(gamma)
-                        articles_ucb1[a] = ucb1Struct()
-                        articles_greedy[a] = greedyStruct()
-                        '''
+                        
+                        #articles_random[a] = randomStruct()
+                        #articles_exp3[a] = exp3Struct(gamma)
+                        #articles_ucb1[a] = ucb1Struct()
+                        #articles_greedy[a] = greedyStruct()
+                
                         
                         MyQ.push(article_id)
-                        
+                    '''    
                     if article_id not in epochArticles:
                         epochArticles[article_id] = 1
                     else:
@@ -303,15 +303,17 @@ if __name__ == '__main__':
                     articles_exp3[article_chosen].learn_stats.accesses = articles_exp3[article_chosen].learn_stats.accesses + 1
                     if click:
                         articles_exp3[article_chosen].updateWeight(pool_articleNum, click)
-			
-                    if MyQ.QueueLength < QueueSize:
-                        MyQ.push(article_chosen)
-                    elif article_chosen in MyQ.dic:
-                        MyQ.dic[article_id] += 1
-                    else:
-                        a=MyQ.pop()
-                        articles_exp3[a].reInitilize()
-                        MyQ.push(article_id)
+                        
+                    for article in pool_articles: 
+                        article_id = article[0]
+                        if MyQ.QueueLength < QueueSize:
+                            MyQ.push(article_chosen)
+                        elif article_chosen in MyQ.dic:
+                            MyQ.dic[article_id] += 1
+                        else:
+                            a=MyQ.pop()
+                            articles_exp3[a].reInitilize()
+                            MyQ.push(article_id)
                     
                 if totalArticles%20000 ==0:
                     # write observations for this batch

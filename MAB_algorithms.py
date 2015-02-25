@@ -31,12 +31,32 @@ class Stats():
         self.accesses +=1
         self.updateCTR()
 
+
+class myQueue:
+    def __init__(self):
+        self.dic = {}
+        self.QueueLength = len(self.dic)
+    def push(self, articleID):
+        if articleID in self.dic:
+            self.dic[articleID] += 1
+        else:
+            self.dic[articleID] = 0
+    def pop(self):
+        removed = min(self.dic, key=self.dic.get)
+        a = copy.copy(removed)
+        del self.dic[removed]
+        return a
+    def decreaseAll(self):
+        for article in self.dic:
+            self.dic[article] = self.dic[article] - 1
+    def initialize(self):
+        self.dic = {}
+
 class RandomStruct:
     def __init__(self, id):
         self.stats = Stats()
         self.id = id
         
-
 class Exp3Struct:
     def __init__(self, gamma, id):
         self.id = id
@@ -108,6 +128,51 @@ class Exp3Algorithm:
         for x in pool_articles:
             if x.id not in self.articles:
                 self.articles[x.id] = Exp3Struct(self.gamma, x.id)
+            total_Weights += self.articles[x.id].weights
+        for x in pool_articles:
+            self.articles[x.id].updatePta(len(pool_articles), total_Weights)
+            cum_pta += self.articles[x.id].pta
+            if cum_pta >r:
+                return x
+    def updateWeight(self, pickedArticle, ArticleNum, click):
+        self.articles[pickedArticle.id].updateWeight(ArticleNum, click)
+        if self.decay:
+            self.applyDecayToAll(1)
+    
+    def applyDecayToAll(self, duration):
+        for key in self.articles:
+            self.articles[key].applyDecay(self.decay, duration)
+    
+    def getarticleCTR(self, article_id):
+        return self.articles[article_id].stats.CTR
+
+class Exp3QueueAlgorithm:
+    def __init__(self, gamma, decay = None):
+        self.articles = {}
+        self.gamma = gamma
+        self.decay = decay
+    
+    def decide(self, pool_articles):
+        MyQ = myQueue()
+        QueueSize = 15
+        MyQ.decreaseAll()
+        
+        r = random.random()
+        cum_pta = 0.0        
+        total_Weights = 0.0
+        for x in pool_articles:
+            if x.id not in self.articles:
+                self.articles[x.id] = Exp3Struct(self.gamma, x.id)
+            
+            if MyQ.QueueLength < QueueSize:
+                MyQ.push(x)
+            elif x.id in MyQ.dic:
+                MyQ.dic[x.id] += 1
+            else:
+                a=MyQ.pop()
+                articles_exp3[a].reInitilize()
+                MyQ.push(x_id)
+                
             total_Weights += self.articles[x.id].weights
         for x in pool_articles:
             self.articles[x.id].updatePta(len(pool_articles), total_Weights)

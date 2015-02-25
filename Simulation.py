@@ -275,12 +275,13 @@ if __name__ =='__main__':
                                            environmentVars = {"reInitiate":100000}
                                            )
         Exp3 = Exp3Algorithm(gamma = 0.3)
-        decExp3 = Exp3Algorithm(gamma = 0.3, decay = 0.9999)
+        decExp3 = Exp3Algorithm(gamma = 0.3, decay = 0.9)
+        AgeQueueExp3 = Exp3QueueAlgorithm(gamma = 0.3)
         Random = RandomAlgorithm()
         UCB1 = UCB1Algorithm()
         
         
-        simExperiment.runAlgorithms({"Exp3":Exp3, "decExp3":decExp3, "Random":Random})
+        simExperiment.runAlgorithms({"Exp3":Exp3, "decExp3":decExp3, "Random":Random, "AgeQueueExp3": AgeQueueExp3})
         #simExperiment.runAlgorithmsUCB1({"UCB1": UCB1})
         print "Done, begin analysis"
         simExperiment.analyzeExperiment()
