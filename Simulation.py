@@ -6,14 +6,14 @@ Created on Fri Feb 20 12:24:59 2015
 """
 
 import math
-import nump as np
-#from MAB_algorithms import *
+import numpy as np
+from MAB_algorithms import *
 import datetime
 from matplotlib.pylab import *
 from random import sample
 
 class batchStats():
-    def __init(self):
+    def __init__(self):
         self.stats = Stats()    # what's Stats()
         self.clickArray = []
         self.accessArray = []
@@ -22,12 +22,12 @@ class batchStats():
         self.poolMSE = [] # What's this for
         self.articlesCTR = {}  #key: articleID, value: CTR
         
-    def addRecord(self, iter_, poolMSE, poolArticles):
-        self.clickArray.append(self.stat.clicks)
+    def addRecord(self, iter_, poolArticles):
+        self.clickArray.append(self.stats.clicks)
         self.accessArray.append(self.stats.accesses)
         self.CTRArray.append(self.stats.CTR)
         self.time_.append(iter_)
-        self.poolMSE.append(poolMSE)
+        #self.poolMSE.append(poolMSE)
         for x in poolArticles:  #poolArticles is a dictionary?
             if x in self.articlesCTR:
                 self.articlesCTR[x].append(poolArticles[x])
@@ -46,7 +46,7 @@ class Article():
         self.endTime = endTime
         self.initialTheta = None  #parameter in LinUCB?
         self.theta = None   #parameter in LinUCB?
-        self.featureVector
+        #self.featureVector = None
         self.deltaTheta = None
         self.absDiff = {}  # What's this for
         self.time_ ={}
@@ -64,17 +64,17 @@ class Article():
     def inPool(self, curr_time):
         return curr_time <=self.endTime and curr_time >=self.startTime
         
-    def addRecord(self, time_, absDiff, alg_name):
+    def addRecord(self, time_,  alg_name):
         if alg_name in self.time_:
             self.time_[alg_name].append(time_)
         else:
             self.time_[alg_name] = [time_]
-            
+        '''    
         if alg_name in self.absDiff:
             self.absDiff[alg_name].append(absDiff)
         else:
             self.absDiff[alg_name] = [absDiff]
-            
+        '''    
     def plotAbsDiff(self):
         figure()
         for k in self.time_.keys():
@@ -161,7 +161,7 @@ class simulateOnlineData:
             
     def simulateUsers(self, numUsers):
         """users of all context arriving uniformly"""
-        usersids = self.createIds(numUsers)
+        userids = self.createIds(numUsers)
         for key in userids:
             self.users.append(User(key, self.featureUniform()))
             
@@ -182,10 +182,28 @@ class simulateOnlineData:
             self.updateArticlePool()
             userArrived = self.getUser()
             for alg_name, alg in algorithms.items():
-                pickedArticle = alg.decide(self.articlePool, userArrived, self.iter_)
+                pickedArticle = alg.decide(self.articlePool)
                 clickExpectation = np.dot(pickedArticle.theta, userArrived.featureVector)
                 click = np.random.binomial(1, clickExpectation)
-                alg.updateParameters(pickedArticle, userArrived, click, self.iter_ )
+                alg.updateWeight(pickedArticle, len(self.articlePool), click)
+                
+                self.iterationRecord(alg_name, userArrived.id, click, pickedArticle.id)
+                
+            if self.iter_%self.batchSize == 0 and self.iter_ >1:
+                self.batchRecord(algorithms)
+    def runAlgorithmsUCB1(self, algorithms):
+        self.startTime = datetime.datetime.now()
+        countLine = 0
+        for self.iter_ in range(self.iterations):
+            countLine += 1
+            self.regulateEnvironment()
+            self.updateArticlePool()
+            userArrived = self.getUser()
+            for alg_name, alg in algorithms.items():
+                pickedArticle = alg.decide(self.articlePool, countLine)
+                clickExpectation = np.dot(pickedArticle.theta, userArrived.featureVector)
+                click = np.random.binomial(1, clickExpectation)
+                alg.updateParameter(pickedArticle, countLine, click)
                 
                 self.iterationRecord(alg_name, userArrived.id, click, pickedArticle.id)
                 
@@ -195,16 +213,16 @@ class simulateOnlineData:
     def iterationRecord(self, alg_name, user_id, click, article_id):
         if alg_name not in self.alg_perf:
             self.alg_perf[alg_name] = batchStats()
-        self.alg_perf[alg_name].stats.adrecord(click)
+        self.alg_perf[alg_name].stats.addrecord(click)
         
     def batchRecord(self, algorithms):
         for alg_name, alg in algorithms.items():
             poolArticlesCTR = dict([(x.id, alg.getarticleCTR(x.id)) for x in self.articlePool])
             if self.iter_%self.batchSize == 0:
-                self.alg_perf[alg_name].addRecord(self.iter_, self.getPoolMSE(alg), poolArticlesCTR)
+                self.alg_perf[alg_name].addRecord(self.iter_, poolArticlesCTR)
                 
             for article in self.articlePool:
-                article.addRecord(self.iter_, self.getArticleAbsDiff(alg, article), alg_name)
+                article.addRecord(self.iter_, alg_name)
                 
         print "Iteration %d "%self.iter_, "Pool ", len(self.articlePool)," Elapsed time", datetime.datetime.now() - self.startTime
         
@@ -217,16 +235,17 @@ class simulateOnlineData:
                 ymin, ymax = axes.get_ylim()
                 ySet = ymin +(np.array(range(0, 31))*1.0/30) * (ymax - ymin)
                 plot(xSet, ySet, "black")
+                
         xlocs = list(set(map(lambda x: x.startTime, self.articles)))
         figure()
         for alg in self.alg_perf:
             plot(self.alg_perf[alg].time_, self.alg_perf[alg].CTRArray)
-        legend(self.alg_perf.keys, loc =4)
+        legend(self.alg_perf.keys(), loc =4)
         xlabel("Iteration")
         ylabel("Cumulative CTR")
         title("CTR Performance")
         plotLines(xlocs)
-        
+        '''
         figure()
         for alg in self.alg_perf:
             plot(self.alg_perf[alg].time_, self.alg_perf[alg].poolMSE)
@@ -235,7 +254,7 @@ class simulateOnlineData:
         ylabe("MSE")
         title("Learning Error")
         plotLines(xlocs)
-        
+        '''
     def getPoolMSE(self, alg):
         diff = 0
         for article in self.articlePool:
@@ -243,29 +262,27 @@ class simulateOnlineData:
         diff = math.sqrt(diff)
         return diff
         
-    def getArticleAbsDiff(self, alg, article):
+    def getArticleAbsDiff(self, alg, article):       
+        return sum(map(abs, article.theta - alg.getLearntParams(article.id)))
         
-        return sum(map(abs, article.theta - alg.getLearntParams(article.id))
-               
-if __name__ == '__main__':
+if __name__ =='__main__':
     for i in range(1):
         simExperiment = simulateOnlineData(n_articles = 50,
-                                           n_users = 10000
-                                           dimension = 5
-                                           iterations = 200000
-                                           type = "ConstantTheta"
-                                           EnvironmentVars = {"reInitate", 100000} 
+                                           n_users = 1000,
+                                           dimension = 5,
+                                           iterations = 200000,
+                                           type = "ConstantTheta",
+                                           environmentVars = {"reInitiate":100000}
                                            )
-        LinUCB = LinUCBAlgorithm(dimension = 5, alpha = 0.3)
-        decLinUCB = LinUCBAlgorithm(dimension = 5, alpha = 0.3, decay = 0.9999)
+        Exp3 = Exp3Algorithm(gamma = 0.3)
+        decExp3 = Exp3Algorithm(gamma = 0.3, decay = 0.9999)
+        Random = RandomAlgorithm()
+        UCB1 = UCB1Algorithm()
         
-        simExperiment.runAlgorithms({"LinUCB":LinUCB, "decLinUCB":decLinUCB})
+        
+        simExperiment.runAlgorithms({"Exp3":Exp3, "decExp3":decExp3, "Random":Random})
+        #simExperiment.runAlgorithmsUCB1({"UCB1": UCB1})
+        print "Done, begin analysis"
         simExperiment.analyzeExperiment()
-        
-                                           
-            
                     
-                    
-        
-        
         

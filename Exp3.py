@@ -39,12 +39,12 @@ class exp3Struct:
         self.pta=0.0
           
     def updatePta(self, n_arms, total_weight):
-        n_arms = n_arms
+        #n_arms = n_arms
         self.pta= (1-self.gamma) * (self.weights / total_weight)
         self.pta= self.pta + (self.gamma) * (1.0 / float(n_arms))
  
     def updateWeight(self, n_arms, reward):
-        n_arms = n_arms
+        #n_arms = n_arms
         X=reward/self.pta
         growth_factor = math.exp((self.gamma/n_arms)*X)
         self.weights = self.weights * growth_factor
