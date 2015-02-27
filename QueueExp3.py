@@ -231,7 +231,7 @@ if __name__ == '__main__':
             
     modes = {0:'multiple', 1:'single', 2:'hours'} 	# the possible modes that this code can be run in; 'multiple' means multiple days or all days so theta dont change; single means it is reset every day; hours is reset after some hours depending on the reInitPerDay. 
     mode = 'multiple' 									# the selected mode
-    fileSig = 'Queue20_Multiple'								# depending on further environment parameters a file signature to remember those. for example if theta is set every two hours i can have it '2hours'; for 
+    fileSig = 'Modified_Q15_Multi'								# depending on further environment parameters a file signature to remember those. for example if theta is set every two hours i can have it '2hours'; for 
     reInitPerDay = 12								# how many times theta is re-initialized per day
 
     gamma = 0.3                                                  # parameter in exp3
@@ -243,8 +243,11 @@ if __name__ == '__main__':
     articles_greedy = {}
     articles_random = {}
     articlesPlayedByUCB1 = {}
-    MyQ = myQueue()
-    QueueSize = 30
+    MyQExp3 = myQueue()
+    MyQUCB1 = myQueue()
+    MyQGreedy = myQueue()
+    
+    QueueSize = 15
     
     
     UCB1ChosenNum = 0
@@ -336,8 +339,10 @@ if __name__ == '__main__':
                 currentArticles = []
                 total_weight = 0
                 time_firstLoop = time.time()
+                '''
                 if countLine%10 == 0:
                     MyQ.decreaseAll() # every time when you need to choose one article from the pool
+                '''
                 
                 for article in pool_articles:                    
                     article_id = article[0]
@@ -350,7 +355,7 @@ if __name__ == '__main__':
                         articles_exp3[article_id] = exp3Struct(gamma)
                         articles_ucb1[article_id] = ucb1Struct()
                         articles_greedy[article_id] = greedyStruct()
-                   '''     
+                    '''     
                     if MyQ.QueueLength < QueueSize:
                         MyQ.push(article_id)
                     elif article_id in MyQ.dic:
@@ -414,6 +419,18 @@ if __name__ == '__main__':
                     articles_exp3[article_chosen].learn_stats.accesses = articles_exp3[article_chosen].learn_stats.accesses + 1
                     if click:
                         articles_exp3[article_chosen].updateWeight(pool_articleNum, click)
+                        
+                    MyQExp3.decreaseAll() 
+                    for article in pool_articles: 
+                        article_id = article[0]
+                        if MyQExp3.QueueLength < QueueSize:
+                            MyQExp3.push(article_id)
+                        elif article_id in MyQExp3.dic:
+                            MyQExp3.dic[article_id] += 1
+                        else:
+                            a=MyQExp3.pop()
+                            articles_exp3[a].reInitilize()
+                            MyQExp3.push(article_id)
                 
                 if ucb1Article == article_chosen:
                     UCB1ChosenNum = UCB1ChosenNum + 1
@@ -421,6 +438,18 @@ if __name__ == '__main__':
                     articles_ucb1[article_chosen].learn_stats.accesses = articles_ucb1[article_chosen].learn_stats.accesses + 1
                     articles_ucb1[article_chosen].totalReward = articles_ucb1[article_chosen].totalReward + click
                     articles_ucb1[ucb1Article].numPlayed = articles_ucb1[ucb1Article].numPlayed + 1
+                    
+                    MyQUCB1.decreaseAll() 
+                    for article in pool_articles: 
+                        article_id = article[0]
+                        if MyQUCB1.QueueLength < QueueSize:
+                            MyQUCB1.push(article_id)
+                        elif article_id in MyQ.dic:
+                            MyQUCB1.dic[article_id] += 1
+                        else:
+                            a=MyQUCB1.pop()
+                            articles_ucb1[a].reInitilize()
+                            MyQUCB1.push(article_id)
  
                 if greedyArticle == article_chosen:
                     GreedyChosenNum = GreedyChosenNum + 1
@@ -428,6 +457,18 @@ if __name__ == '__main__':
                     articles_greedy[article_chosen].learn_stats.accesses = articles_greedy[article_chosen].learn_stats.accesses + 1
                     articles_greedy[article_chosen].totalReward = articles_greedy[article_chosen].totalReward + click
                     articles_greedy[greedyArticle].numPlayed = articles_greedy[greedyArticle].numPlayed + 1
+                    
+                    MyQGreedy.decreaseAll() 
+                    for article in pool_articles: 
+                        article_id = article[0]
+                        if MyQGreedy.QueueLength < QueueSize:
+                            MyQGreedy.push(article_id)
+                        elif article_id in MyQ.dic:
+                            MyQGreedy.dic[article_id] += 1
+                        else:
+                            a=MyQGreedy.pop()
+                            articles_greedy[a].reInitilize()
+                            MyQGreedy.push(article_id)
                 
                
                 if totalArticles%20000 ==0:
