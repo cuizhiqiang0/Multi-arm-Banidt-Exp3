@@ -200,10 +200,12 @@ class simulateOnlineData:
             self.updateArticlePool()
             userArrived = self.getUser()
             for alg_name, alg in algorithms.items():
+                #print "CountLine", countLine
                 pickedArticle = alg.decide(self.articlePool, countLine)
+                #print "Picked", pickedArticle
                 clickExpectation = np.dot(pickedArticle.theta, userArrived.featureVector)
                 click = np.random.binomial(1, clickExpectation)
-                alg.updateParameter(pickedArticle, countLine, click)
+                alg.updateParameter(pickedArticle, click)
                 
                 self.iterationRecord(alg_name, userArrived.id, click, pickedArticle.id)
                 
@@ -274,15 +276,18 @@ if __name__ =='__main__':
                                            type = "ConstantTheta",
                                            environmentVars = {"reInitiate":100000}
                                            )
+        
+        UCB1 = UCB1Algorithm()
         Exp3 = Exp3Algorithm(gamma = 0.3)
-        decExp3 = Exp3Algorithm(gamma = 0.3, decay = 0.9)
+        decExp3 = Exp3Algorithm(gamma = 0.3, decay = 0.99)
         AgeQueueExp3 = Exp3QueueAlgorithm(gamma = 0.3)
         Random = RandomAlgorithm()
-        UCB1 = UCB1Algorithm()
         
+        simExperiment.runAlgorithmsUCB1({"UCB1": UCB1})
+        #simExperiment.analyzeExperiment()
+        #simExperiment.runAlgorithms({"Random": Random})
+        #simExperiment.runAlgorithms({"Exp3":Exp3, "decExp3_0.99":decExp3, "Random":Random, "AgeQueueExp3_15": AgeQueueExp3})
         
-        simExperiment.runAlgorithms({"Exp3":Exp3, "decExp3":decExp3, "Random":Random, "AgeQueueExp3": AgeQueueExp3})
-        #simExperiment.runAlgorithmsUCB1({"UCB1": UCB1})
         print "Done, begin analysis"
         simExperiment.analyzeExperiment()
                     

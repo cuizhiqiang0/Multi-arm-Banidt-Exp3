@@ -22,6 +22,7 @@ if __name__ == '__main__':
     filenamesQueue = [x for x in os.listdir(save_addressQueue) if 'csv' in x]
     filenamesTimeDecay = [x for x in os.listdir(save_addressTimeDecay) if 'csv' in x]
     filenamesDebugUCB1 = [x for x in os.listdir(save_addressDebugUCB1) if 'csv' in x]
+    filenamesModifiedAgeQueue = [x for x in os.listdir(save_addressModifiedAgeQueue) if 'csv' in x]
     
     for x in filenamesExp3:
         filename = os.path.join(save_addressExp3, x)
@@ -142,7 +143,7 @@ if __name__ == '__main__':
                         continue
                     randa[i],randc[i],exp3a[i],exp3c[i], ucb1a[i], ucb1c[i], greedya[i], greedyc[i], exp3CTRRatio[i], ucb1CTRRatio[i], greedyCTRRatio[i]= [float(x) for x in words[2].split(';')]
                     tim[i] = int(words[1]) 
-                plt.plot(tim.values(),exp3CTRRatio.values(), linestyle= "--", label = 'Exp31_0.3SingleDay')
+                #plt.plot(tim.values(),exp3CTRRatio.values(), linestyle= "--", label = 'Exp31_0.3SingleDay')
                 #plt.plot(tim.values(), ucb1CTRRatio.values(), linestyle = "--", label = 'UCB1_0.3SingleDay')
                 #plt.plot(tim.values(), greedyCTRRatio.values(),linestyle = "--",  label = 'UCB1_0.3MultipleDay')
                 plt.xlabel('MultipleDay')
@@ -206,7 +207,7 @@ if __name__ == '__main__':
                 plt.annotate('Exp3', xy=(1.24e+09, 1.04479), xytext=(1.242e+09, 0.94), arrowprops=dict(facecolor='black', shrink=0.05),)
                 plt.xlabel('Time')
                 plt.ylabel('CTR-Ratio')
-                plt.title('Exp3_Multiple with Freq10_AgeQueue25')
+                plt.title('Exp3_Multiple with Freq10_AgeQueue15_Modified')
                 plt.annotate('Exp3', xy=(1.24e+09, 1.04479), xytext=(1.242e+09, 0.94), arrowprops=dict(facecolor='black', shrink=0.05),)
                 
                 
@@ -236,6 +237,26 @@ if __name__ == '__main__':
                 plt.ylabel('CTR-Ratio')
                 plt.title('UCB1 and UCB1 timedecay')
                 plt.annotate('Exp3', xy=(1.24e+09, 1.04479), xytext=(1.242e+09, 0.94), arrowprops=dict(facecolor='black', shrink=0.05),)
-                
+    
+    for x in filenamesModifiedAgeQueue:
+        filename = os.path.join(save_addressModifiedAgeQueue, x)
+        if 'Modified'in x:
+            with open(filename, 'r')as f:
+                randa = {}
+                randc = {}
+                exp3a = {}
+                exp3c = {}
+                exp3CTRRatio = {}
+                tim = {}
+                i = -1
+                for line in f:
+                    i = i + 1
+                    words = line.split(',')
+                    if words[0].strip()!='data':
+                        continue
+                    randa[i],randc[i],exp3a[i],exp3c[i], exp3CTRRatio[i] = [float(x) for x in words[2].split(';')]
+                    tim[i] = int(words[1])                
+                plt.plot(tim.values(),exp3CTRRatio.values(), linestyle = "--", label = 'Exp31_0.3SingleDay')
+
                 
     

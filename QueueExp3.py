@@ -110,7 +110,7 @@ class myQueue:
         return a
     def decreaseAll(self):
         for article in self.dic:
-            self.dic[article] = self.dic[article] - 1
+            self.dic[article] = self.dic[article] - 0.05
     def initialize(self):
         self.dic = {}
         
@@ -350,7 +350,7 @@ if __name__ == '__main__':
                         articles_exp3[article_id] = exp3Struct(gamma)
                         articles_ucb1[article_id] = ucb1Struct()
                         articles_greedy[article_id] = greedyStruct()
-                        
+                   '''     
                     if MyQ.QueueLength < QueueSize:
                         MyQ.push(article_id)
                     elif article_id in MyQ.dic:
@@ -359,15 +359,9 @@ if __name__ == '__main__':
                         a=MyQ.pop()
                         articles_exp3[a].reInitilize()
                         articles_ucb1[a].reInitilize()
-                        articles_greedy[a].reInitilize()
-                        '''
-                        articles_random[a] = randomStruct()
-                        articles_exp3[a] = exp3Struct(gamma)
-                        articles_ucb1[a] = ucb1Struct()
-                        articles_greedy[a] = greedyStruct()
-                        '''                       
+                        articles_greedy[a].reInitilize()                      
                         MyQ.push(article_id)
-                        
+                    '''   
                         
                     if article_id not in epochArticles:
                         epochArticles[article_id] = 1

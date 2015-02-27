@@ -48,7 +48,7 @@ class myQueue:
         return a
     def decreaseAll(self):
         for article in self.dic:
-            self.dic[article] = self.dic[article] - 1
+            self.dic[article] = self.dic[article] - 0.05
     def initialize(self):
         self.dic = {}
 
@@ -97,6 +97,7 @@ class UCB1Struct:
             self.pta = self.totalReward / self.numPlayed + np.sqrt(2*np.log(allNumPlayed) / self.numPlayed)
         except ZeroDivisionError:
             self.pta = 0.0
+        return self.pta
     def applyDecay(self, decay, duration):  # where to add decay
         self.totalReward *=(decay**duration)
     
@@ -202,13 +203,16 @@ class UCB1Algorithm:
             if x.id not in self.articles:
                 self.articles[x.id] = UCB1Struct(x.id)
             x_pta = self.articles[x.id].updatePta(allNumPlayed)
-            
-            if minPta < x_pta:
+            '''
+            if self.articles[x.id].numPlayed == 0:
+                articlePicked = x 
+            '''
+            if minPta <= x_pta:
                 articlePicked = x
                 minPta = x_pta
         return articlePicked
-    def updateParameter(self, pickedArticle, allNumPlayed, click):
-        self.articles[pickedArticle.id].updateParameter(allNumPlayed, click)
+    def updateParameter(self, pickedArticle, click):
+        self.articles[pickedArticle.id].updateParameter( click)
         if self.decay:
             self.applyDecayToAll(1)
     def applyDecayToAll(self, duration):

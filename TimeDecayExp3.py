@@ -246,7 +246,7 @@ if __name__ == '__main__':
     
     last_time = 0 
     #decay = 0.7
-    decay_range = [0.7, 0.3, 0.1, 0.5]
+    decay_range = [0.999, 0.95, 0.9]
     ctr = 1 				# overall ctr
     numArticlesChosen = 1 	# overall the articles that are same as for LinUCB and the random strategy that created Yahoo! dataset. I will call it evaluation strategy
     totalArticles = 0 		# total articles seen whether part of evaluation strategy or not

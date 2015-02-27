@@ -17,3 +17,4 @@ save_addressQueue = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/0216/F
 save_addressTimeDecay = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/0216/Decay0.3"
 save_addressCTROverall = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/02_08-09/CTROverTime"
 save_addressDebugUCB1 = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/02_08-09/DebugUCB1"
+save_addressModifiedAgeQueue = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/0216/ModifiedAgeQueue"
