@@ -28,16 +28,19 @@ class articleAccess():
 
 
 # this structure saves for the exp3 algorithm
+# Modified Exp3, every update totalreward
 class exp3Struct:
     def __init__(self, gamma, tim = None):
         self.gamma = gamma
         self.weights = 1.0
+        self.totalReward = 0.0
         self.pta = 0.0
         self.learn_stats = articleAccess()
         self.last_ccess_time = tim
         
     def reInitilize(self):
         self.weights = 1.0
+        self.totalReward = 0.0
         self.pta=0.0
           
     def updatePta(self, n_arms, total_weight):
@@ -49,13 +52,12 @@ class exp3Struct:
         self.pta= self.pta + (self.gamma) * (1.0 / float(n_arms))
  
     def updateWeight(self, n_arms, reward):
-        n_arms = n_arms
-        X=reward/self.pta
-        growth_factor = math.exp((self.gamma/n_arms)*X)
-        self.weights = self.weights * growth_factor
+        SimulatedReward = (self.gamma/n_arms)*(reward/self.pta)
+        self.totalReward +=SimulatedReward
+        self.weights = math.exp(self.totalReward)
         
     def applyDecay(self, decay, duration):
-        self.weights *= (decay**duration)
+        self.totalReward *= (decay**duration)
     
     '''
     def decayAverage(self, decay, previousInsts, newInstance, current_time):
