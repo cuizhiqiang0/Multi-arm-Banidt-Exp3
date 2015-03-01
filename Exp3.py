@@ -87,21 +87,6 @@ class greedyStruct:
         except ZeroDivisionError:
             self.averageReward = 0.0
             
-class extremeGreedyStruct:
-    def __init__(self):
-        self.learn_stats = articleAccess()
-        self.totalReward = 0.0
-        self.numPlayed = 0.0
-        self.averageReward = 0.0
-    def reInitilize(self):
-        self.totalReward = 0.0
-        self.numPlayed = 0.0
-        self.averageReward = 0.0
-    def updateReward(self):
-        try:
-            self.averageReward = self.totalReward / self.numPlayed
-        except ZeroDivisionError:
-            self.averageReward = 0.0
         
 
 # structure to save data from random strategy as mentioned in LiHongs paper
@@ -163,11 +148,7 @@ if __name__ == '__main__':
         greedyLA = sum([articles_greedy[x].learn_stats.accesses for x in articles_greedy])
         greedyC = sum([articles_greedy[x].learn_stats.clicks for x in articles_greedy])
         greedyCTR = sum([articles_greedy[x].learn_stats.clicks for x in articles_greedy]) / sum([articles_greedy[x].learn_stats.accesses for x in articles_greedy])
-        
-        extremeGreedyLA = sum([articles_extremeGreedy[x].learn_stats.accesses for x in articles_extremeGreedy])
-        extremeGreedyC = sum([articles_extremeGreedy[x].learn_stats.clicks for x in articles_extremeGreedy])
-        extremeGreedyCTR = sum([articles_extremeGreedy[x].learn_stats.clicks for x in articles_extremeGreedy]) / sum([articles_extremeGreedy[x].learn_stats.accesses for x in articles_extremeGreedy])
-                
+                       
         print totalArticles,
         print 'Exp3Lrn', exp3CTR / randomCTR,
         print 'UCB1', ucb1CTR / randomCTR,

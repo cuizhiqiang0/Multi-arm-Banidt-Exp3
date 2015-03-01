@@ -48,25 +48,6 @@ class ucb1Struct:
         except ZeroDivisionError:
             self.pta = 0.0
 
-class ucb1AlphaStruct:
-    def __init__(self):
-        self.totalReward = 0.0
-        self.numPlayed = 0
-        self.pta = 0.0
-        self.learn_stats = articleAccess()
-        self.deploy_stats = articleAccess()
-        
-    def reInitilize(self): 
-        self.totalReward = 0.0
-        self.numPlayed = 0.0  
-        self.pta=0.0
-        
-    def updatePta(self, allNumPlayed, alpha):
-        try:
-            self.pta = self.totalReward / self.numPlayed + alpha / np.sqrt(self.numPlayed)
-        except ZeroDivisionError:
-            self.pta = 0.0
-    
         
 class randomStruct:
 	def __init__(self):
@@ -126,23 +107,12 @@ if __name__ == '__main__':
         ucb1LA = sum([articles_ucb1[x].learn_stats.accesses for x in articles_ucb1])
         ucb1C = sum([articles_ucb1[x].learn_stats.clicks for x in articles_ucb1])
         ucb1CTR = sum([articles_ucb1[x].learn_stats.clicks for x in articles_ucb1]) / sum([articles_ucb1[x].learn_stats.accesses for x in articles_ucb1])
-            
-        ucb1_1LA = sum([articles_ucb1_1[x].learn_stats.accesses for x in articles_ucb1_1])
-        ucb1_1C = sum([articles_ucb1_1[x].learn_stats.clicks for x in articles_ucb1_1])
-        ucb1_1CTR = sum([articles_ucb1_1[x].learn_stats.clicks for x in articles_ucb1_1]) / sum([articles_ucb1_1[x].learn_stats.accesses for x in articles_ucb1_1])
-            
-        ucb1AlphaLA = sum([articles_ucb1Alpha[x].learn_stats.accesses for x in articles_ucb1Alpha])
-        ucb1AlphaC = sum([articles_ucb1Alpha[x].learn_stats.clicks for x in articles_ucb1Alpha])
-        ucb1AlphaCTR = sum([articles_ucb1Alpha[x].learn_stats.clicks for x in articles_ucb1Alpha]) / sum([articles_ucb1Alpha[x].learn_stats.accesses for x in articles_ucb1Alpha])
-            
+                      
         print totalArticles,
-        print 'UCB1', ucb1CTR / randomCTR,
-        print 'UCB1_1', ucb1_1CTR / randomCTR,
-        print 'UCB1Alpha', ucb1AlphaCTR / randomCTR,
-        
+        print 'UCB1', ucb1CTR / randomCTR,     
         print ' '
         
-        recordedStats = [randomLA, randomC, ucb1LA, ucb1C,  ucb1CTR / randomCTR, ucb1_1CTR / randomCTR, ucb1AlphaCTR / randomCTR ]
+        recordedStats = [randomLA, randomC, ucb1LA, ucb1C,  ucb1CTR / randomCTR ]
         # write to file
         save_to_file(fileNameWrite, articles_ucb1, recordedStats, epochArticles, epochSelectedArticles, tim)
     
@@ -151,13 +121,6 @@ if __name__ == '__main__':
         for x in articles_ucb1:
             articles_ucb1[x].reInitilize()
              
-    def re_initialize_article_ucb1_1Structs():
-        for x in articles_ucb1_1:
-            articles_ucb1_1[x].reInitilize()
-             
-    def re_initialize_article_ucb1AlphaStructs():
-        for x in articles_ucb1Alpha:
-            articles_ucb1Alpha[x].reInitilize()
 
     def ucb1SelectArm(articles):
         flag = 0
@@ -168,36 +131,13 @@ if __name__ == '__main__':
         if flag == 0:
             return max(np.random.permutation([(x, articles_ucb1[x].pta) for x in articles]), key = itemgetter(1))[0]
         
-    def ucb1SelectArm_1(articles):
-        flag = 0
-        for x in articles:
-            if articles_ucb1_1[x].numPlayed ==0:
-                flag = 1
-                return x
-        if flag == 0:
-            return max(np.random.permutation([(x, articles_ucb1_1[x].pta) for x in articles]), key = itemgetter(1))[0]
-            
-    def ucb1AlphaSelectArm(articles):
-        flag = 0
-        for x in articles:
-            if articles_ucb1Alpha[x].numPlayed ==0:
-                flag = 1
-                return x
-        if flag == 0:
-            return max(np.random.permutation([(x, articles_ucb1Alpha[x].pta) for x in articles]), key = itemgetter(1))[0]
-        
         
             
     modes = {0:'multiple', 1:'single', 2:'hours'} 	# the possible modes that this code can be run in; 'multiple' means multiple days or all days so theta dont change; single means it is reset every day; hours is reset after some hours depending on the reInitPerDay. 
     mode = 'hours' 									# the selected mode
-    fileSig = 'DebugUCB1_Hour'								# depending on further environment parameters a file signature to remember those. for example if theta is set every two hours i can have it '2hours'; for 
+    fileSig = 'UCB1_Hour'								# depending on further environment parameters a file signature to remember those. for example if theta is set every two hours i can have it '2hours'; for 
     reInitPerDay = 12								# how many times theta is re-initialized per day
     
-    alpha = 20
-    #gamma = 0.3                                                  # parameter in exp3
-    #
-    # relative dictionaries for algorithms
-    #recentArticles = Queue.Queue(maxsize = 200)
     articles_ucb1 = {}
     articles_ucb1_1 ={}
     articles_ucb1Alpha = {}
@@ -237,9 +177,7 @@ if __name__ == '__main__':
             re_initialize_article_ucb1_1Structs()
             re_initialize_article_ucb1AlphaStructs()
             UCB1ChosenNum = 0
-            UCB1_1ChosenNum =0
-            UCB1AlphaChosenNum = 0
-            
+           
             countNoArticle = 0
             countLine = 0
         elif mode == 'multiple':
@@ -270,11 +208,7 @@ if __name__ == '__main__':
                     # re-initialize
                     countLine = 0
                     re_initialize_article_ucb1Structs()
-                    re_initialize_article_ucb1_1Structs()
-                    re_initialize_article_ucb1AlphaStructs()
                     UCB1ChosenNum = 0
-                    UCB1_1ChosenNum =0
-                    UCB1AlphaChosenNum = 0
                     printWrite()
                     batchStartTime = tim
                     epochArticles = {}
@@ -292,33 +226,11 @@ if __name__ == '__main__':
                     article_id = article[0]
                     currentArticles.append(article_id)
                     
-                    '''
-                    
-                    if article_id not in recentArticles.queue:
-                        #print "good"
-                        articles_random[article_id] = randomStruct()
-                        articles_exp3[article_id] = exp3Struct(gamma)
-                        articles_ucb1[article_id] = ucb1Struct()
-                    #print 'second'
-                    if recentArticles.full():
-                        recentArticles.get()
-                        
-                    recentArticles.put(article_id)
-                    
-                    '''
-                    
-                    #print "yyyyy"
-                        
-                    
                     if article_id not in articles_ucb1: #if its a new article; add it to dictionaries
                         articles_random[article_id] = randomStruct()
                         articles_ucb1[article_id] = ucb1Struct()
-                        articles_ucb1_1[article_id] = ucb1Struct()
-                        articles_ucb1Alpha[article_id] = ucb1AlphaStruct()
-                        
+                       
                     articles_ucb1[article_id].updatePta(UCB1ChosenNum)
-                    articles_ucb1_1[article_id].updatePta(UCB1ChosenNum)
-                    articles_ucb1Alpha[article_id].updatePta(UCB1ChosenNum, alpha)
                                                                                          
                 pool_articleNum = len(currentArticles)
                                      
@@ -327,16 +239,9 @@ if __name__ == '__main__':
                 
                 ucb1Article = ucb1SelectArm(currentArticles)
                 articlesPlayedByUCB1.append(ucb1Article)
-                
-                ucb1_1Article = ucb1SelectArm_1(currentArticles)
-                ucb1AlphaArticle = ucb1AlphaSelectArm(currentArticles)
-                #print 'chosenArticle:',  article_chosen, "UCB1ChosenArticle:", ucb1Article,
-                #print " "
-                #articles_ucb1[ucb1Article].numPlayed = articles_ucb1[ucb1Article].numPlayed + 1
-                             
+     
                 # if random strategy article Picked by evaluation srategy
-                if randomArticle == article_chosen:
-                    
+                if randomArticle == article_chosen:                    
                     articles_random[randomArticle].learn_stats.clicks = articles_random[randomArticle].learn_stats.clicks + click
                     articles_random[randomArticle].learn_stats.accesses = articles_random[randomArticle].learn_stats.accesses + 1   
                                 
@@ -349,44 +254,6 @@ if __name__ == '__main__':
                     articles_ucb1[article_chosen].learn_stats.accesses = articles_ucb1[article_chosen].learn_stats.accesses + 1
                     articles_ucb1[article_chosen].totalReward = articles_ucb1[article_chosen].totalReward + click
                     articles_ucb1[ucb1Article].numPlayed = articles_ucb1[ucb1Article].numPlayed + 1
-  
-                    '''                    
-                    if click:
-                        UCB1ClickNum = UCB1ClickNum + 1
-                        print "UCB1nArticle: ", ucb1Article, "Click", click
-                        print "UCB1ClickNum", UCB1ClickNum,
-                        print " "
-                     '''   
-                if ucb1_1Article == article_chosen:
-                    UCB1_1ChosenNum = UCB1_1ChosenNum + 1
-                    #print "UCB1nArticle: ", ucb1Article, "Click", clickChose
-                    #print " "
-                    articles_ucb1_1[article_chosen].learn_stats.clicks = articles_ucb1_1[article_chosen].learn_stats.clicks + click
-                    articles_ucb1_1[article_chosen].learn_stats.accesses = articles_ucb1_1[article_chosen].learn_stats.accesses + 1
-                    articles_ucb1_1[article_chosen].totalReward = articles_ucb1_1[article_chosen].totalReward + click
-                    articles_ucb1_1[ucb1Article].numPlayed = articles_ucb1_1[ucb1Article].numPlayed + 1
-                    '''                    
-                    if click:
-                        UCB1ClickNum = UCB1ClickNum + 1
-                        print "UCB1nArticle: ", ucb1Article, "Click", click
-                        print "UCB1ClickNum", UCB1ClickNum,
-                        print " "
-                    '''
-                if ucb1AlphaArticle == article_chosen:
-                    UCB1AlphaChosenNum = UCB1AlphaChosenNum + 1
-                    #print "UCB1nArticle: ", ucb1Article, "Click", clickChose
-                    #print " "
-                    articles_ucb1Alpha[article_chosen].learn_stats.clicks = articles_ucb1Alpha[article_chosen].learn_stats.clicks + click
-                    articles_ucb1Alpha[article_chosen].learn_stats.accesses = articles_ucb1Alpha[article_chosen].learn_stats.accesses + 1
-                    articles_ucb1Alpha[article_chosen].totalReward = articles_ucb1Alpha[article_chosen].totalReward + click
-                    articles_ucb1Alpha[ucb1Article].numPlayed = articles_ucb1Alpha[ucb1Article].numPlayed + 1
-                    '''                    
-                    if click:
-                        UCB1ClickNum = UCB1ClickNum + 1
-                        print "UCB1nArticle: ", ucb1Article, "Click", click
-                        print "UCB1ClickNum", UCB1ClickNum,
-                        print " "
-                    '''
 
                 if (totalArticles % 20000) == 0:
                     # write observations for this batch

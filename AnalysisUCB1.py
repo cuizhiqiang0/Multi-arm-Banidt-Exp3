@@ -23,6 +23,8 @@ if __name__ == '__main__':
     filenamesTimeDecay = [x for x in os.listdir(save_addressTimeDecay) if 'csv' in x]
     filenamesDebugUCB1 = [x for x in os.listdir(save_addressDebugUCB1) if 'csv' in x]
     filenamesModifiedAgeQueue = [x for x in os.listdir(save_addressModifiedAgeQueue) if 'csv' in x]
+    filenamesModifiedAllAge = [x for x in os.listdir(save_addressModifiedAllAge) if 'csv' in x]
+    filenamesMyQueue = [x for x in os.listdir(save_addressMyQueue) if 'csv' in x]
     
     for x in filenamesExp3:
         filename = os.path.join(save_addressExp3, x)
@@ -54,9 +56,6 @@ if __name__ == '__main__':
                 #plt.plot(tim.values(), greedyCTRRatio.values(),linestyle = "--", label = 'greedy_Hour')
                 #plt.legend('H')
                 
-
-        
-        
         if '0.3_MultipleDay'in x:
             with open(filename, 'r')as f:
                 randa = {}
@@ -80,15 +79,14 @@ if __name__ == '__main__':
                     randa[i],randc[i],exp3a[i],exp3c[i], ucb1a[i], ucb1c[i], greedya[i], greedyc[i],exp3CTRRatio[i], ucb1CTRRatio[i], greedyCTRRatio[i]= [float(x) for x in words[2].split(';')]
                     tim[i] = int(words[1])
                 plt.plot(tim.values(),exp3CTRRatio.values(),label = 'Exp31_0.3SingleDay')
-               
-                #plt.plot(tim.values(), ucb1CTRRatio.values(), label = 'UCB1_0.3SingleDay')
+                plt.plot(tim.values(), ucb1CTRRatio.values(), label = 'UCB1_0.3SingleDay')
                 #plt.plot(tim.values(), greedyCTRRatio.values(), label = 'greedy_0.3MultipleDay')
                 plt.xlabel('Time')
                 plt.ylabel('CTR-Ratio')
            
     for x in filenamesTimeDecay:
         filename = os.path.join(save_addressTimeDecay, x)
-        if 'Multiple' in x:
+        if '0.7Multiple' in x:
             with open(filename, 'r')as f:
                 randa = {}
                 randc = {}
@@ -111,7 +109,7 @@ if __name__ == '__main__':
                     randa[i],randc[i],exp3a[i],exp3c[i], ucb1a[i], ucb1c[i], greedya[i], greedyc[i], exp3CTRRatio[i], ucb1CTRRatio[i], greedyCTRRatio[i]= [float(x) for x in words[2].split(';')]
                     tim[i] = int(words[1]) 
                 
-                #plt.plot(tim.values(),exp3CTRRatio.values(), linestyle= "--", label = 'Exp31_0.3SingleDay')
+                plt.plot(tim.values(),exp3CTRRatio.values(), linestyle= "--", label = 'Exp31_0.3SingleDay')
                 #plt.annotate('Exp3', xy=(1.24e+09, 1.04479), xytext=(1.242e+09, 0.94), arrowprops=dict(facecolor='black', shrink=0.05),)
                 #plt.plot(tim.values(), ucb1CTRRatio.values(), linestyle = "--",  label = 'Hour')
                 #plt.plot(tim.values(), greedyCTRRatio.values(), linestyle = "--",  label = 'greedy_0.3MultipleDay')
@@ -178,7 +176,7 @@ if __name__ == '__main__':
                 #plt.plot(tim.values(), ucb1CTRRatio.values(), linestyle = ":",  label = 'UCB1_0.3SingleDay')
                 #plt.plot(tim.values(), greedyCTRRatio.values(), linestyle = "--")
                 #plt.plot(tim.values(), extremeGreedyCTRRatio.values(), label = 'MultipleDay')
-                plt.xlabel('Multiple_gamma0.3_Queue50')
+                plt.xlabel('Time')
                 plt.ylabel('CTR-Ratio')
     
     for x in filenamesDebugUCB1:
@@ -201,13 +199,13 @@ if __name__ == '__main__':
                         continue
                     randa[i],randc[i], ucb1a[i], ucb1c[i], ucb1CTRRatio[i], ucb1_1CTRRatio[i],ucb1AlphaCTRRatio[i] = [float(x) for x in words[2].split(';')]
                     tim[i] = int(words[1]) 
-                #plt.plot(tim.values(),ucb1CTRRatio.values(), label = 'Exp31_0.3SingleDay')
+                plt.plot(tim.values(),ucb1CTRRatio.values(), label = 'Exp31_0.3SingleDay')
                 #plt.plot(tim.values(), ucb1_1CTRRatio.values(), label = 'UCB1_0.3SingleDay')
                 #plt.plot(tim.values(), ucb1AlphaCTRRatio.values(), 'o')
                 plt.annotate('Exp3', xy=(1.24e+09, 1.04479), xytext=(1.242e+09, 0.94), arrowprops=dict(facecolor='black', shrink=0.05),)
                 plt.xlabel('Time')
                 plt.ylabel('CTR-Ratio')
-                plt.title('Exp3_Multiple with Freq10_AgeQueue15_Modified')
+                plt.title('Greedy with TimeDecay0.99')
                 plt.annotate('Exp3', xy=(1.24e+09, 1.04479), xytext=(1.242e+09, 0.94), arrowprops=dict(facecolor='black', shrink=0.05),)
                 
                 
@@ -237,6 +235,37 @@ if __name__ == '__main__':
                 plt.ylabel('CTR-Ratio')
                 plt.title('UCB1 and UCB1 timedecay')
                 plt.annotate('Exp3', xy=(1.24e+09, 1.04479), xytext=(1.242e+09, 0.94), arrowprops=dict(facecolor='black', shrink=0.05),)
+                
+    for x in filenamesModifiedAllAge:
+        filename = os.path.join(save_addressModifiedAllAge, x)
+        if 'Modi'in x:
+            with open(filename, 'r')as f:
+                randa = {}
+                randc = {}
+                exp3a = {}
+                exp3c = {}
+                ucb1a = {}
+                ucb1c = {}
+                greedya = {}
+                greedyc = {}
+                exp3CTRRatio = {}
+                ucb1CTRRatio = {}
+                greedyCTRRatio = {}
+                tim = {}
+                i = -1
+                for line in f:
+                    i = i + 1
+                    words = line.split(',')
+                    if words[0].strip()!='data':
+                        continue
+                    randa[i],randc[i],exp3a[i],exp3c[i], ucb1a[i], ucb1c[i], greedya[i], greedyc[i], exp3CTRRatio[i], ucb1CTRRatio[i], greedyCTRRatio[i] = [float(x) for x in words[2].split(';')]
+                    tim[i] = int(words[1]) 
+                #plt.plot(tim.values(),exp3CTRRatio.values(), linestyle = "--", label = 'Exp31_0.3SingleDay')
+                #plt.plot(tim.values(), ucb1CTRRatio.values(), linestyle = "--",  label = 'UCB1_0.3SingleDay')
+                #plt.plot(tim.values(), greedyCTRRatio.values(), linestyle = "--")
+                #plt.plot(tim.values(), extremeGreedyCTRRatio.values(), label = 'MultipleDay')
+                plt.xlabel('Time')
+                plt.ylabel('CTR-Ratio')
     
     for x in filenamesModifiedAgeQueue:
         filename = os.path.join(save_addressModifiedAgeQueue, x)
@@ -256,7 +285,44 @@ if __name__ == '__main__':
                         continue
                     randa[i],randc[i],exp3a[i],exp3c[i], exp3CTRRatio[i] = [float(x) for x in words[2].split(';')]
                     tim[i] = int(words[1])                
-                plt.plot(tim.values(),exp3CTRRatio.values(), linestyle = "--", label = 'Exp31_0.3SingleDay')
+                #plt.plot(tim.values(),exp3CTRRatio.values(), linestyle = "--", label = 'Exp31_0.3SingleDay')
+    
+    
+    for x in filenamesMyQueue:
+        filename = os.path.join(save_addressMyQueue, x)
+        if 'Multiple'in x:
+            with open(filename, 'r')as f:
+                randa = {}
+                randc = {}
+                exp3a = {}
+                exp3c = {}
+                ucb1a = {}
+                ucb1c = {}
+                greedya = {}
+                greedyc = {}
+                exp3CTRRatio = {}
+                ucb1CTRRatio = {}
+                greedyCTRRatio = {}
+                tim = {}
+                i = -1
+                for line in f:
+                    i = i + 1
+                    words = line.split(',')
+                    if words[0].strip()!='data':
+                        continue
+                    randa[i],randc[i],exp3a[i],exp3c[i], ucb1a[i], ucb1c[i], greedya[i], greedyc[i], exp3CTRRatio[i], ucb1CTRRatio[i], greedyCTRRatio[i] = [float(x) for x in words[2].split(';')]
+                    tim[i] = int(words[1]) 
+                #plt.plot(tim.values(),exp3CTRRatio.values(), linestyle = "--", label = 'Exp31_0.3SingleDay')
+                #plt.plot(tim.values(), ucb1CTRRatio.values(), linestyle = "--", label = 'UCB1_0.3SingleDay')
+                #plt.plot(tim.values(), greedyCTRRatio.values(),  linestyle = "--")
+                plt.annotate('Exp3', xy=(1.24e+09, 1.04479), xytext=(1.242e+09, 0.94), arrowprops=dict(facecolor='black', shrink=0.05),)
+                plt.xlabel('Time')
+                plt.ylabel('CTR-Ratio')
+                plt.title('Greedy with OrderQueue25')
+                plt.annotate('Exp3', xy=(1.24e+09, 1.04479), xytext=(1.242e+09, 0.94), arrowprops=dict(facecolor='black', shrink=0.05),)
+                
+    
+    
 
                 
     
