@@ -77,8 +77,7 @@ def parseLine(line):
 # tim: is time of the last observation in the batch
 def save_to_file(fileNameWrite, recordedStats, tim):
 	with open(fileNameWrite, 'a+') as f:
-		f.write('data') # the observation line starts with data;
-		f.write(',' + str(tim))
+		f.write(str(tim))
 		f.write(',' + ','.join([str(x) for x in recordedStats]))
 		f.write('\n')
 
@@ -131,7 +130,7 @@ if __name__ == '__main__':
     for x in range(0,len(AllArticleIDpool)):
         #articles_logged[AllArticleIDpool[x]] = loggedStruct()
         articles_exp3[AllArticleIDpool[x]] = exp3Struct(gamma)
-        print AllArticleIDpool[x]
+        #print AllArticleIDpool[x]
             
     #save all articleID into a file for later use
     with open(fileNameWriteCTR, 'a+') as f:
@@ -139,7 +138,9 @@ if __name__ == '__main__':
         f.write('\nTime'+',' + ','.join([str(AllArticleIDpool[x]) for x in range(0, len(AllArticleIDpool))]))
        
     for dataDay in dataDays:
-        fileName = yahoo_address + "/ydata-fp-td-clicks-v1_0.200905" + '01'  
+        print "Processing", dataDay
+        start_time = time.time()
+        fileName = yahoo_address + "/ydata-fp-td-clicks-v1_0.200905" + dataDay
         with open(fileName, 'r') as f:
             # reading file line ie observations running one at a time
             for line in f:  
@@ -148,6 +149,7 @@ if __name__ == '__main__':
                 
                 # read the observation
                 tim, article_chosen, click, pool_articles = parseLine(line)
+                article_chosen = str(article_chosen)
                 currentArticles = []
                 total_weight = 0.0
                 for article in pool_articles:
@@ -170,22 +172,37 @@ if __name__ == '__main__':
                 
                 # Exp3 Chose article
                 exp3Article = categorical_draw(currentArticles)
+                exp3Article = str(exp3Article)
                 
                 # If the article chosen by Exp matches with log article
                 if exp3Article == article_chosen:
-                    articles_exp3[article_chosen].learn_stats.clicks +=click
-                    articles_exp3[article_chosen].learn_stats.accesses += 1
+                    article_chosen = str(article_chosen)
+                    articles_exp3[article_chosen].stats.clicks +=click
+                    articles_exp3[article_chosen].stats.accesses += 1
                     if click:
                         articles_exp3[article_chosen].updateWeight(pool_articleNum, click)
            
                 if totalArticles%20000 ==0:
                     for x in range(0,len(AllArticleIDpool)):
-                        articles_exp3[AllArticleIDpool[x]].stats.updateCTR
-                        articles_exp3[AllArticleIDpool[x]].stats.accesses = 0
-                        articles_exp3[AllArticleIDpool[x]].stats.clicks = 0
-                    printWrite()  
+                        #AllArticleIDpool[x] = str(AllArticleIDpool[x])
+                        #print AllArticleIDpool[x]
+                        #print articles_exp3[AllArticleIDpool[x]].stats.CTR
+                        #articles_exp3[AllArticleIDpool[x]].stats.updateCTR      
+                        try:
+                            articles_exp3[AllArticleIDpool[x]].stats.CTR = articles_exp3[AllArticleIDpool[x]].stats.clicks / articles_exp3[AllArticleIDpool[x]].stats.accesses
+                        except ZeroDivisionError:
+                            articles_exp3[AllArticleIDpool[x]].stats.CTR = -0.01
+                            
+                        #print "CTR", articles_exp3[AllArticleIDpool[x]].stats.CTR
+                        articles_exp3[AllArticleIDpool[x]].stats.accesses = 0.0
+                        articles_exp3[AllArticleIDpool[x]].stats.clicks = 0.0                       
+                    printWrite()
+                    
+                    
+                      
             # print stuff to screen and save parameters to file when the Yahoo! dataset file endd
             printWrite()
+            print "Done in ", time.time()-start_time, dataDay
             
             
 

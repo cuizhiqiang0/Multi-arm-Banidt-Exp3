@@ -67,8 +67,7 @@ def parseLine(line):
 # tim: is time of the last observation in the batch
 def save_to_file(fileNameWrite, recordedStats, tim):
 	with open(fileNameWrite, 'a+') as f:
-		f.write('data') # the observation line starts with data;
-		f.write(',' + str(tim))
+		f.write(str(tim))
 		f.write(',' + ','.join([str(x) for x in recordedStats]))
 		f.write('\n')
 
@@ -111,7 +110,8 @@ if __name__ == '__main__':
     fileSig = 'GreedyCTR'
     gamma = 0.3 
     epsilon = 0.2
-    UCB1ChosenNum = 0    
+    UCB1ChosenNum = 0 
+    GreedyChosenNum = 0
     totalArticles = 0 		# total articles seen whether part of evaluation strategy or not
     countLine = 0 			# number of articles in this batch. should be same as batch size; not so usefull
     timeRun = datetime.datetime.now().strftime('_%m_%d_%H_%M') 	# the current data time
@@ -136,6 +136,9 @@ if __name__ == '__main__':
         f.write('\nTime'+',' + ','.join([str(AllArticleIDpool[x]) for x in range(0, len(AllArticleIDpool))]))
        
     for dataDay in dataDays:
+        print "Processing", dataDay
+        
+        start_time = time.time()
         fileName = yahoo_address + "/ydata-fp-td-clicks-v1_0.200905" + dataDay 
         with open(fileName, 'r') as f:
             # reading file line ie observations running one at a time
@@ -145,6 +148,7 @@ if __name__ == '__main__':
                 
                 # read the observation
                 tim, article_chosen, click, pool_articles = parseLine(line)
+                article_chosen = str(article_chosen)
                 currentArticles = []
                 total_weight = 0.0
                 for article in pool_articles:
@@ -162,23 +166,30 @@ if __name__ == '__main__':
                 
                 #UCB1 choose article
                 greedyArticle = greedySelectArm(epsilon, currentArticles)
+                greedyArticle = str(greedyArticle)
                 
                 # If the article chosen by Exp matches with log article
                 if greedyArticle == article_chosen:
+                    #print article_chosen
                     GreedyChosenNum = GreedyChosenNum + 1
-                    articles_greedy[article_chosen].learn_stats.clicks = articles_greedy[article_chosen].learn_stats.clicks + click
-                    articles_greedy[article_chosen].learn_stats.accesses = articles_greedy[article_chosen].learn_stats.accesses + 1
+                    articles_greedy[article_chosen].stats.clicks += click
+                    articles_greedy[article_chosen].stats.accesses += 1
                     articles_greedy[article_chosen].totalReward = articles_greedy[article_chosen].totalReward + click
                     articles_greedy[greedyArticle].numPlayed = articles_greedy[greedyArticle].numPlayed + 1
                       
                 if totalArticles%20000 ==0:
                     for x in range(0,len(AllArticleIDpool)):
                         articles_greedy[AllArticleIDpool[x]].stats.updateCTR
-                        articles_greedy[AllArticleIDpool[x]].stats.accesses = 0
-                        articles_greedy[AllArticleIDpool[x]].stats.clicks = 0
+                        try:
+                            articles_greedy[AllArticleIDpool[x]].stats.CTR = articles_greedy[AllArticleIDpool[x]].stats.clicks / articles_greedy[AllArticleIDpool[x]].stats.accesses
+                        except ZeroDivisionError:
+                            articles_greedy[AllArticleIDpool[x]].stats.CTR = -0.01
+                        articles_greedy[AllArticleIDpool[x]].stats.accesses = 0.0
+                        articles_greedy[AllArticleIDpool[x]].stats.clicks = 0.0
                     printWrite()  
             # print stuff to screen and save parameters to file when the Yahoo! dataset file endd
             printWrite()
+            print "Done in ", time.time()-start_time, dataDay
             
             
 

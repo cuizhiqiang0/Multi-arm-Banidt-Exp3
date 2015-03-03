@@ -48,8 +48,7 @@ def parseLine(line):
 # tim: is time of the last observation in the batch
 def save_to_file(fileNameWrite, recordedStats, tim):
 	with open(fileNameWrite, 'a+') as f:
-		f.write('data') # the observation line starts with data;
-		f.write(',' + str(tim))
+		f.write(str(tim))
 		f.write(',' + ','.join([str(x) for x in recordedStats]))
 		f.write('\n')
 
@@ -75,8 +74,8 @@ if __name__ == '__main__':
     totalArticles = 0 		# total articles seen whether part of evaluation strategy or not
     countLine = 0 			# number of articles in this batch. should be same as batch size; not so usefull
     timeRun = datetime.datetime.now().strftime('_%m_%d_%H_%M') 	# the current data time
-    #dataDays = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'] # the files from Yahoo that the algorithms will be run on; these files are indexed by days starting from May 1, 2009. this array starts from day 3 as also in the test data in the paper
-    dataDays = ['01', '02']
+    dataDays = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'] # the files from Yahoo that the algorithms will be run on; these files are indexed by days starting from May 1, 2009. this array starts from day 3 as also in the test data in the paper
+    #dataDays = ['01', '02']
     #fileNameWriteCTR = os.path.join(save_address,fileSig + dataDay + '_' + str(hours) + timeRun + '.csv') 
     fileNameWriteCTR = os.path.join(save_address,  fileSig + '_' + timeRun + '.csv')
     
@@ -107,9 +106,15 @@ if __name__ == '__main__':
                 # read the observation
                 tim, article_chosen, click, pool_articles = parseLine(line)
                 article_chosen = str(article_chosen)
-                #print "article_chosen", article_chosen                 
+                #print "article_chosen", article_chosen
                 articles_logged[article_chosen].stats.accesses += 1
                 articles_logged[article_chosen].stats.clicks += click
+                #print articles_logged[article_chosen].stats.accesses
+                #print articles_logged[article_chosen].stats.clicks
+                #print articles_logged[article_chosen].stats.clicks / articles_logged[article_chosen].stats.accesses
+                #print articles_logged[article_chosen].stats.CTR
+                #articles_logged[article_chosen].stats.updateCTR
+                #print articles_logged[article_chosen].stats.CTR
                 #articles_logged[article_chosen].stats.updateCTR
                     
                
@@ -119,11 +124,25 @@ if __name__ == '__main__':
             
                 if totalArticles%20000 ==0:
                     for x in range(0,len(AllArticleIDpool)):
-                        articles_logged[AllArticleIDpool[x]].stats.updateCTR
+                        #AllArticleIDpool[x] = str(AllArticleIDpool[x])
+                        #print AllArticleIDpool[x]
+                        #print articles_logged[AllArticleIDpool[x]].stats.accesses
+                        #print articles_logged[AllArticleIDpool[x]].stats.clicks
+                        #print articles_logged[AllArticleIDpool[x]].stats.CTR
+                        #articles_logged[AllArticleIDpool[x]].stats.updateCTR
+                        #print articles_logged[AllArticleIDpool[x]].stats.CTR
+                        
+                        try:
+                            articles_logged[AllArticleIDpool[x]].stats.CTR = articles_logged[AllArticleIDpool[x]].stats.clicks / articles_logged[AllArticleIDpool[x]].stats.accesses
+                        except ZeroDivisionError:
+                            articles_logged[AllArticleIDpool[x]].stats.CTR = -0.01
+                        #print "CTR", articles_logged[AllArticleIDpool[x]].stats.CTR
+                        articles_logged[AllArticleIDpool[x]].stats.accesses = 0.0
+                        articles_logged[AllArticleIDpool[x]].stats.clicks = 0.0
                         # reset CTR
-                        articles_logged[AllArticleIDpool[x]].stats.accesses = 0
-                        articles_logged[AllArticleIDpool[x]].stats.clicks = 0
-                    printWrite()  
+                    printWrite()
+                        
+                      
             # print stuff to screen and save parameters to file when the Yahoo! dataset file endd
             printWrite()
             

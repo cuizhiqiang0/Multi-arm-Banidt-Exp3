@@ -60,8 +60,7 @@ def parseLine(line):
 # tim: is time of the last observation in the batch
 def save_to_file(fileNameWrite, recordedStats, tim):
 	with open(fileNameWrite, 'a+') as f:
-		f.write('data') # the observation line starts with data;
-		f.write(',' + str(tim))
+		f.write(str(tim))
 		f.write(',' + ','.join([str(x) for x in recordedStats]))
 		f.write('\n')
 
@@ -124,8 +123,11 @@ if __name__ == '__main__':
         f.write('\nTime'+',' + ','.join([str(AllArticleIDpool[x]) for x in range(0, len(AllArticleIDpool))]))
        
     for dataDay in dataDays:
-        fileName = yahoo_address + "/ydata-fp-td-clicks-v1_0.200905" + '01'  
+        print "Processing", dataDay       
+        start_time = time.time()
+        fileName = yahoo_address + "/ydata-fp-td-clicks-v1_0.200905" + dataDay 
         with open(fileName, 'r') as f:
+            
             # reading file line ie observations running one at a time
             for line in f:  
                 countLine = countLine + 1
@@ -133,6 +135,7 @@ if __name__ == '__main__':
                 
                 # read the observation
                 tim, article_chosen, click, pool_articles = parseLine(line)
+                article_chosen = str(article_chosen)
                 currentArticles = []
                 total_weight = 0.0
                 for article in pool_articles:
@@ -150,20 +153,26 @@ if __name__ == '__main__':
                 
                 #UCB1 choose article
                 ucb1Article = ucb1SelectArm(currentArticles)
-                
+                ucb1Article = str(ucb1Article)
                 # If the article chosen by Exp matches with log article
                 if ucb1Article == article_chosen:
+                    #print article_chosen
                     UCB1ChosenNum = UCB1ChosenNum + 1
-                    articles_ucb1[article_chosen].learn_stats.clicks = articles_ucb1[article_chosen].learn_stats.clicks + click
-                    articles_ucb1[article_chosen].learn_stats.accesses = articles_ucb1[article_chosen].learn_stats.accesses + 1
+                    articles_ucb1[article_chosen].stats.clicks += click
+                    articles_ucb1[article_chosen].stats.accesses += 1
                     articles_ucb1[article_chosen].totalReward = articles_ucb1[article_chosen].totalReward + click
                     articles_ucb1[ucb1Article].numPlayed = articles_ucb1[ucb1Article].numPlayed + 1
             
                 if totalArticles%20000 ==0:
                     for x in range(0,len(AllArticleIDpool)):
                         articles_ucb1[AllArticleIDpool[x]].stats.updateCTR
-                        articles_ucb1[AllArticleIDpool[x]].stats.accesses = 0
-                        articles_ucb1[AllArticleIDpool[x]].stats.clicks = 0
+                        try:
+                            articles_ucb1[AllArticleIDpool[x]].stats.CTR = articles_ucb1[AllArticleIDpool[x]].stats.clicks / articles_ucb1[AllArticleIDpool[x]].stats.accesses
+                        except ZeroDivisionError:
+                            articles_ucb1[AllArticleIDpool[x]].stats.CTR = -0.01 # negative CTR means this article didn't appear in the time interval
+                            
+                        articles_ucb1[AllArticleIDpool[x]].stats.accesses = 0.0
+                        articles_ucb1[AllArticleIDpool[x]].stats.clicks = 0.0
                     printWrite()  
             # print stuff to screen and save parameters to file when the Yahoo! dataset file endd
             printWrite()
