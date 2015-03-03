@@ -113,12 +113,13 @@ if __name__ == '__main__':
 
     #articles_logged = {}
     articles_exp3 = {}
+    fileSig = 'Exp3CTR'
     gamma = 0.3     
     totalArticles = 0 		# total articles seen whether part of evaluation strategy or not
     countLine = 0 			# number of articles in this batch. should be same as batch size; not so usefull
     timeRun = datetime.datetime.now().strftime('_%m_%d_%H_%M') 	# the current data time
     dataDays = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'] # the files from Yahoo that the algorithms will be run on; these files are indexed by days starting from May 1, 2009. this array starts from day 3 as also in the test data in the paper
-    fileNameWriteCTR = os.path.join(save_address,'CTR.csv')   
+    fileNameWriteCTR = os.path.join(save_address,  fileSig + '_' + timeRun + '.csv')  
     
     articleIDfilename = '/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/temp.txt'
     # Read all articleIDs from file

@@ -34,8 +34,7 @@ class loggedStruct():
 
 class greedyStruct:
     def __init__(self):
-        self.learn_stats = articleAccess()
-        self.deploy_stats = articleAccess()
+        self.stats = articleAccess()
         self.totalReward = 0.0
         self.numPlayed = 0.0
         self.averageReward = 0.0
@@ -85,7 +84,7 @@ if __name__ == '__main__':
     
     def printWrite():
         #recordedStats = [articles_logged[AllArticleIDpool[x]].stats.CTR for x in range(0, len(AllArticleIDpool))]
-        recordedStats = [articles_exp3[AllArticleIDpool[x]].stats.CTR for x in range(0, len(AllArticleIDpool))]
+        recordedStats = [articles_greedy[AllArticleIDpool[x]].stats.CTR for x in range(0, len(AllArticleIDpool))]
         # write to file
         save_to_file(fileNameWriteCTR, recordedStats, tim)
     
@@ -93,12 +92,13 @@ if __name__ == '__main__':
         for x in articles_greedy:
             articles_greedy[x].reInitilize()
             
- 
-    def greedySelectArm(cd, K, n, articles):
+    def greedySelectArm(epsilon, articles):
+        '''
         if n == 0:
             epsilon = 1
         else:
             epsilon = min([1, (cd * K) / n ])
+        '''
         if random.random() < epsilon:
             return choice(articles)
         else:
@@ -106,14 +106,17 @@ if __name__ == '__main__':
             
     #articles_logged = {}
     #articles_exp3 = {}
-    articles_ucb1 = {}
+    #articles_ucb1 = {}
+    articles_greedy = {}
+    fileSig = 'GreedyCTR'
     gamma = 0.3 
+    epsilon = 0.2
     UCB1ChosenNum = 0    
     totalArticles = 0 		# total articles seen whether part of evaluation strategy or not
     countLine = 0 			# number of articles in this batch. should be same as batch size; not so usefull
     timeRun = datetime.datetime.now().strftime('_%m_%d_%H_%M') 	# the current data time
     dataDays = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'] # the files from Yahoo that the algorithms will be run on; these files are indexed by days starting from May 1, 2009. this array starts from day 3 as also in the test data in the paper
-    fileNameWriteCTR = os.path.join(save_address,'CTR.csv')   
+    fileNameWriteCTR = os.path.join(save_address,  fileSig + '_' + timeRun + '.csv')   
     
     articleIDfilename = '/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/savedArticleID.txt'
     # Read all articleIDs from file
@@ -125,7 +128,7 @@ if __name__ == '__main__':
     for x in range(0,len(AllArticleIDpool)):
         #articles_logged[AllArticleIDpool[x]] = loggedStruct()
         #articles_exp3[AllArticleIDpool[x]] = exp3Struct(gamma)
-        articles_greedy[AllArticleIDpool[x]] = ucb1Struct()
+        articles_greedy[AllArticleIDpool[x]] = greedyStruct()
             
     #save all articleID into a file for later use
     with open(fileNameWriteCTR, 'a+') as f:
@@ -133,7 +136,7 @@ if __name__ == '__main__':
         f.write('\nTime'+',' + ','.join([str(AllArticleIDpool[x]) for x in range(0, len(AllArticleIDpool))]))
        
     for dataDay in dataDays:
-        fileName = yahoo_address + "/ydata-fp-td-clicks-v1_0.200905" + '01'  
+        fileName = yahoo_address + "/ydata-fp-td-clicks-v1_0.200905" + dataDay 
         with open(fileName, 'r') as f:
             # reading file line ie observations running one at a time
             for line in f:  
@@ -145,7 +148,8 @@ if __name__ == '__main__':
                 currentArticles = []
                 total_weight = 0.0
                 for article in pool_articles:
-                    article_id = article[0]
+                    article_id = int(article[0])
+                    article_id = str(article_id)
                     currentArticles.append(article_id)
                     articles_greedy[article_id].updateReward()
                     
@@ -157,7 +161,7 @@ if __name__ == '__main__':
                 
                 
                 #UCB1 choose article
-                greedyArticle = greedySelectArm(cd, len(currentArticles), GreedyChosenNum, currentArticles)
+                greedyArticle = greedySelectArm(epsilon, currentArticles)
                 
                 # If the article chosen by Exp matches with log article
                 if greedyArticle == article_chosen:

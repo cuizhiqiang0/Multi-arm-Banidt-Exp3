@@ -70,12 +70,15 @@ if __name__ == '__main__':
 
 
     articles_logged = {}
+    fileSig = 'LogCTR'
           
     totalArticles = 0 		# total articles seen whether part of evaluation strategy or not
     countLine = 0 			# number of articles in this batch. should be same as batch size; not so usefull
     timeRun = datetime.datetime.now().strftime('_%m_%d_%H_%M') 	# the current data time
-    dataDays = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'] # the files from Yahoo that the algorithms will be run on; these files are indexed by days starting from May 1, 2009. this array starts from day 3 as also in the test data in the paper
-    fileNameWriteCTR = os.path.join(save_address,'CTR.csv')   
+    #dataDays = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'] # the files from Yahoo that the algorithms will be run on; these files are indexed by days starting from May 1, 2009. this array starts from day 3 as also in the test data in the paper
+    dataDays = ['01', '02']
+    #fileNameWriteCTR = os.path.join(save_address,fileSig + dataDay + '_' + str(hours) + timeRun + '.csv') 
+    fileNameWriteCTR = os.path.join(save_address,  fileSig + '_' + timeRun + '.csv')
     
     articleIDfilename = '/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/temp.txt'
     # Read all articleIDs from file
@@ -93,7 +96,11 @@ if __name__ == '__main__':
         f.write('\nTime'+',' + ','.join([str(AllArticleIDpool[x]) for x in range(0, len(AllArticleIDpool))]))
        
     for dataDay in dataDays:
-        fileName = yahoo_address + "/ydata-fp-td-clicks-v1_0.200905" + '01'  
+        print "Processing", dataDay
+        
+        start_time = time.time()
+        #print "Done in ", time.time()-start_time, dataDay
+        fileName = yahoo_address + "/ydata-fp-td-clicks-v1_0.200905" + dataDay  
         with open(fileName, 'r') as f:
             # reading file line ie observations running one at a time
             for line in f:  
@@ -119,6 +126,8 @@ if __name__ == '__main__':
                     printWrite()  
             # print stuff to screen and save parameters to file when the Yahoo! dataset file endd
             printWrite()
+            
+            print "Done in ", time.time()-start_time, dataDay
             
             
 

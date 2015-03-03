@@ -30,9 +30,8 @@ class ucb1Struct:
         self.totalReward = 0.0
         self.numPlayed = 0
         self.pta = 0.0
-        self.learn_stats = articleAccess()
-        self.deploy_stats = articleAccess()
-        
+        self.stats = articleAccess()
+
     def reInitilize(self): 
         self.totalReward = 0.0
         self.numPlayed = 0.0  
@@ -78,7 +77,7 @@ if __name__ == '__main__':
     
     def printWrite():
         #recordedStats = [articles_logged[AllArticleIDpool[x]].stats.CTR for x in range(0, len(AllArticleIDpool))]
-        recordedStats = [articles_exp3[AllArticleIDpool[x]].stats.CTR for x in range(0, len(AllArticleIDpool))]
+        recordedStats = [articles_ucb1[AllArticleIDpool[x]].stats.CTR for x in range(0, len(AllArticleIDpool))]
         # write to file
         save_to_file(fileNameWriteCTR, recordedStats, tim)
     
@@ -99,12 +98,13 @@ if __name__ == '__main__':
     #articles_exp3 = {}
     articles_ucb1 = {}
     gamma = 0.3 
+    fileSig = 'UCB1CTR'
     UCB1ChosenNum = 0    
     totalArticles = 0 		# total articles seen whether part of evaluation strategy or not
     countLine = 0 			# number of articles in this batch. should be same as batch size; not so usefull
     timeRun = datetime.datetime.now().strftime('_%m_%d_%H_%M') 	# the current data time
     dataDays = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'] # the files from Yahoo that the algorithms will be run on; these files are indexed by days starting from May 1, 2009. this array starts from day 3 as also in the test data in the paper
-    fileNameWriteCTR = os.path.join(save_address,'CTR.csv')   
+    fileNameWriteCTR = os.path.join(save_address,  fileSig + '_' + timeRun + '.csv')   
     
     articleIDfilename = '/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/savedArticleID.txt'
     # Read all articleIDs from file
@@ -136,7 +136,8 @@ if __name__ == '__main__':
                 currentArticles = []
                 total_weight = 0.0
                 for article in pool_articles:
-                    article_id = article[0]
+                    article_id = int(article[0])
+                    article_id = str(article_id)
                     currentArticles.append(article_id)
                     articles_ucb1[article_id].updatePta(UCB1ChosenNum)
                     
