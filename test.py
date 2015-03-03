@@ -39,8 +39,8 @@ if __name__ == "__main__":
     totalArticles = {}
     AllArticleArray ={}
     timeRun = datetime.datetime.now().strftime('_%m_%d_%H_%M') 
-    #dataDays = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10']
-    dataDays = ['09', '10']
+    dataDays = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10']
+    #dataDays = ['09', '10']
     #dataDays = ['01', '02']
     
     start_time = time.time()
@@ -57,7 +57,9 @@ if __name__ == "__main__":
                 tim, article_chosen, click, pool_articles = parseLine(line)
                 
                 for article in pool_articles:
-                    article_id = article[0]
+                    article_id = int(article[0])
+                    #article_id = article[0]
+                    #print 'article_id', article_id
                     if article_id not in AllArticleArray:
                         AllArticleArray[article_id] = 1
         

@@ -77,7 +77,7 @@ if __name__ == '__main__':
     dataDays = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'] # the files from Yahoo that the algorithms will be run on; these files are indexed by days starting from May 1, 2009. this array starts from day 3 as also in the test data in the paper
     fileNameWriteCTR = os.path.join(save_address,'CTR.csv')   
     
-    articleIDfilename = '/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/savedArticleID.txt'
+    articleIDfilename = '/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/temp.txt'
     # Read all articleIDs from file
     with open(articleIDfilename, 'r') as f:
         for line in f:
@@ -98,7 +98,9 @@ if __name__ == '__main__':
             # reading file line ie observations running one at a time
             for line in f:  
                 # read the observation
-                tim, article_chosen, click, pool_articles = parseLine(line)                 
+                tim, article_chosen, click, pool_articles = parseLine(line)
+                article_chosen = str(article_chosen)
+                #print "article_chosen", article_chosen                 
                 articles_logged[article_chosen].stats.accesses += 1
                 articles_logged[article_chosen].stats.clicks += click
                 #articles_logged[article_chosen].stats.updateCTR

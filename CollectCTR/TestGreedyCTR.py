@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Mar  2 23:58:04 2015
+
+@author: Summer
+"""
+
 from conf import *
 import time
 import re
@@ -25,24 +32,24 @@ class loggedStruct():
     def __init__(self):
         self.stats = articleAccess()
 
-class ucb1Struct:
+class greedyStruct:
     def __init__(self):
-        self.totalReward = 0.0
-        self.numPlayed = 0
-        self.pta = 0.0
         self.learn_stats = articleAccess()
         self.deploy_stats = articleAccess()
-        
-    def reInitilize(self): 
         self.totalReward = 0.0
-        self.numPlayed = 0.0  
-        self.pta=0.0
-        
-    def updatePta(self, allNumPlayed):
+        self.numPlayed = 0.0
+        self.averageReward = 0.0
+
+    def reInitilize(self):
+        self.totalReward = 0.0
+        self.numPlayed = 0.0
+        self.averageReward = 0.0
+
+    def updateReward(self):
         try:
-            self.pta = self.totalReward / self.numPlayed + np.sqrt(2*np.log(allNumPlayed) / self.numPlayed)
+            self.averageReward = self.totalReward / self.numPlayed
         except ZeroDivisionError:
-            self.pta = 0.0
+            self.averageReward = 0.0
             
         
 # This code simply reads one line from the source files of Yahoo!. Please see the yahoo info file to understand the format. I tested this part; so should be good but second pair of eyes could help
@@ -82,19 +89,21 @@ if __name__ == '__main__':
         # write to file
         save_to_file(fileNameWriteCTR, recordedStats, tim)
     
-    def re_initialize_article_ucb1Structs():
-        for x in articles_ucb1:
-            articles_ucb1[x].reInitilize()
-    
-    def ucb1SelectArm(articles):
-        flag = 0
-        for x in articles:
-            if articles_ucb1[x].numPlayed ==0:
-                flag = 1
-                return x
-        if flag == 0:
-            return max(np.random.permutation([(x, articles_ucb1[x].pta) for x in articles]), key = itemgetter(1))[0]
-    
+    def re_initialize_article_greedyStructs():
+        for x in articles_greedy:
+            articles_greedy[x].reInitilize()
+            
+ 
+    def greedySelectArm(cd, K, n, articles):
+        if n == 0:
+            epsilon = 1
+        else:
+            epsilon = min([1, (cd * K) / n ])
+        if random.random() < epsilon:
+            return choice(articles)
+        else:
+            return max(np.random.permutation([(x, articles_greedy[x].averageReward) for x in articles]), key = itemgetter(1))[0]
+            
     #articles_logged = {}
     #articles_exp3 = {}
     articles_ucb1 = {}
@@ -116,7 +125,7 @@ if __name__ == '__main__':
     for x in range(0,len(AllArticleIDpool)):
         #articles_logged[AllArticleIDpool[x]] = loggedStruct()
         #articles_exp3[AllArticleIDpool[x]] = exp3Struct(gamma)
-        articles_ucb1[AllArticleIDpool[x]] = ucb1Struct()
+        articles_greedy[AllArticleIDpool[x]] = ucb1Struct()
             
     #save all articleID into a file for later use
     with open(fileNameWriteCTR, 'a+') as f:
@@ -138,7 +147,7 @@ if __name__ == '__main__':
                 for article in pool_articles:
                     article_id = article[0]
                     currentArticles.append(article_id)
-                    articles_ucb1[article_id].updatePta(UCB1ChosenNum)
+                    articles_greedy[article_id].updateReward()
                     
                 pool_articleNum = len(currentArticles)
 
@@ -148,21 +157,21 @@ if __name__ == '__main__':
                 
                 
                 #UCB1 choose article
-                ucb1Article = ucb1SelectArm(currentArticles)
+                greedyArticle = greedySelectArm(cd, len(currentArticles), GreedyChosenNum, currentArticles)
                 
                 # If the article chosen by Exp matches with log article
-                if ucb1Article == article_chosen:
-                    UCB1ChosenNum = UCB1ChosenNum + 1
-                    articles_ucb1[article_chosen].learn_stats.clicks = articles_ucb1[article_chosen].learn_stats.clicks + click
-                    articles_ucb1[article_chosen].learn_stats.accesses = articles_ucb1[article_chosen].learn_stats.accesses + 1
-                    articles_ucb1[article_chosen].totalReward = articles_ucb1[article_chosen].totalReward + click
-                    articles_ucb1[ucb1Article].numPlayed = articles_ucb1[ucb1Article].numPlayed + 1
-            
+                if greedyArticle == article_chosen:
+                    GreedyChosenNum = GreedyChosenNum + 1
+                    articles_greedy[article_chosen].learn_stats.clicks = articles_greedy[article_chosen].learn_stats.clicks + click
+                    articles_greedy[article_chosen].learn_stats.accesses = articles_greedy[article_chosen].learn_stats.accesses + 1
+                    articles_greedy[article_chosen].totalReward = articles_greedy[article_chosen].totalReward + click
+                    articles_greedy[greedyArticle].numPlayed = articles_greedy[greedyArticle].numPlayed + 1
+                      
                 if totalArticles%20000 ==0:
                     for x in range(0,len(AllArticleIDpool)):
-                        articles_ucb1[AllArticleIDpool[x]].stats.updateCTR
-                        articles_ucb1[AllArticleIDpool[x]].stats.accesses = 0
-                        articles_ucb1[AllArticleIDpool[x]].stats.clicks = 0
+                        articles_greedy[AllArticleIDpool[x]].stats.updateCTR
+                        articles_greedy[AllArticleIDpool[x]].stats.accesses = 0
+                        articles_greedy[AllArticleIDpool[x]].stats.clicks = 0
                     printWrite()  
             # print stuff to screen and save parameters to file when the Yahoo! dataset file endd
             printWrite()

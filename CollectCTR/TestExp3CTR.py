@@ -44,7 +44,7 @@ class exp3Struct:
         self.gamma = gamma
         self.weights = 1.0
         self.pta = 0.0
-        self.learn_stats = articleAccess()
+        self.stats = articleAccess()
         
     def reInitilize(self):
         self.weights = 1.0
@@ -120,7 +120,7 @@ if __name__ == '__main__':
     dataDays = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'] # the files from Yahoo that the algorithms will be run on; these files are indexed by days starting from May 1, 2009. this array starts from day 3 as also in the test data in the paper
     fileNameWriteCTR = os.path.join(save_address,'CTR.csv')   
     
-    articleIDfilename = '/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/savedArticleID.txt'
+    articleIDfilename = '/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/temp.txt'
     # Read all articleIDs from file
     with open(articleIDfilename, 'r') as f:
         for line in f:
@@ -130,6 +130,7 @@ if __name__ == '__main__':
     for x in range(0,len(AllArticleIDpool)):
         #articles_logged[AllArticleIDpool[x]] = loggedStruct()
         articles_exp3[AllArticleIDpool[x]] = exp3Struct(gamma)
+        print AllArticleIDpool[x]
             
     #save all articleID into a file for later use
     with open(fileNameWriteCTR, 'a+') as f:
@@ -149,14 +150,18 @@ if __name__ == '__main__':
                 currentArticles = []
                 total_weight = 0.0
                 for article in pool_articles:
-                    article_id = article[0]
+                    article_id = int(article[0])
+                    article_id = str(article_id)
+                    #print article_id
                     currentArticles.append(article_id)
+                    #print articles_exp3[article_id]
                     total_weight = total_weight + articles_exp3[article_id].weights
                     
                 pool_articleNum = len(currentArticles)
            
                 for article in pool_articles:
-                    article_id = article[0]
+                    article_id = int(article[0])
+                    article_id = str(article_id)
                     articles_exp3[article_id].updatePta(pool_articleNum, total_weight)
                 #LogCTR    
                 #articles_logged[article_chosen].stats.accesses += 1
@@ -166,20 +171,18 @@ if __name__ == '__main__':
                 exp3Article = categorical_draw(currentArticles)
                 
                 # If the article chosen by Exp matches with log article
-                 if ucb1Article == article_chosen:
-                    UCB1ChosenNum = UCB1ChosenNum + 1
-                    articles_ucb1[article_chosen].learn_stats.clicks += click
-                    articles_ucb1[article_chosen].learn_stats.accesses += 1
-                    articles_ucb1[article_chosen].totalReward = articles_ucb1[article_chosen].totalReward + click
-                    articles_ucb1[ucb1Article].numPlayed = articles_ucb1[ucb1Article].numPlayed + 1
+                if exp3Article == article_chosen:
+                    articles_exp3[article_chosen].learn_stats.clicks +=click
+                    articles_exp3[article_chosen].learn_stats.accesses += 1
+                    if click:
+                        articles_exp3[article_chosen].updateWeight(pool_articleNum, click)
            
                 if totalArticles%20000 ==0:
                     for x in range(0,len(AllArticleIDpool)):
                         articles_exp3[AllArticleIDpool[x]].stats.updateCTR
                         articles_exp3[AllArticleIDpool[x]].stats.accesses = 0
                         articles_exp3[AllArticleIDpool[x]].stats.clicks = 0
-        
-                  printWrite()  
+                    printWrite()  
             # print stuff to screen and save parameters to file when the Yahoo! dataset file endd
             printWrite()
             
