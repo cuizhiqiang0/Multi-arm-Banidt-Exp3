@@ -77,9 +77,10 @@ def parseLine(line):
 # tim: is time of the last observation in the batch
 def save_to_file(fileNameWrite, recordedStats, tim):
 	with open(fileNameWrite, 'a+') as f:
-		f.write(str(tim))
-		f.write(',' + ','.join([str(x) for x in recordedStats]))
-		f.write('\n')
+         f.write('data')
+         f.write(',' + str(tim))
+         f.write(',' + ','.join([str(x) for x in recordedStats]))
+         f.write('\n')
 
 # this code counts the line in a file; we need to divide data if we are re-setting theta multiple times a day. Could have been done based on time; i guess little harder to implement
 def file_len(fname):
@@ -135,7 +136,8 @@ if __name__ == '__main__':
     #save all articleID into a file for later use
     with open(fileNameWriteCTR, 'a+') as f:
         f.write('\nExp3CTR, New Run at  ' + datetime.datetime.now().strftime('%m/%d/%Y %H:%M:%S'))
-        f.write('\nTime'+',' + ','.join([str(AllArticleIDpool[x]) for x in range(0, len(AllArticleIDpool))]))
+        f.write('\n, Time'+',' + ','.join([str(AllArticleIDpool[x]) for x in range(0, len(AllArticleIDpool))]))
+        f.write('\n')
        
     for dataDay in dataDays:
         print "Processing", dataDay

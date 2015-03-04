@@ -20,3 +20,4 @@ save_addressDebugUCB1 = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/02
 save_addressModifiedAgeQueue = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/0216/ModifiedAgeQueue"
 save_addressModifiedAllAge = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/0216/ModifiedAllAge"
 save_addressMyQueue = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/02_08-09/Queue25"
+save_addressCTR = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/CTR"

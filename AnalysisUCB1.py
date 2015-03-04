@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Mar  3 13:05:41 2015
+
+@author: Summer
+"""
+
 
 """
 Created on Sun Jan 25 22:09:48 2015
