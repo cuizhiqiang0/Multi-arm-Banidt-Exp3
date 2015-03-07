@@ -80,3 +80,7 @@ Exp3,ConstantTheta,,10,1000,10000,0.3,0.99,nan
 AgeQueueExp3,ConstantTheta,,10,1000,10000,0.3,0.99,nan
 Random,ConstantTheta,,10,1000,10000,0.3,0.99,nan
 decExp3_0.99,ConstantTheta,,10,1000,10000,0.3,0.99,nan
+Exp3,ConstantTheta,,10,1000,10000,0.3,0.99,nan
+AgeQueueExp3,ConstantTheta,,10,1000,10000,0.3,0.99,nan
+Random,ConstantTheta,,10,1000,10000,0.3,0.99,nan
+decExp3_0.99,ConstantTheta,,10,1000,10000,0.3,0.99,nan

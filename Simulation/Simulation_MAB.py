@@ -171,7 +171,7 @@ class simulateOnlineData():
                         for alg_name, alg in algorithms.items():
                                 pickedArticle = alg.decide(self.articlePool)
                                 click = self.getClick(pickedArticle, userArrived)
-                                alg.updateWeight(pickedArticle, len(self.articlePool), click)
+                                alg.updateParameters(pickedArticle, len(self.articlePool), click)
                                 
                                 self.iterationRecord(alg_name, userArrived.id, click, pickedArticle.id)
                         '''
@@ -189,7 +189,7 @@ class simulateOnlineData():
                         for alg_name, alg in algorithm.items():
                                 pickedArticle = alg.decide(self.articlePool, countLine)
                                 click = self.getClick(pickedArticle, userArrived)
-                                alg.updateParameter(pickedArticle, click)
+                                alg.updateParameters(pickedArticle, click)
                                 
                                 self.iterationRecord(alg_name, userArrived.id, click, pickedArticle.id)
                         '''

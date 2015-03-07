@@ -111,7 +111,7 @@ class RandomAlgorithm:
             if x.id not in pool_articles:
                 self.articles[x.id] = RandomStruct(x.id)
         return choice(pool_articles)
-    def updateWeight(self, pickedArticle, ArticleNum, click): # meaningless, just add this part to make it consistent 
+    def updateParameters(self, pickedArticle, ArticleNum, click): # meaningless, just add this part to make it consistent 
         a = 1        
     def getarticleCTR(self, article_id):
         return self.articles[article_id].stats.CTR
@@ -135,7 +135,7 @@ class Exp3Algorithm:
             cum_pta += self.articles[x.id].pta
             if cum_pta >r:
                 return x
-    def updateParameter(self, pickedArticle, ArticleNum, click): # parameters : (pickedArticle, Nun of articles in article pool, click)
+    def updateParameters(self, pickedArticle, ArticleNum, click): # parameters : (pickedArticle, Nun of articles in article pool, click)
         self.articles[pickedArticle.id].updateWeight(ArticleNum, click)
         if self.decay:
             self.applyDecayToAll(1)
@@ -180,7 +180,7 @@ class Exp3QueueAlgorithm:
             cum_pta += self.articles[x.id].pta
             if cum_pta >r:
                 return x
-    def updateParameter(self, pickedArticle, ArticleNum, click):   # parameters : (pickedArticle, Nun of articles in article pool, click)
+    def updateParameters(self, pickedArticle, ArticleNum, click):   # parameters : (pickedArticle, Nun of articles in article pool, click)
         self.articles[pickedArticle.id].updateWeight(ArticleNum, click)
         if self.decay:
             self.applyDecayToAll(1)
@@ -208,7 +208,7 @@ class UCB1Algorithm:
                 return articlePicked
             return max(np.random.permutation([(x, self.articles[x.id].pta) for x in pool_articles]), key = itemgetter(1))[0]
             
-    def updateParameter(self, pickedArticle, click):  #parameters: (pickedArticle, click)
+    def updateParameters(self, pickedArticle, click):  #parameters: (pickedArticle, click)
         self.articles[pickedArticle.id].updateParameter( click)
         if self.decay:
             self.applyDecayToAll(1)
