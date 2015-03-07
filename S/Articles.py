@@ -32,7 +32,13 @@ class Article():
 			self.time_[alg_name].append(time_)
 		else:
 			self.time_[alg_name] = [time_]
-   
+        '''
+		if alg_name in self.absDiff:
+			self.absDiff[alg_name].append(absDiff)
+		else:
+			self.absDiff[alg_name] = [absDiff]
+        '''
+
 	def plotAbsDiff(self):
 		figure()
 		for k in self.time_.keys():
