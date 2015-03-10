@@ -66,7 +66,7 @@ if __name__ == '__main__':
                         logCTR.append(words[1])
                 plt.plot(tim, logCTR, label = "Exp3")
                 plt.legend()
-        '''
+        
         if 'LogCTR'in x:
             with open(filename, 'r')as f:
                 print "plot"
@@ -109,6 +109,48 @@ if __name__ == '__main__':
                             logCTR.append(words[1])
                 plt.plot(tim, logCTR, label = "Exp3")
                 plt.legend()
+        '''
+                
+        if 'LogCTR'in x:
+            with open(filename, 'r')as f:
+                print "plot"
+                logCTR =[]
+                tim = []
+                i = -1
+                for line in f:
+                    i = i+1
+                    words = line.split(',')
+                    if words[0].strip() != 'data':
+                        continue
+                    tim.append(words[1])
+                    #print words[0]
+                    #print words[1]
+                    logCTR.append(words[2])
+                plt.plot(tim, logCTR, label = "log")
+                plt.xlabel('CTR')
+                plt.ylabel('Time')
+                plt.legend()
+                title('ArticleID: 109568')
+        if 'Exp3CTR'in x:
+            with open(filename, 'r')as f:
+                print "plot"
+                logCTR =[]
+                tim = []
+                i = -1
+                for line in f:
+                    i = i+1
+                    words = line.split(',')
+                    if words[0].strip() != 'data':
+                        continue
+                    tim.append(words[1])
+                    #print words[0]
+                    #print words[1]
+                    logCTR.append(words[2])
+                plt.plot(tim, logCTR, label = "log")
+                plt.xlabel('CTR')
+                plt.ylabel('Time')
+                plt.legend()
+                title('ArticleID: 109568')
 
         
 
