@@ -115,6 +115,7 @@ if __name__ == '__main__':
             with open(filename, 'r')as f:
                 print "plot"
                 logCTR =[]
+                logCTR2 = []
                 tim = []
                 i = -1
                 for line in f:
@@ -126,7 +127,9 @@ if __name__ == '__main__':
                     #print words[0]
                     #print words[1]
                     logCTR.append(words[2])
-                plt.plot(tim, logCTR, label = "log")
+                    logCTR2.append(words[3])
+                #plt.plot(tim, logCTR, label = "log")
+                #plt.plot(tim, logCTR2, label = "log")
                 plt.xlabel('CTR')
                 plt.ylabel('Time')
                 plt.legend()
@@ -135,6 +138,7 @@ if __name__ == '__main__':
             with open(filename, 'r')as f:
                 print "plot"
                 logCTR =[]
+                logCTR2 = []
                 tim = []
                 i = -1
                 for line in f:
@@ -146,7 +150,9 @@ if __name__ == '__main__':
                     #print words[0]
                     #print words[1]
                     logCTR.append(words[2])
-                plt.plot(tim, logCTR, label = "log")
+                    logCTR2.append(words[3])
+                plt.plot(tim, logCTR, label = "Exp3")
+                plt.plot(tim, logCTR2, label = "Exp3")
                 plt.xlabel('CTR')
                 plt.ylabel('Time')
                 plt.legend()

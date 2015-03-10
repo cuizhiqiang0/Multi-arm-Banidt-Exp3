@@ -62,7 +62,7 @@ class ArticleManager():
 		with open(filename, 'r') as f:
 			return cPickle.load(f)
 
-	def simulateArticlePool(self, n_articles, thetaFunc, argv, poolArticles=None):
+	def simulateArticlePool(self, n_articles, thetaFunc , argv , poolArticles=None):
 		def getEndTimes():
 			pool = range(poolArticles)
 			endTimes = [0 for i in startTimes]
