@@ -112,8 +112,10 @@ if __name__ == '__main__':
                 return x
 
     #articles_logged = {}
+    modes = {0:'multiple', 1:'single'} 	# the possible modes that this code can be run in; 'multiple' means multiple days or all days so theta dont change; single means it is reset every day; hours is reset after some hours depending on the reInitPerDay. 
+    mode = 'single' 
     articles_exp3 = {}
-    fileSig = 'Exp3CTR'
+    fileSig = 'Exp3CTR_Reset'
     gamma = 0.3     
     totalArticles = 0 		# total articles seen whether part of evaluation strategy or not
     countLine = 0 			# number of articles in this batch. should be same as batch size; not so usefull
@@ -143,6 +145,9 @@ if __name__ == '__main__':
         print "Processing", dataDay
         start_time = time.time()
         fileName = yahoo_address + "/ydata-fp-td-clicks-v1_0.200905" + dataDay
+        if mode == 'single':
+            re_initialize_article_exp3Structs()
+        
         with open(fileName, 'r') as f:
             # reading file line ie observations running one at a time
             for line in f:  

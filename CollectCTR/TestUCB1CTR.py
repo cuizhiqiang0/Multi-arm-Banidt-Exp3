@@ -94,8 +94,8 @@ if __name__ == '__main__':
         if flag == 0:
             return max(np.random.permutation([(x, articles_ucb1[x].pta) for x in articles]), key = itemgetter(1))[0]
     
-    #articles_logged = {}
-    #articles_exp3 = {}
+    modes = {0:'multiple', 1:'single'} 	# the possible modes that this code can be run in; 'multiple' means multiple days or all days so theta dont change; single means it is reset every day; hours is reset after some hours depending on the reInitPerDay. 
+    mode = 'single'
     articles_ucb1 = {}
     gamma = 0.3 
     fileSig = 'UCB1CTR'
@@ -112,13 +112,13 @@ if __name__ == '__main__':
         for line in f:
             line = line.rstrip('\n').split('\t')
             AllArticleIDpool = copy.copy(line)
-            print AllArticleIDpool
+            #print AllArticleIDpool
     # Initialize         
     for x in range(0,len(AllArticleIDpool)):
         #articles_logged[AllArticleIDpool[x]] = loggedStruct()
         #articles_exp3[AllArticleIDpool[x]] = exp3Struct(gamma)
         articles_ucb1[AllArticleIDpool[x]] = ucb1Struct()
-        print AllArticleIDpool[x]
+        #print AllArticleIDpool[x]
             
     #save all articleID into a file for later use
     with open(fileNameWriteCTR, 'a+') as f:
@@ -131,6 +131,10 @@ if __name__ == '__main__':
         print "Processing", dataDay       
         start_time = time.time()
         fileName = yahoo_address + "/ydata-fp-td-clicks-v1_0.200905" + dataDay 
+        if mode == 'single':
+            re_initialize_article_ucb1Structs()
+            UCB1ChosenNum = 0
+            
         with open(fileName, 'r') as f:
             
             # reading file line ie observations running one at a time
@@ -181,6 +185,7 @@ if __name__ == '__main__':
                     printWrite()  
             # print stuff to screen and save parameters to file when the Yahoo! dataset file endd
             printWrite()
+            print "Done in ", time.time()-start_time, dataDay
             
             
 
