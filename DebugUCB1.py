@@ -3,6 +3,10 @@
 Created on Tue Jan 20 15:12:00 2015
 
 @author: Qingyun Wu
+
+Modification on Mar 15, 2015:
+
+
 """
 
 from conf import *
@@ -229,8 +233,10 @@ if __name__ == '__main__':
                     if article_id not in articles_ucb1: #if its a new article; add it to dictionaries
                         articles_random[article_id] = randomStruct()
                         articles_ucb1[article_id] = ucb1Struct()
-                       
-                    articles_ucb1[article_id].updatePta(UCB1ChosenNum)
+                allNumPlayed = sum([articles_ucb1[article_id].numPlayed for x in pool_articles]) # Another way of interperating UCB1 chosen Number
+                
+                for article in pool_articles:
+                    articles_ucb1[article_id].updatePta(allNumPlayed)
                                                                                          
                 pool_articleNum = len(currentArticles)
                                      
@@ -241,7 +247,8 @@ if __name__ == '__main__':
                 articlesPlayedByUCB1.append(ucb1Article)
      
                 # if random strategy article Picked by evaluation srategy
-                if randomArticle == article_chosen:                    
+                if randomArticle == article_chosen:            
+                    
                     articles_random[randomArticle].learn_stats.clicks = articles_random[randomArticle].learn_stats.clicks + click
                     articles_random[randomArticle].learn_stats.accesses = articles_random[randomArticle].learn_stats.accesses + 1   
                                 
@@ -257,13 +264,7 @@ if __name__ == '__main__':
 
                 if (totalArticles % 20000) == 0:
                     # write observations for this batch
-                    print "Yes"
                     printWrite()
-                    print "NO"
-                    batchStartTime = tim
-                    epochArticles = {}
-                    epochSelectedArticles = {}
-                    #print "zzzz"
                     totalClicks = totalClicks + click
             # print stuff to screen and save parameters to file when the Yahoo! dataset file endd
             printWrite()
