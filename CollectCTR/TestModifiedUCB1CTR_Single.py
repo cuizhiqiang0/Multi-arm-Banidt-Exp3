@@ -154,12 +154,14 @@ if __name__ == '__main__':
                     article_id = str(article_id)
                     currentArticles.append(article_id)  
                     allNumPlayed += articles_ucb1[article_id].numPlayed
+                    articles_ucb1[article_id].updatePta(allNumPlayed)
                 for article in pool_articles:
                     article_id = int(article[0])
                     article_id = str(article_id)
                     currentArticles.append(article_id)  
+
                     articles_ucb1[article_id].updatePta(allNumPlayed)
-                   
+                    
                 pool_articleNum = len(currentArticles)
 
                 #LogCTR    
