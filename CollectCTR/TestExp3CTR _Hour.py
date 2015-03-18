@@ -118,6 +118,7 @@ if __name__ == '__main__':
     fileSig = 'Exp3CTR_Hours'
     reInitPerDay = 12
     
+    
     gamma = 0.3     
     totalArticles = 0 		# total articles seen whether part of evaluation strategy or not
     countLine = 0 			# number of articles in this batch. should be same as batch size; not so usefull
