@@ -144,7 +144,8 @@ if __name__ == '__main__':
                 #title('ArticleID: 109568')
                 '''
                 
-        if 'Exp3CTR'in x:
+        if 'Exp3CTR_Hours'in x:
+            print 'in'
             with open(filename, 'r')as f:
                 print "plot"
                 logCTR1 =[]
@@ -166,17 +167,19 @@ if __name__ == '__main__':
                     logCTR3.append(words[58])
                     logCTR4.append(words[247])
                 '''
-                plt.plot(tim, logCTR1, label = "Exp3_109517")
-                plt.plot(tim, logCTR3, linestyle = ':', label = "Exp3_109626")
-                plt.plot(tim, logCTR2, label = "Exp3_109524")
-                plt.plot(tim, logCTR4,  linestyle = ':',label = "Exp3_109541")
+                plt.plot(tim, logCTR1, label = "Exp3_Hour_109517")
+                plt.plot(tim, logCTR3, linestyle = ':', label = "Exp3_Hour_109626")
+                plt.plot(tim, logCTR2, label = "Exp3_Hour_109524")
+                plt.plot(tim, logCTR4,  linestyle = ':',label = "Exp3_Hour_109541")
+                #plt.plot(time1, cc)
                 plt.xlabel('time')
                 plt.ylabel('CTR')
                 plt.legend()
                 #title('ArticleID: 109568')
                 '''
                 
-        if 'UCB1CTR'in x:
+                
+        if 'Modified_UCB1CTR_Multi'in x:
             with open(filename, 'r')as f:
                 print "plot"
                 logCTR1 =[]
@@ -198,11 +201,11 @@ if __name__ == '__main__':
                     logCTR3.append(words[58])
                     logCTR4.append(words[247])
                 
-                    
-                plt.plot(tim, logCTR1, label = "UCB1_109517")
-                plt.plot(tim, logCTR3, linestyle = ':', label = "UCB1_109626")
-                plt.plot(tim, logCTR2, label = "UCB1_109524")
-                plt.plot(tim, logCTR4, label = "UCB1_109541")
+                   
+                plt.plot(tim, logCTR1, label = "UCB1_Hour_109517")
+                plt.plot(tim, logCTR3, linestyle = ':', label = "UCB1_Hour_109626")
+                plt.plot(tim, logCTR2, label = "UCB1_Hour_109524")
+                plt.plot(tim, logCTR4, label = "UCB1_Hour_109541")
                 plt.xlabel('Time')
                 plt.ylabel('CTR')
                 plt.legend()

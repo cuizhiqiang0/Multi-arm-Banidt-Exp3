@@ -84,15 +84,12 @@ def parseLine(line):
 # epochArticles: are articles that were availabe to be chosen in this epoch or interval or batch.
 # epochSelectedArticles: are articles that were selected by any algorithm in this batch.
 # tim: is time of the last observation in the batch
-def save_to_file(fileNameWrite, dicts, recordedStats, epochArticles, epochSelectedArticles, tim):
+def save_to_file(fileNameWrite, dicts, recordedStats, tim):
 	with open(fileNameWrite, 'a+') as f:
 		f.write('data') # the observation line starts with data;
 		f.write(',' + str(tim))
 		f.write(',' + ';'.join([str(x) for x in recordedStats]))
-		f.write(',' + ';'.join([str(dicts[x].learn_stats.accesses) + ' ' + str(dicts[x].learn_stats.clicks) + ' ' + str(x)  for x in epochSelectedArticles]))
-		f.write(',' + ';'.join(str(x)+' ' + str(epochArticles[x]) for x in epochArticles))
-		f.write(',' + ';'.join(str(x)+' ' + str(epochSelectedArticles[x]) for x in epochSelectedArticles))
-
+		
 		f.write('\n')
 
 # this code counts the line in a file; we need to divide data if we are re-setting theta multiple times a day. Could have been done based on time; i guess little harder to implement
@@ -118,7 +115,7 @@ if __name__ == '__main__':
         
         recordedStats = [randomLA, randomC, ucb1LA, ucb1C,  ucb1CTR / randomCTR ]
         # write to file
-        save_to_file(fileNameWrite, articles_ucb1, recordedStats, epochArticles, epochSelectedArticles, tim)
+        save_to_file(fileNameWrite, articles_ucb1, recordedStats, tim)
     
             
     def re_initialize_article_ucb1Structs():
@@ -149,9 +146,7 @@ if __name__ == '__main__':
     articlesPlayedByUCB1 = []
     articlesPlayedByExp3 = []
     UCB1ChosenNum = 0
-    UCB1_1ChosenNum =0
-    UCB1AlphaChosenNum = 0
-    
+ 
     UCB1ClickNum = 0
     Exp3ClickNum = 0
     
@@ -178,8 +173,6 @@ if __name__ == '__main__':
         if mode == 'single':
             fileNameWrite = os.path.join(save_address, fileSig + dataDay + timeRun + '.csv')
             re_initialize_article_ucb1Structs()
-            re_initialize_article_ucb1_1Structs()
-            re_initialize_article_ucb1AlphaStructs()
             UCB1ChosenNum = 0
            
             countNoArticle = 0
@@ -196,7 +189,7 @@ if __name__ == '__main__':
         # put some new data in file for readability
         with open(fileNameWrite, 'a+') as f:
             f.write('\nNew Run at  ' + datetime.datetime.now().strftime('%m/%d/%Y %H:%M:%S'))
-            f.write('\n, Time, randomAccesses; randomClicks; ucb1Accesses; ucb1Clicks; ucb1CTRRatio; ucb1_1CTRRatio; ucb1AlphaCTRRatio, Article Access; Clicks; ID; Theta, ID; epochArticles, ID ;epochSelectedArticles \n')
+            f.write('\n, Time, randomAccesses; randomClicks; ucb1Accesses; ucb1Clicks; ucb1CTRRatio \n')
             print fileName, fileNameWrite, dataDay, resetInterval
         
         with open(fileName, 'r') as f:
@@ -226,18 +219,19 @@ if __name__ == '__main__':
                 # article ids for articles in the current pool for this observation
                 currentArticles = []
                 total_weight = 0
+                allNumPlayed = 0
                 for article in pool_articles:
                     article_id = article[0]
-                    currentArticles.append(article_id)
-                    
+                    currentArticles.append(article_id)          
                     if article_id not in articles_ucb1: #if its a new article; add it to dictionaries
                         articles_random[article_id] = randomStruct()
                         articles_ucb1[article_id] = ucb1Struct()
-                allNumPlayed = sum([articles_ucb1[article_id].numPlayed for x in pool_articles]) # Another way of interperating UCB1 chosen Number
-                
+                    allNumPlayed += articles_ucb1[article_id].numPlayed
                 for article in pool_articles:
+                    article_id = article[0]
                     articles_ucb1[article_id].updatePta(allNumPlayed)
-                                                                                         
+                
+                                        
                 pool_articleNum = len(currentArticles)
                                      
                 # article picked by random strategy

@@ -276,7 +276,7 @@ if __name__ == '__main__':
 	resultsFile = os.path.join(result_folder, "Results.csv")
 	# sim_type = "ConstantTheta"
 	UM = UserManager(dimension, iterations, userFilename)
-	# UM.randomContexts(featureUniform, argv={"l2_limit":1})
+	#UM.randomContexts(featureUniform, argv={"l2_limit":1})
 	
 
 	for p_art in poolArticles:
@@ -284,8 +284,9 @@ if __name__ == '__main__':
 		articlesFilename = os.path.join(sim_files_folder, "articles"+str(n_articles)+"+AP-"+str(p_art)+"+IT-"+str(iterations)+".p")
 		AM = ArticleManager(iterations, dimension, n_articles=n_articles, 
 				poolArticles=p_art, thetaFunc=featureUniform,  argv={'l2_limit':1})
-		# articles = AM.simulateArticlePool()	
-		# AM.saveArticles(articles, articlesFilename)	
+    
+		#articles = AM.simulateArticlePool()	
+		#AM.saveArticles(articles, articlesFilename)	
 		
 		# print map(lambda x:x.startTime, articles), map(lambda x:x.endTime, articles)
 

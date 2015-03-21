@@ -307,8 +307,8 @@ if __name__ == '__main__':
                     for article in pool_articles: 
                         article_id = article[0]
                         if MyQ.QueueLength < QueueSize:
-                            MyQ.push(article_chosen)
-                        elif article_chosen in MyQ.dic:
+                            MyQ.push(article_id)     # re-run this(a mistake aritcle_chosen)
+                        elif article_id in MyQ.dic:
                             MyQ.dic[article_id] += 1
                         else:
                             a=MyQ.pop()
