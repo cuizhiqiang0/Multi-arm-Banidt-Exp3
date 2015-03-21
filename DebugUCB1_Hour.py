@@ -135,8 +135,8 @@ if __name__ == '__main__':
         
             
     modes = {0:'multiple', 1:'single', 2:'hours'} 	# the possible modes that this code can be run in; 'multiple' means multiple days or all days so theta dont change; single means it is reset every day; hours is reset after some hours depending on the reInitPerDay. 
-    mode = 'multiple' 									# the selected mode
-    fileSig = 'UCB1_allNumPlayed_Multi'								# depending on further environment parameters a file signature to remember those. for example if theta is set every two hours i can have it '2hours'; for 
+    mode = 'hours' 									# the selected mode
+    fileSig = 'UCB1_allNumPlayed_Hour'								# depending on further environment parameters a file signature to remember those. for example if theta is set every two hours i can have it '2hours'; for 
     reInitPerDay = 12								# how many times theta is re-initialized per day
     
     articles_ucb1 = {}
@@ -165,6 +165,7 @@ if __name__ == '__main__':
     fileNameWriteCTR = os.path.join(save_address,'CTR.csv')
     
     for dataDay in dataDays:
+        hours = 0
         fileName = yahoo_address + "/ydata-fp-td-clicks-v1_0.200905" + dataDay
   
         # should be self explaining
