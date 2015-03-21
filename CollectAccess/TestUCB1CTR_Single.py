@@ -77,7 +77,7 @@ if __name__ == '__main__':
     
     def printWrite():
         #recordedStats = [articles_logged[AllArticleIDpool[x]].stats.CTR for x in range(0, len(AllArticleIDpool))]
-        recordedStats = [articles_ucb1[AllArticleIDpool[x]].stats.CTR for x in range(0, len(AllArticleIDpool))]
+        recordedStats = [articles_ucb1[AllArticleIDpool[x]].stats.accesses for x in range(0, len(AllArticleIDpool))]
         # write to file
         save_to_file(fileNameWriteCTR, recordedStats, tim)
     
@@ -98,7 +98,7 @@ if __name__ == '__main__':
     mode = 'single'
     articles_ucb1 = {}
     gamma = 0.3 
-    fileSig = 'UCB1CTR'
+    fileSig = 'UCB1Accesses_Single'
     UCB1ChosenNum = 0    
     totalArticles = 0 		# total articles seen whether part of evaluation strategy or not
     countLine = 0 			# number of articles in this batch. should be same as batch size; not so usefull
@@ -122,7 +122,7 @@ if __name__ == '__main__':
             
     #save all articleID into a file for later use
     with open(fileNameWriteCTR, 'a+') as f:
-        f.write('\nUCB1CTR, New Run at  ' + datetime.datetime.now().strftime('%m/%d/%Y %H:%M:%S'))
+        f.write('\nExp3CTR, New Run at  ' + datetime.datetime.now().strftime('%m/%d/%Y %H:%M:%S'))
         f.write('\n, Time'+',' + ','.join([str(AllArticleIDpool[x]) for x in range(0, len(AllArticleIDpool))]))
         f.write('\n')
         
@@ -147,19 +147,12 @@ if __name__ == '__main__':
                 article_chosen = str(article_chosen)
                 currentArticles = []
                 total_weight = 0.0
-                
-                allNumPlayed = 0
                 for article in pool_articles:
                     article_id = int(article[0])
                     article_id = str(article_id)
-                    currentArticles.append(article_id)  
-                    allNumPlayed += articles_ucb1[article_id].numPlayed
-                for article in pool_articles:
-                    article_id = int(article[0])
-                    article_id = str(article_id)
-                    currentArticles.append(article_id)  
-                    articles_ucb1[article_id].updatePta(allNumPlayed)
-                   
+                    currentArticles.append(article_id)
+                    articles_ucb1[article_id].updatePta(UCB1ChosenNum)
+                    
                 pool_articleNum = len(currentArticles)
 
                 #LogCTR    

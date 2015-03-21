@@ -94,14 +94,17 @@ if __name__ == '__main__':
         if flag == 0:
             return max(np.random.permutation([(x, articles_ucb1[x].pta) for x in articles]), key = itemgetter(1))[0]
     
-    modes = {0:'multiple', 1:'single'} 	# the possible modes that this code can be run in; 'multiple' means multiple days or all days so theta dont change; single means it is reset every day; hours is reset after some hours depending on the reInitPerDay. 
-    mode = 'single'
+    modes = {0:'multiple', 1:'single', 2:'Hour'} 	# the possible modes that this code can be run in; 'multiple' means multiple days or all days so theta dont change; single means it is reset every day; hours is reset after some hours depending on the reInitPerDay. 
+    mode = 'Hour'
     articles_ucb1 = {}
     gamma = 0.3 
     fileSig = 'UCB1CTR'
+    reInitPerDay = 12
+     
     UCB1ChosenNum = 0    
     totalArticles = 0 		# total articles seen whether part of evaluation strategy or not
     countLine = 0 			# number of articles in this batch. should be same as batch size; not so usefull
+    resetInterval = 0
     timeRun = datetime.datetime.now().strftime('_%m_%d_%H_%M') 	# the current data time
     dataDays = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'] # the files from Yahoo that the algorithms will be run on; these files are indexed by days starting from May 1, 2009. this array starts from day 3 as also in the test data in the paper
     fileNameWriteCTR = os.path.join(save_address,  fileSig + '_' + timeRun + '.csv')   
@@ -128,12 +131,18 @@ if __name__ == '__main__':
         
        
     for dataDay in dataDays:
+        hours = 0
         print "Processing", dataDay       
         start_time = time.time()
         fileName = yahoo_address + "/ydata-fp-td-clicks-v1_0.200905" + dataDay 
         if mode == 'single':
             re_initialize_article_ucb1Structs()
             UCB1ChosenNum = 0
+        elif mode == 'hours':
+            numObs = file_len(fileName)
+            # resetInterval calcualtes after how many observations the count should be reset?
+            resetInterval = int(numObs / reInitPerDay) + 1
+            
             
         with open(fileName, 'r') as f:
             
@@ -144,6 +153,15 @@ if __name__ == '__main__':
                 
                 # read the observation
                 tim, article_chosen, click, pool_articles = parseLine(line)
+                if mode=='hours' and countLine > resetInterval:
+                    hours = hours + 1
+                    # each time theta is reset, a new file is started.
+                    #fileNameWrite = os.path.join(save_address, fileSig + dataDay + '_' + str(hours) + timeRun + '.csv')
+                    # re-initialize
+                    countLine = 0
+                    UCB1ChosenNum = 0
+                    re_initialize_article_ucb1Structs()     #Not sure whether to re-initialize exp3Struct
+                    print "hours thing fired!!"
                 article_chosen = str(article_chosen)
                 currentArticles = []
                 total_weight = 0.0
@@ -154,12 +172,14 @@ if __name__ == '__main__':
                     article_id = str(article_id)
                     currentArticles.append(article_id)  
                     allNumPlayed += articles_ucb1[article_id].numPlayed
+                    articles_ucb1[article_id].updatePta(allNumPlayed)
                 for article in pool_articles:
                     article_id = int(article[0])
                     article_id = str(article_id)
                     currentArticles.append(article_id)  
+
                     articles_ucb1[article_id].updatePta(allNumPlayed)
-                   
+                    
                 pool_articleNum = len(currentArticles)
 
                 #LogCTR    
