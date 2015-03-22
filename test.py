@@ -34,16 +34,16 @@ def parseLine(line):
 
 def save_to_file(fileNameWrite, dicts):
 	with open(fileNameWrite, 'a+') as f:
-         f.write('data')
-         f.write(',' + ';'.join([str(x) for x in dicts]))
-         f.write(',' + ';'.join([str(dicts[x]) for x in dicts]))
-         f.write('\n')
-         
          '''
-         for x in dicts.keys():
-             #f.write(str(x) + "\t" )
-             f.write( dicts[x])
-        '''
+         f.write(';'.join([str(x) for x in dicts]))
+         f.write('\n')
+         f.write(';'.join([str(dicts[x]) for x in dicts]))
+         '''
+         
+         for x in dicts:
+             f.write(str(x))
+             f.write(','+str(dicts[x]))
+             f.write('\n')
 
 
 if __name__ == "__main__":
@@ -57,7 +57,7 @@ if __name__ == "__main__":
     
     start_time = time.time()
     
-    fileNameWrite = os.path.join(save_address, 'AllArticleIDAppearDate.txt')
+    fileNameWrite = os.path.join(save_address, 'AllArticleIDAppearDate.csv')
     
     for dataDay in dataDays:
         start_time = time.time()        
