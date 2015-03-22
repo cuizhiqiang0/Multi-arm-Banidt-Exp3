@@ -21,3 +21,4 @@ save_addressModifiedAgeQueue = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/re
 save_addressModifiedAllAge = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/0216/ModifiedAllAge"
 save_addressMyQueue = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/02_08-09/Queue25"
 save_addressCTR = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/CTR"
+save_addressAccess = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/Access"

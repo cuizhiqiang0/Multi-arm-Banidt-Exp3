@@ -20,10 +20,10 @@ from operator import itemgetter
 
 if __name__ == '__main__':
 
-    filenamesCTR = [x for x in os.listdir(save_addressCTR) if 'csv' in x]
+    filenamesAccess = [x for x in os.listdir(save_addressAccess) if 'csv' in x]
 
-    for x in filenamesCTR:
-        filename = os.path.join(save_addressCTR, x)
+    for x in filenamesAccess:
+        filename = os.path.join(save_addressAccess, x)
         print filename
         '''
         if 'LogCTR'in x:
@@ -144,7 +144,7 @@ if __name__ == '__main__':
                 #title('ArticleID: 109568')
                 '''
                 
-        if 'Exp3CTR_Hours'in x:
+        if 'Exp3Access'in x:
             print 'in'
             with open(filename, 'r')as f:
                 print "plot"
@@ -179,7 +179,7 @@ if __name__ == '__main__':
                 '''
                 
                 
-        if 'Modified_UCB1CTR_Multi'in x:
+        if 'UCB1Accesses_Multi'in x:
             with open(filename, 'r')as f:
                 print "plot"
                 logCTR1 =[]

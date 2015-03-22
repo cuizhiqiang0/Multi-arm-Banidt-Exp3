@@ -112,13 +112,17 @@ if __name__ == '__main__':
                 return x
 
     #articles_logged = {}
-    modes = {0:'multiple', 1:'single'} 	# the possible modes that this code can be run in; 'multiple' means multiple days or all days so theta dont change; single means it is reset every day; hours is reset after some hours depending on the reInitPerDay. 
-    mode = 'multiple' 
+    modes = {0:'multiple', 1:'single', 2:'hours'} 	# the possible modes that this code can be run in; 'multiple' means multiple days or all days so theta dont change; single means it is reset every day; hours is reset after some hours depending on the reInitPerDay. 
+    mode = 'hours' 
     articles_exp3 = {}
-    fileSig = 'Exp3Access_Multi'
+    fileSig = 'Exp3Access_Hours'
+    reInitPerDay = 12
+    
+    
     gamma = 0.3     
     totalArticles = 0 		# total articles seen whether part of evaluation strategy or not
     countLine = 0 			# number of articles in this batch. should be same as batch size; not so usefull
+    resetInterval = 0
     timeRun = datetime.datetime.now().strftime('_%m_%d_%H_%M') 	# the current data time
     dataDays = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'] # the files from Yahoo that the algorithms will be run on; these files are indexed by days starting from May 1, 2009. this array starts from day 3 as also in the test data in the paper
     fileNameWriteCTR = os.path.join(save_address,  fileSig + '_' + timeRun + '.csv')  
@@ -142,11 +146,16 @@ if __name__ == '__main__':
         f.write('\n')
        
     for dataDay in dataDays:
+        hours = 0
         print "Processing", dataDay
         start_time = time.time()
         fileName = yahoo_address + "/ydata-fp-td-clicks-v1_0.200905" + dataDay
         if mode == 'single':
             re_initialize_article_exp3Structs()
+        elif mode =='hours':
+            numObs = file_len(fileName)
+            # resetInterval calcualtes after how many observations the count should be reset?
+            resetInterval = int(numObs / reInitPerDay) + 1
         
         with open(fileName, 'r') as f:
             # reading file line ie observations running one at a time
@@ -156,6 +165,14 @@ if __name__ == '__main__':
                 
                 # read the observation
                 tim, article_chosen, click, pool_articles = parseLine(line)
+                if mode=='hours' and countLine > resetInterval:
+                    hours = hours + 1
+                    # each time theta is reset, a new file is started.
+                    #fileNameWrite = os.path.join(save_address, fileSig + dataDay + '_' + str(hours) + timeRun + '.csv')
+                    # re-initialize
+                    countLine = 0
+                    re_initialize_article_exp3Structs()     #Not sure whether to re-initialize exp3Struct
+                    print "hours thing fired!!"
                 article_chosen = str(article_chosen)
                 currentArticles = []
                 total_weight = 0.0
@@ -190,23 +207,22 @@ if __name__ == '__main__':
                         articles_exp3[article_chosen].updateWeight(pool_articleNum, click)
            
                 if totalArticles%20000 ==0:
+                    printWrite()
                     for x in range(0,len(AllArticleIDpool)):
                         #AllArticleIDpool[x] = str(AllArticleIDpool[x])
                         #print AllArticleIDpool[x]
-                        #print articles_exp3[AllArticleIDpool[x]].stats.CTR
-                        #articles_exp3[AllArticleIDpool[x]].stats.updateCTR      
                         try:
                             articles_exp3[AllArticleIDpool[x]].stats.CTR = articles_exp3[AllArticleIDpool[x]].stats.clicks / articles_exp3[AllArticleIDpool[x]].stats.accesses
                         except ZeroDivisionError:
-                            articles_exp3[AllArticleIDpool[x]].stats.CTR = -0.01
+                            articles_exp3[AllArticleIDpool[x]].stats.CTR = -0.01 # negative CTR means this article didn't appear in the time interval
                             
+                        #print articles_exp3[AllArticleIDpool[x]].stats.CTR
+                        #articles_exp3[AllArticleIDpool[x]].stats.updateCTR      
                         #print "CTR", articles_exp3[AllArticleIDpool[x]].stats.CTR
                         articles_exp3[AllArticleIDpool[x]].stats.accesses = 0.0
                         articles_exp3[AllArticleIDpool[x]].stats.clicks = 0.0                       
-                    printWrite()
                     
-                    
-                      
+                                       
             # print stuff to screen and save parameters to file when the Yahoo! dataset file endd
             printWrite()
             print "Done in ", time.time()-start_time, dataDay

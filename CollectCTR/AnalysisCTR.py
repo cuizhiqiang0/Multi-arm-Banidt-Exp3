@@ -19,12 +19,13 @@ from operator import itemgetter
 
 
 if __name__ == '__main__':
+    print save_addressCTR
 
     filenamesCTR = [x for x in os.listdir(save_addressCTR) if 'csv' in x]
 
     for x in filenamesCTR:
         filename = os.path.join(save_addressCTR, x)
-        print filename
+        #print filename
         '''
         if 'LogCTR'in x:
             with open(filename, 'r')as f:
