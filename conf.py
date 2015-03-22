@@ -1,6 +1,6 @@
 import os
 
-datasets_address = "/Users/Summer/Documents/Research/datasets/"
+datasets_address = "/if24/qw2ky/MyResearch/datasets/"
 
 yahoo_address = os.path.join(datasets_address, "R6")
 
@@ -22,3 +22,4 @@ save_addressModifiedUCB1 = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result
 save_addressModifiedAgeQueue = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/0216/ModifiedAgeQueue"
 save_addressModifiedAllAge = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/0216/ModifiedAllAge"
 save_addressMyQueue = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/02_08-09/Queue25"
+save_address = "/if24/qw2ky/MyResearch/Codes/MAB_exp3/result/Exp3"

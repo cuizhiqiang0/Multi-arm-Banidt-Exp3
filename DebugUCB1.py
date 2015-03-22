@@ -89,7 +89,11 @@ def save_to_file(fileNameWrite, dicts, recordedStats, tim):
 		f.write('data') # the observation line starts with data;
 		f.write(',' + str(tim))
 		f.write(',' + ';'.join([str(x) for x in recordedStats]))
+<<<<<<< HEAD
 		
+=======
+
+>>>>>>> 6c4c062d9fd4631d3fee2799864db4954c94f7db
 		f.write('\n')
 
 # this code counts the line in a file; we need to divide data if we are re-setting theta multiple times a day. Could have been done based on time; i guess little harder to implement
@@ -164,11 +168,7 @@ if __name__ == '__main__':
     
     for dataDay in dataDays:
         fileName = yahoo_address + "/ydata-fp-td-clicks-v1_0.200905" + dataDay
-        epochArticles = {} 			# the articles that are present in this batch or epoch
-        epochSelectedArticles = {} 	# the articles selected in this epoch
-        hours = 0 					# times the theta was reset if the mode is 'hours'		
-        batchStartTime = 0 			# time of first observation of the batch
-
+  
         # should be self explaining
         if mode == 'single':
             fileNameWrite = os.path.join(save_address, fileSig + dataDay + timeRun + '.csv')
@@ -207,9 +207,7 @@ if __name__ == '__main__':
                     re_initialize_article_ucb1Structs()
                     UCB1ChosenNum = 0
                     printWrite()
-                    batchStartTime = tim
-                    epochArticles = {}
-                    epochSelectedArticles = {}
+   
                     print "hours thing fired!!"
                     
                 # number of observations seen in this batch; reset after start of new batch
