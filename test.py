@@ -15,7 +15,11 @@ import numpy as np
 import math
 import random
 import Queue
+from sets import Set
 
+def articleAppear():
+    def __init__(self):
+        self.appearDate = Set()
 
 def parseLine(line):
 	line = line.split("|")
@@ -30,8 +34,16 @@ def parseLine(line):
 
 def save_to_file(fileNameWrite, dicts):
 	with open(fileNameWrite, 'a+') as f:
+         f.write('data')
+         f.write(',' + ';'.join([str(x) for x in dicts]))
+         f.write(',' + ';'.join([str(dicts[x]) for x in dicts]))
+         f.write('\n')
+         
+         '''
          for x in dicts.keys():
-             f.write(str(x) + "\t")
+             #f.write(str(x) + "\t" )
+             f.write( dicts[x])
+        '''
 
 
 if __name__ == "__main__":
@@ -45,7 +57,7 @@ if __name__ == "__main__":
     
     start_time = time.time()
     
-    fileNameWrite = os.path.join(save_address, 'AllArticleID_1.txt')
+    fileNameWrite = os.path.join(save_address, 'AllArticleIDAppearDate.txt')
     
     for dataDay in dataDays:
         start_time = time.time()        
@@ -61,7 +73,12 @@ if __name__ == "__main__":
                     #article_id = article[0]
                     #print 'article_id', article_id
                     if article_id not in AllArticleArray:
-                        AllArticleArray[article_id] = 1
+                        AllArticleArray[article_id] = Set()
+                        #print  AllArticleArray[article_id]
+                        
+                    AllArticleArray[article_id].add(dataDay)
+                    #save_to_file(fileNameWrite, AllArticleArray)
+                    #print  AllArticleArray[article_id]
         
         
                 '''

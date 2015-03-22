@@ -1,0 +1,7 @@
+
+New Run at  03/17/2015 11:27:23
+, Time, randomAccesses; randomClicks; ucb1Accesses; ucb1Clicks; ucb1CTRRatio; ucb1_1CTRRatio; ucb1AlphaCTRRatio, Article Access; Clicks; ID; Theta, ID; epochArticles, ID ;epochSelectedArticles 
+data,1241766300,1589871.0;58283.0;1489800.0;55901.0;1.02355597208
+data,1241766900,1590863.0;58306.0;1490793.0;55925.0;1.02354792178
+data,1241767800,1591824.0;58328.0;1491810.0;55944.0;1.02342957794
+data,1241768700,1592841.0;58346.0;1492802.0;55962.0;1.02341636475
