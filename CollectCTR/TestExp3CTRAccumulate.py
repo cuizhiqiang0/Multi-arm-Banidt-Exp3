@@ -96,7 +96,7 @@ if __name__ == '__main__':
         #recordedStats = [articles_logged[AllArticleIDpool[x]].stats.CTR for x in range(0, len(AllArticleIDpool))]
         recordedStats = [articles_exp3[AllArticleIDpool[x]].stats.CTR for x in range(0, len(AllArticleIDpool))]
         # write to file
-        save_to_file(fileNameWriteCTR, recordedStats, tim)
+        save_to_file(fileNameWrite, recordedStats, tim)
     
     def re_initialize_article_exp3Structs():
         for x in articles_exp3:
@@ -121,7 +121,6 @@ if __name__ == '__main__':
     countLine = 0 			# number of articles in this batch. should be same as batch size; not so usefull
     timeRun = datetime.datetime.now().strftime('_%m_%d_%H_%M') 	# the current data time
     dataDays = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'] # the files from Yahoo that the algorithms will be run on; these files are indexed by days starting from May 1, 2009. this array starts from day 3 as also in the test data in the paper
-    fileNameWriteCTR = os.path.join(save_address,  fileSig + '_' + timeRun + '.csv')  
     
     articleIDfilename = '/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/temp.txt'
     # Read all articleIDs from file
@@ -134,12 +133,7 @@ if __name__ == '__main__':
         #articles_logged[AllArticleIDpool[x]] = loggedStruct()
         articles_exp3[AllArticleIDpool[x]] = exp3Struct(gamma)
         #print AllArticleIDpool[x]
-            
-    #save all articleID into a file for later use
-    with open(fileNameWriteCTR, 'a+') as f:
-        f.write('\nExp3CTR, New Run at  ' + datetime.datetime.now().strftime('%m/%d/%Y %H:%M:%S'))
-        f.write('\n, Time'+',' + ','.join([str(AllArticleIDpool[x]) for x in range(0, len(AllArticleIDpool))]))
-        f.write('\n')
+
        
     for dataDay in dataDays:
         print "Processing", dataDay
@@ -150,6 +144,11 @@ if __name__ == '__main__':
             re_initialize_article_exp3Structs()
         elif mode == 'multiple':
             fileNameWrite = os.path.join(save_address, fileSig + dataDay + timeRun + '.csv')
+        #write all articleID into a file for later use
+        with open(fileNameWrite, 'a+') as f:
+            f.write('\nExp3AccumutiveCTR, New Run at  ' + datetime.datetime.now().strftime('%m/%d/%Y %H:%M:%S'))
+            f.write('\n, Time'+',' + ','.join([str(AllArticleIDpool[x]) for x in range(0, len(AllArticleIDpool))]))
+            f.write('\n')
         
         with open(fileName, 'r') as f:
             # reading file line ie observations running one at a time
