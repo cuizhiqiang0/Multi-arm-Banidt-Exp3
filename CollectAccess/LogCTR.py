@@ -63,14 +63,14 @@ def file_len(fname):
 if __name__ == '__main__':
     
     def printWrite():
-        recordedStats = [articles_logged[AllArticleIDpool[x]].stats.CTR for x in range(0, len(AllArticleIDpool))]
+        recordedStats = [articles_logged[AllArticleIDpool[x]].stats.accesses for x in range(0, len(AllArticleIDpool))]
         # write to file
         save_to_file(fileNameWriteCTR, recordedStats, tim)
     
 
 
     articles_logged = {}
-    fileSig = 'LogCTR'
+    fileSig = 'LogAccess'
           
     totalArticles = 0 		# total articles seen whether part of evaluation strategy or not
     countLine = 0 			# number of articles in this batch. should be same as batch size; not so usefull
@@ -92,7 +92,7 @@ if __name__ == '__main__':
             
     #save all articleID into a file for later use
     with open(fileNameWriteCTR, 'a+') as f:
-        f.write('\nLogCTR, New Run at  ' + datetime.datetime.now().strftime('%m/%d/%Y %H:%M:%S'))
+        f.write('\nLogAccess, New Run at  ' + datetime.datetime.now().strftime('%m/%d/%Y %H:%M:%S'))
         f.write('\n, Time'+',' + ','.join([str(AllArticleIDpool[x]) for x in range(0, len(AllArticleIDpool))]))
         f.write('\n')
        
@@ -111,13 +111,7 @@ if __name__ == '__main__':
                 #print "article_chosen", article_chosen
                 articles_logged[article_chosen].stats.accesses += 1
                 articles_logged[article_chosen].stats.clicks += click
-                #print articles_logged[article_chosen].stats.accesses
-                #print articles_logged[article_chosen].stats.clicks
-                #print articles_logged[article_chosen].stats.clicks / articles_logged[article_chosen].stats.accesses
-                #print articles_logged[article_chosen].stats.CTR
-                #articles_logged[article_chosen].stats.updateCTR
-                #print articles_logged[article_chosen].stats.CTR
-                #articles_logged[article_chosen].stats.updateCTR
+
                     
                
                 # number of observations seen in this batch; reset after start of new batch
@@ -126,13 +120,6 @@ if __name__ == '__main__':
             
                 if totalArticles%20000 ==0:
                     for x in range(0,len(AllArticleIDpool)):
-                        #AllArticleIDpool[x] = str(AllArticleIDpool[x])
-                        #print AllArticleIDpool[x]
-                        #print articles_logged[AllArticleIDpool[x]].stats.accesses
-                        #print articles_logged[AllArticleIDpool[x]].stats.clicks
-                        #print articles_logged[AllArticleIDpool[x]].stats.CTR
-                        #articles_logged[AllArticleIDpool[x]].stats.updateCTR
-                        #print articles_logged[AllArticleIDpool[x]].stats.CTR
                         
                         try:
                             articles_logged[AllArticleIDpool[x]].stats.CTR = articles_logged[AllArticleIDpool[x]].stats.clicks / articles_logged[AllArticleIDpool[x]].stats.accesses
