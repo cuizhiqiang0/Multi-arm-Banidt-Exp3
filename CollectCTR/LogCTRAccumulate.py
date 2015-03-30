@@ -95,7 +95,8 @@ if __name__ == '__main__':
         start_time = time.time()
         #print "Done in ", time.time()-start_time, dataDay
         fileName = yahoo_address + "/ydata-fp-td-clicks-v1_0.200905" + dataDay
-        fileNameWrite = os.path.join(save_address, fileSig + dataDay + timeRun + '.csv'
+        fileNameWrite = os.path.join(save_address, fileSig + dataDay + timeRun + '.csv')
+        
         with open(fileNameWrite, 'a+') as f:
             f.write('\nLogAccumutiveCTR, New Run at  ' + datetime.datetime.now().strftime('%m/%d/%Y %H:%M:%S'))
             f.write('\n, Time'+',' + ','.join([str(AllArticleIDpool[x]) for x in range(0, len(AllArticleIDpool))]))
