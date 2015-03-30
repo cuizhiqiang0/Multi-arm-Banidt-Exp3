@@ -76,7 +76,7 @@ if __name__ == '__main__':
     countLine = 0 			# number of articles in this batch. should be same as batch size; not so usefull
     timeRun = datetime.datetime.now().strftime('_%m_%d_%H_%M') 	# the current data time
     dataDays = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'] # the files from Yahoo that the
-    articleIDfilename = '/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/temp.txt'
+    #articleIDfilename = '/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/temp.txt'
     # Read all articleIDs from file
     with open(articleIDfilename, 'r') as f:
         for line in f:
@@ -95,7 +95,8 @@ if __name__ == '__main__':
         start_time = time.time()
         #print "Done in ", time.time()-start_time, dataDay
         fileName = yahoo_address + "/ydata-fp-td-clicks-v1_0.200905" + dataDay
-        fileNameWrite = os.path.join(save_address, fileSig + dataDay + timeRun + '.csv'
+        fileNameWrite = os.path.join(save_address, fileSig + dataDay + timeRun + '.csv')
+        
         with open(fileNameWrite, 'a+') as f:
             f.write('\nLogAccumutiveCTR, New Run at  ' + datetime.datetime.now().strftime('%m/%d/%Y %H:%M:%S'))
             f.write('\n, Time'+',' + ','.join([str(AllArticleIDpool[x]) for x in range(0, len(AllArticleIDpool))]))
@@ -129,7 +130,7 @@ if __name__ == '__main__':
                         try:
                             articles_logged[AllArticleIDpool[x]].stats.CTR = articles_logged[AllArticleIDpool[x]].stats.clicks / articles_logged[AllArticleIDpool[x]].stats.accesses
                         except ZeroDivisionError:
-                            articles_logged[AllArticleIDpool[x]].stats.CTR = -0.5
+                            articles_logged[AllArticleIDpool[x]].stats.CTR = -0.02
                         #print "CTR", articles_logged[AllArticleIDpool[x]].stats.CTR
                         # reset CTR
                     printWrite()
