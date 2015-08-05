@@ -14,65 +14,8 @@ import datetime
 import numpy as np
 import math
 import random
+import MABAlgorithms   # Import Multi-armed bandits algorithms
 
-class articleAccess():
-    def __init__(self):
-        self.accesses = 0.0
-        self.clicks = 0.0
-        self.CTR = 0.0
-    def updateCTR(self):
-        try:
-            self.CTR = self.clicks / self.accesses
-        except ZeroDivisionError:
-            return self.CTR
-
-
-# this structure saves for the exp3 algorithm
-class exp3Struct:
-    def __init__(self, gamma):
-        self.gamma = gamma
-        self.weights = 1
-        self.pta = 0
-        self.learn_stats = articleAccess()
-        
-    def reInitilize(self):
-        self.weights = 1.0
-        self.pta=0.0
-          
-    def updatePta(self, n_arms, total_weight):
-        n_arms = n_arms
-        self.pta= (1-self.gamma) * (self.weights / total_weight)
-        self.pta= self.pta + (self.gamma) * (1.0 / float(n_arms))
- 
-    def updateWeight(self, n_arms, reward):
-        n_arms = n_arms
-        X=reward/self.pta
-        growth_factor = math.exp((self.gamma/n_arms)*X)
-        self.weights = self.weights * growth_factor
-
-class ucb1Struct:
-    def __init__(self):
-        self.totalReward = 0.0
-        self.numPlayed = 0
-        self.pta = 0.0
-        self.learn_stats = articleAccess()
-        self.deploy_stats = articleAccess()
-        
-    def reInitilize(self): 
-        self.totalReward = 0.0
-        self.numPlayed = 0        
-        
-    def updatePta(self, allNumPlayed):
-        try:
-            self.pta = self.totalReward / self.numPlayed + np.sqrt(2*np.log(allNumPlayed) / self.numPlayed)
-        except ZeroDivisionError:
-            self.pta = 0.0
-
-# structure to save data from random strategy as mentioned in LiHongs paper
-class randomStruct:
-	def __init__(self):
-		self.learn_stats = articleAccess()
-		#self.deploy_stats = articleAccess()
 
 # This code simply reads one line from the source files of Yahoo!. Please see the yahoo info file to understand the format. I tested this part; so should be good but second pair of eyes could help
 def parseLine(line):
@@ -89,8 +32,6 @@ def parseLine(line):
 # this code saves different parameters in the file for one batch; this code is written to meet special needs since we need to see statistics as they evolve; I record accumulative stats from which batch stats can be extracted easily
 # dicts: is a dictionary of articles UCB structures indexed by 'article-id' key. to reference an article we do dicts[article-id]
 # recored_stats: are interesting statistics we want to save; i save accesses and clicks for UCB, random and greedy strategy for all articles in this batch
-# epochArticles: are articles that were availabe to be chosen in this epoch or interval or batch.
-# epochSelectedArticles: are articles that were selected by any algorithm in this batch.
 # tim: is time of the last observation in the batch
 def save_to_file(fileNameWrite, dicts, recordedStats, epochArticles, epochSelectedArticles, tim):
 	with open(fileNameWrite, 'a+') as f:
@@ -123,28 +64,22 @@ if __name__ == '__main__':
         ucb1LA = sum([articles_ucb1[x].learn_stats.accesses for x in articles_ucb1])
         ucb1C = sum([articles_ucb1[x].learn_stats.clicks for x in articles_ucb1])
         ucb1CTR = sum([articles_ucb1[x].learn_stats.clicks for x in articles_ucb1]) / sum([articles_ucb1[x].learn_stats.accesses for x in articles_ucb1])
-                
-        print totalArticles,
-        print 'Exp3Lrn', exp3CTR / randomCTR,
-        print 'UCB1', ucb1CTR / randomCTR
 
-        #print ' '
+        greedyLA = sum([articles_greedy[x].learn_stats.accesses for x in articles_greedy])
+        greedyC = sum([articles_greedy[x].learn_stats.clicks for x in articles_greedy])
+        greedyCTR = sum([articles_greedy[x].learn_stats.clicks for x in articles_greedy]) / sum([articles_greedy[x].learn_stats.accesses for x in articles_greedy])
+                       
+        print countLine,
+        print 'Exp3', exp3CTR ,
+        print 'UCB1', ucb1CTR ,
+        print 'Greedy', greedyCTR
         
-        recordedStats = [randomLA, randomC, exp3LA, exp3C, ucb1LA, ucb1C, exp3CTR / randomCTR, ucb1CTR / randomCTR]
+        recordedStats = [randomCTR, greedyCTR, exp3CTR, ucb1CTR, LinUCBCTR ]
         # write to file
-        save_to_file(fileNameWrite, articles_exp3, recordedStats, epochArticles, epochSelectedArticles, tim)
+        save_to_file(fileNameWrite, articles_exp3, recordedStats, tim)
     
-            
-    # this function reset weight for all exp3
-    def re_initialize_article_exp3Structs():
-        for x in articles_exp3:
-            articles_exp3[x].reInitilize()
-            
-    def re_initialize_article_ucb1Structs():
-        for x in articles_ucb1:
-            articles_ucb1[x].reInitilize()
     
-    def categorical_draw(articles):
+    def exp3SelectArm(articles):
         z = random.random()
         cum_pta = 0.0
         #flag = 0
@@ -159,26 +94,33 @@ if __name__ == '__main__':
                 flag = 1
                 return x
         if flag == 0:
-            return max(np.random.permutation([(x, articles_ucb1[x].pta) for x in articles]), key = itemgetter(1))[0]
-            
-    modes = {0:'multiple', 1:'single', 2:'hours'} 	# the possible modes that this code can be run in; 'multiple' means multiple days or all days so theta dont change; single means it is reset every day; hours is reset after some hours depending on the reInitPerDay. 
-    mode = 'multiple' 									# the selected mode
+            return max([(x, articles_ucb1[x].pta) for x in articles], key = itemgetter(1))[0]
+    
+    def greedySelectArm(cd, K, n, articles):
+        if n == 0:
+            epsilon = 1
+        else:
+            epsilon = min([1, (cd * K) / n ])
+        if random.random() < epsilon:
+            return choice(articles)
+        else:
+            return max([(x, articles_greedy[x].averageReward for x in articles]), key = itemgetter(1))[0]
+                
+        
     fileSig = '1_MultipleDay'								# depending on further environment parameters a file signature to remember those. for example if theta is set every two hours i can have it '2hours'; for 
     reInitPerDay = 12								# how many times theta is re-initialized per day
 
-    gamma = 0.3                                                  # parameter in exp3 
+    gamma = 0.3                                                  # parameter in exp3
+    cd = 20                                               # parameter in e-greedy
  
     # relative dictionaries for algorithms
     articles_exp3 = {}
     articles_ucb1 = {}
+    articles_greedy = {}
     articles_random = {}
-    articlesPlayedByUCB1 = {}
+        
     
-    ctr = 1 				# overall ctr
-    numArticlesChosen = 1 	# overall the articles that are same as for LinUCB and the random strategy that created Yahoo! dataset. I will call it evaluation strategy
     totalArticles = 0 		# total articles seen whether part of evaluation strategy or not
-    totalClicks = 0 		# total clicks 
-    countNoArticle = 0 		# total articles in the pool 
     countLine = 0 			# number of articles in this batch. should be same as batch size; not so usefull
     resetInterval = 0 		# initialize; value assigned later; determined when 
     timeRun = datetime.datetime.now().strftime('_%m_%d_%H_%M') 	# the current data time
@@ -186,66 +128,38 @@ if __name__ == '__main__':
     fileNameWriteCTR = os.path.join(save_address,'CTR.csv')
     
     for dataDay in dataDays:
+        start_time = time.time()
         fileName = yahoo_address + "/ydata-fp-td-clicks-v1_0.200905" + dataDay
-        epochArticles = {} 			# the articles that are present in this batch or epoch
-        epochSelectedArticles = {} 	# the articles selected in this epoch
         hours = 0 					# times the theta was reset if the mode is 'hours'		
         batchStartTime = 0 			# time of first observation of the batch
+        fileNameWrite = os.path.join(save_address,  fileSig +dataDay + timeRun + '.csv')
 
-        # should be self explaining
-        if mode == 'single':
-            fileNameWrite = os.path.join(save_address, fileSig + dataDay + timeRun + '.csv')
-            re_initialize_article_exp3Structs()
-            re_initialize_article_ucb1Structs()
-            articlesPlayedByUCB1 = {}
-            countNoArticle = 0
-            countLine = 0
-        elif mode == 'multiple':
-            fileNameWrite = os.path.join(save_address,  fileSig +dataDay + timeRun + '.csv')
-        
-        elif mode == 'hours':
-            numObs = file_len(fileName)
-            # resetInterval calcualtes after how many observations the count should be reset?
-            resetInterval = int(numObs / reInitPerDay) + 1
-            fileNameWrite = os.path.join(save_address,  fileSig + dataDay + '_' + str(hours) + timeRun + '.csv')
-            
+        time_open= time.time()    
         # put some new data in file for readability
         with open(fileNameWrite, 'a+') as f:
             f.write('\nNew Run at  ' + datetime.datetime.now().strftime('%m/%d/%Y %H:%M:%S'))
-            f.write('\n, Time, randomAccesses; randomClicks; exp3Access; exp3Clicks; ucb1Accesses; ucb1Clicks; exp3CTRRatio; ucb1CTRRatio, Article Access; Clicks; ID; Theta, ID; epochArticles, ID ;epochSelectedArticles \n')
+            f.write('\n, Time, randomCTR; greedyCTR, exp3CTR; ucb1CTR; LinUCBCTR \n')
             print fileName, fileNameWrite, dataDay, resetInterval
+        print 'opentime', time.time() - time_open
         
         with open(fileName, 'r') as f:
             # reading file line ie observations running one at a time
-                            
-            for line in f:             
+            
+            for line in f:  
+                line_time = time.time()
                 # read the observation
+                time_read = time.time()
                 tim, article_chosen, click, pool_articles = parseLine(line)
-                pool_articleID = pool_articles[:,0]
-                pool_articleNum = len(pool_articleID)
-
-                if mode=='hours' and countLine > resetInterval:
-                    hours = hours + 1
-                    # each time theta is reset, a new file is started.
-                    fileNameWrite = os.path.join(save_address, fileSig + dataDay + '_' + str(hours) + timeRun + '.csv')
-                    # re-initialize
-                    countLine = 0
-                    re_initialize_article_exp3Structs()     #Not sure whether to re-initialize exp3Struct
-                    re_initialize_article_ucb1Structs()
-                    articlesPlayedByUCB1 = {}
-                    printWrite()
-                    batchStartTime = tim
-                    epochArticles = {}
-                    epochSelectedArticles = {}
-                    print "hours thing fired!!"
+                print "parse time", time.time() - time_read
                     
                 # number of observations seen in this batch; reset after start of new batch
                 countLine = countLine + 1
-                totalArticles = totalArticles + 1
+               
    
                 # article ids for articles in the current pool for this observation
                 currentArticles = []
                 total_weight = 0
+                time_firstLoop = time.time()
                 for article in pool_articles:                    
                     article_id = article[0]
                     currentArticles.append(article_id)
@@ -254,21 +168,26 @@ if __name__ == '__main__':
                         articles_random[article_id] = randomStruct()
                         articles_exp3[article_id] = exp3Struct(gamma)
                         articles_ucb1[article_id] = ucb1Struct()
+                        articles_greedy[article_id] = greedyStruct()
+                        articles_extremeGreedy[article_id] = extremeGreedyStruct()
                         
-                    if article_id not in epochArticles:
-                        epochArticles[article_id] = 1
-                    else:
-                        # we also count the times article appeared in selection pool in this batch
-                        epochArticles[article_id] = epochArticles[article_id] + 1
-                    
                     #total_weight = sum([articles_exp3[x].weights for x in pool_articles[:0]])
                     total_weight = total_weight + articles_exp3[article_id].weights
                     
+                pool_articleNum = len(currentArticles)
+                print "firstLoop", time.time() - time_firstLoop
+                
+                time_secondeLoop = time.time()
+                
                 for article in pool_articles:
                     article_id = article[0]
                     articles_exp3[article_id].updatePta(pool_articleNum, total_weight)
-                    articles_ucb1[article_id].updatePta(countLine)
+                    articles_ucb1[article_id].updatePta(UCB1ChosenNum)
+                    articles_greedy[article_id].updateReward()
+                    articles_extremeGreedy[article_id].updateReward()
+                print "secondLoop", time.time() - time_secondeLoop
                 
+                time_selection = time.time()
                 if article_chosen not in epochSelectedArticles:
                     epochSelectedArticles[article_chosen] = 1
                 else:
@@ -281,38 +200,67 @@ if __name__ == '__main__':
                 exp3Article = categorical_draw(currentArticles)
                 # article picked by ucb1
                 ucb1Article = ucb1SelectArm(currentArticles)
-                articles_ucb1[ucb1Article].numPlayed = articles_ucb1[ucb1Article].numPlayed + 1
-                 
+                #articles_ucb1[ucb1Article].numPlayed = articles_ucb1[ucb1Article].numPlayed + 1
+                
+                greedyArticle = greedySelectArm(cd, len(currentArticles), GreedyChosenNum, currentArticles)
+                #articles_greedy[greedyArticle].numPlayed = articles_greedy[greedyArticle].numPlayed + 1
+                
+                extremeGreedyArticle = extremeGreedySelectArm(currentArticles)
+                
+                print "SelectionTIme", time.time() - time_selection
+                
+                time_chose = time.time()
                 # if random strategy article Picked by evaluation srategy
                 if randomArticle == article_chosen:
+                    RandomChosenNum = RandomChosenNum + 1
                     articles_random[randomArticle].learn_stats.clicks = articles_random[randomArticle].learn_stats.clicks + click
                     articles_random[randomArticle].learn_stats.accesses = articles_random[randomArticle].learn_stats.accesses + 1   
                
                 # if exp3 article is chosen by evalution strategy
                 if exp3Article == article_chosen:
+                    Exp3ChosenNum = Exp3ChosenNum + 1
                     articles_exp3[article_chosen].learn_stats.clicks = articles_exp3[article_chosen].learn_stats.clicks + click
                     articles_exp3[article_chosen].learn_stats.accesses = articles_exp3[article_chosen].learn_stats.accesses + 1
                     if click:
-                        #articles_exp3[article_chosen].initialize(pool_articleID)
                         articles_exp3[article_chosen].updateWeight(pool_articleNum, click)
                 
                 if ucb1Article == article_chosen:
+                    UCB1ChosenNum = UCB1ChosenNum + 1
                     articles_ucb1[article_chosen].learn_stats.clicks = articles_ucb1[article_chosen].learn_stats.clicks + click
                     articles_ucb1[article_chosen].learn_stats.accesses = articles_ucb1[article_chosen].learn_stats.accesses + 1
-                    if click:
-                        articles_ucb1[article_chosen].totalReward = articles_ucb1[article_chosen].totalReward + click
-					
-                if totalArticles%20000 ==0:
+                    articles_ucb1[article_chosen].totalReward = articles_ucb1[article_chosen].totalReward + click
+                    articles_ucb1[ucb1Article].numPlayed = articles_ucb1[ucb1Article].numPlayed + 1
+ 
+                if greedyArticle == article_chosen:
+                    GreedyChosenNum = GreedyChosenNum + 1
+                    articles_greedy[article_chosen].learn_stats.clicks = articles_greedy[article_chosen].learn_stats.clicks + click
+                    articles_greedy[article_chosen].learn_stats.accesses = articles_greedy[article_chosen].learn_stats.accesses + 1
+                    articles_greedy[article_chosen].totalReward = articles_greedy[article_chosen].totalReward + click
+                    articles_greedy[greedyArticle].numPlayed = articles_greedy[greedyArticle].numPlayed + 1
+                
+                if extremeGreedyArticle == article_chosen:
+                    articles_extremeGreedy[article_chosen].learn_stats.clicks = articles_extremeGreedy[article_chosen].learn_stats.clicks + click
+                    articles_extremeGreedy[article_chosen].learn_stats.accesses = articles_extremeGreedy[article_chosen].learn_stats.accesses + 1
+                    articles_extremeGreedy[article_chosen].totalReward = articles_extremeGreedy[article_chosen].totalReward + click
+                    articles_extremeGreedy[article_chosen].numPlayed = articles_extremeGreedy[article_chosen].numPlayed + 1
+                print "chosen time", time.time() - time_chose            
+                if countLine%20000 ==0:
                     # write observations for this batch
+                    write_time = time.time()
                     printWrite()
+                    print "write time", time.time() - write_time
                     batchStartTime = tim
                     epochArticles = {}
                     epochSelectedArticles = {}
-                    
-                    totalClicks = totalClicks + click
+                print 'oneLineTotalTime', time.time() - line_time
+
+            print time.time() - time_oneFile
             # print stuff to screen and save parameters to file when the Yahoo! dataset file endd
             printWrite()
-                
+            print 'UCb1ChosenNum', UCB1ChosenNum
+            print 'Exp3ChosenNum', Exp3ChosenNum
+            print 'GreedyChosenNum', GreedyChosenNum
+            print 'RandomChosenNum', RandomChosenNum
                 
             
 

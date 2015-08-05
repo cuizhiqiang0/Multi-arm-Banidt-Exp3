@@ -14,86 +14,8 @@ import datetime
 import numpy as np
 import math
 import random
+import MABAlgorithms   # Import Multi-armed bandits algorithms
 
-class articleAccess():
-    def __init__(self):
-        self.accesses = 0.0
-        self.clicks = 0.0
-        self.CTR = 0.0
-    def updateCTR(self):
-        try:
-            self.CTR = self.clicks / self.accesses
-        except ZeroDivisionError:
-            return self.CTR
-
-# this structure saves for the exp3 algorithm
-class exp3Struct:
-    def __init__(self, gamma):
-        self.gamma = gamma
-        self.weights = 1.0
-        self.pta = 0.0
-        self.learn_stats = articleAccess()
-        
-    def reInitilize(self):
-        self.weights = 1.0
-        self.pta=0.0
-          
-    def updatePta(self, n_arms, total_weight):
-        #n_arms = n_arms
-        self.pta= (1-self.gamma) * (self.weights / total_weight)
-        self.pta= self.pta + (self.gamma) * (1.0 / float(n_arms))
- 
-    def updateWeight(self, n_arms, reward):
-        #n_arms = n_arms
-        X=reward/self.pta
-        growth_factor = math.exp((self.gamma/n_arms)*X)
-        self.weights = self.weights * growth_factor
-
-class ucb1Struct:
-    def __init__(self):
-        self.totalReward = 0.0
-        self.numPlayed = 0
-        self.pta = 0.0
-        self.learn_stats = articleAccess()
-        self.deploy_stats = articleAccess()
-        
-    def reInitilize(self): 
-        self.totalReward = 0.0
-        self.numPlayed = 0.0  
-        self.pta=0.0
-        
-    def updatePta(self, allNumPlayed):
-        try:
-            self.pta = self.totalReward / self.numPlayed + np.sqrt(2*np.log(allNumPlayed) / self.numPlayed)
-        except ZeroDivisionError:
-            self.pta = 0.0
-            
-class greedyStruct:
-    def __init__(self):
-        self.learn_stats = articleAccess()
-        self.deploy_stats = articleAccess()
-        self.totalReward = 0.0
-        self.numPlayed = 0.0
-        self.averageReward = 0.0
-
-    def reInitilize(self):
-        self.totalReward = 0.0
-        self.numPlayed = 0.0
-        self.averageReward = 0.0
-
-    def updateReward(self):
-        try:
-            self.averageReward = self.totalReward / self.numPlayed
-        except ZeroDivisionError:
-            self.averageReward = 0.0
-            
-        
-
-# structure to save data from random strategy as mentioned in LiHongs paper
-class randomStruct:
-	def __init__(self):
-		self.learn_stats = articleAccess()
-		#self.deploy_stats = articleAccess()
 
 # This code simply reads one line from the source files of Yahoo!. Please see the yahoo info file to understand the format. I tested this part; so should be good but second pair of eyes could help
 def parseLine(line):
@@ -110,8 +32,6 @@ def parseLine(line):
 # this code saves different parameters in the file for one batch; this code is written to meet special needs since we need to see statistics as they evolve; I record accumulative stats from which batch stats can be extracted easily
 # dicts: is a dictionary of articles UCB structures indexed by 'article-id' key. to reference an article we do dicts[article-id]
 # recored_stats: are interesting statistics we want to save; i save accesses and clicks for UCB, random and greedy strategy for all articles in this batch
-# epochArticles: are articles that were availabe to be chosen in this epoch or interval or batch.
-# epochSelectedArticles: are articles that were selected by any algorithm in this batch.
 # tim: is time of the last observation in the batch
 def save_to_file(fileNameWrite, dicts, recordedStats, epochArticles, epochSelectedArticles, tim):
 	with open(fileNameWrite, 'a+') as f:
@@ -161,23 +81,6 @@ if __name__ == '__main__':
         # write to file
         save_to_file(fileNameWrite, articles_exp3, recordedStats, epochArticles, epochSelectedArticles, tim)
     
-            
-    # this function reset weight for all exp3
-    def re_initialize_article_exp3Structs():
-        for x in articles_exp3:
-            articles_exp3[x].reInitilize()
-            
-    def re_initialize_article_ucb1Structs():
-        for x in articles_ucb1:
-            articles_ucb1[x].reInitilize()
-    
-    def re_initialize_article_greedyStructs():
-        for x in articles_greedy:
-            articles_greedy[x].reInitilize()
-            
-    def re_initialize_article_extremeGreedyStruct():
-        for x in articles_extremeGreedy:
-            articles_extremeGreedy[x].reInitilize()
     
     def categorical_draw(articles):
         z = random.random()
@@ -209,7 +112,7 @@ if __name__ == '__main__':
     def extremeGreedySelectArm(articles):
         return max(np.random.permutation([(x, articles_extremeGreedy[x].averageReward) for x in articles]), key = itemgetter(1))[0]
         
-            
+    algorithms = {}    
     modes = {0:'multiple', 1:'single', 2:'hours'} 	# the possible modes that this code can be run in; 'multiple' means multiple days or all days so theta dont change; single means it is reset every day; hours is reset after some hours depending on the reInitPerDay. 
     mode = 'multiple' 									# the selected mode
     fileSig = '1_MultipleDay'								# depending on further environment parameters a file signature to remember those. for example if theta is set every two hours i can have it '2hours'; for 
