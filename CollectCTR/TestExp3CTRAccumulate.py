@@ -122,7 +122,7 @@ if __name__ == '__main__':
     timeRun = datetime.datetime.now().strftime('_%m_%d_%H_%M') 	# the current data time
     dataDays = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'] # the files from Yahoo that the algorithms will be run on; these files are indexed by days starting from May 1, 2009. this array starts from day 3 as also in the test data in the paper
     
-    articleIDfilename = '/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/temp.txt'
+    #articleIDfilename = '/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/temp.txt'
     # Read all articleIDs from file
     with open(articleIDfilename, 'r') as f:
         for line in f:
@@ -200,7 +200,7 @@ if __name__ == '__main__':
                         try:
                             articles_exp3[AllArticleIDpool[x]].stats.CTR = articles_exp3[AllArticleIDpool[x]].stats.clicks / articles_exp3[AllArticleIDpool[x]].stats.accesses
                         except ZeroDivisionError:
-                            articles_exp3[AllArticleIDpool[x]].stats.CTR = -0.01
+                            articles_exp3[AllArticleIDpool[x]].stats.CTR = -0.02
                             
                         #we want to get Accumulative CTR, so resetting access and clicks is not needed
                         #articles_exp3[AllArticleIDpool[x]].stats.accesses = 0.0

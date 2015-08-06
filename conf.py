@@ -1,13 +1,13 @@
 import os
 
-datasets_address = "/if24/qw2ky/MyResearch/datasets/"
+datasets_address = "/home/qingyun/NAS/MyResearch/datasets/"
 
 yahoo_address = os.path.join(datasets_address, "R6")
 
 # for my personal external drive if i want to run code from dataset stored on my drive.
 yahoo_address_ExternalDrive = "/Volumes/My Passport/GradSchool/MSThesis/datasets/Yahoo/"
 
-save_address = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/DebugExp3/HalfMultip"
+#save_address = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/DebugExp3/HalfMultip"
 save_addressExp3 = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/GreedyExp3"
 save_addressDebugExp3 = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/DebugExp3/HalfMultip"
 #save_addressExp3Greedy = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/extremeGreedy"
@@ -22,6 +22,6 @@ save_addressModifiedUCB1 = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result
 save_addressModifiedAgeQueue = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/0216/ModifiedAgeQueue"
 save_addressModifiedAllAge = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/0216/ModifiedAllAge"
 save_addressMyQueue = "/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/02_08-09/Queue25"
-save_address = "/if24/qw2ky/MyResearch/Codes/MAB_exp3/result/Exp3"
+save_address = "/home/qingyun/NAS/MyResearch/Codes/MAB_exp3/result/Exp3"
 save_addressCTR = '/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/CTR'
 save_addressAccess = '/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/Access'

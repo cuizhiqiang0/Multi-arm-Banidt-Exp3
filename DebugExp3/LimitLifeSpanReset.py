@@ -214,7 +214,7 @@ if __name__ == '__main__':
                         articles_exp3[article_id].LifeSpanCounter += 1
                         
                     if articles_exp3[article_id].LifeSpanCounter > LifeSpanThreshold:
-                        articles_exp3[article_id].reInitilize
+                        articles_exp3[article_id].reInitilize()
                         
                     total_weight = total_weight + articles_exp3[article_id].weights
                     

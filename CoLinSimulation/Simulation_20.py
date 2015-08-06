@@ -282,8 +282,10 @@ class simulateOnlineData():
 					f.write(','+ ','.join([str(ThetaDiffList[alg_name][-1]) for alg_name in ThetaDiffList.iterkeys()]))
 					f.write(','+ ','.join([str(ThetaDiffList[alg_name][-1]) for alg_name in WDiffList.iterkeys()]))
 					f.write('\n')
-					
-		# plot the results		
+		for alg_name in algorithms.iterkeys():
+                        print '%s: %.2f' % (alg_name, BatchAvergeRegret[alg_name][-1])
+		
+                # plot the results		
 		f, axa = plt.subplots(2, sharex=True)
 		for alg_name in algorithms.iterkeys():	
 			axa[0].plot(tim_, BatchAverageRegret[alg_name],label = alg_name)

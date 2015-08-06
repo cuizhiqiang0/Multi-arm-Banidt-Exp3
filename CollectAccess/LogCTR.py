@@ -80,7 +80,7 @@ if __name__ == '__main__':
     #fileNameWriteCTR = os.path.join(save_address,fileSig + dataDay + '_' + str(hours) + timeRun + '.csv') 
     fileNameWriteCTR = os.path.join(save_address,  fileSig + '_' + timeRun + '.csv')
     
-    articleIDfilename = '/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/temp.txt'
+    #articleIDfilename = '/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/temp.txt'
     # Read all articleIDs from file
     with open(articleIDfilename, 'r') as f:
         for line in f:

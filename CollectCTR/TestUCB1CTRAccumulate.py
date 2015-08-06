@@ -79,7 +79,7 @@ if __name__ == '__main__':
         #recordedStats = [articles_logged[AllArticleIDpool[x]].stats.CTR for x in range(0, len(AllArticleIDpool))]
         recordedStats = [articles_ucb1[AllArticleIDpool[x]].stats.CTR for x in range(0, len(AllArticleIDpool))]
         # write to file
-        save_to_file(fileNameWriteCTR, recordedStats, tim)
+        save_to_file(fileNameWrite, recordedStats, tim)
     
     def re_initialize_article_ucb1Structs():
         for x in articles_ucb1:
@@ -105,7 +105,7 @@ if __name__ == '__main__':
     timeRun = datetime.datetime.now().strftime('_%m_%d_%H_%M') 	# the current data time
     dataDays = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'] # the files from Yahoo that the algorithms will be run on; these files are indexed by days starting from May 1, 2009. this array starts from day 3 as also in the test data in the paper
     
-    articleIDfilename = '/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/savedArticleID.txt'
+    #articleIDfilename = '/Users/Summer/Documents/Multi-arm-Banidt-Exp3/result/savedArticleID.txt'
     # Read all articleIDs from file
     with open(articleIDfilename, 'r') as f:
         for line in f:
@@ -117,13 +117,7 @@ if __name__ == '__main__':
         #articles_logged[AllArticleIDpool[x]] = loggedStruct()
         #articles_exp3[AllArticleIDpool[x]] = exp3Struct(gamma)
         articles_ucb1[AllArticleIDpool[x]] = ucb1Struct()
-        #print AllArticleIDpool[x]
-            
-    #save all articleID into a file for later use
-    with open(fileNameWrite, 'a+') as f:
-        f.write('\nUCB1AccumutiveCTR, New Run at  ' + datetime.datetime.now().strftime('%m/%d/%Y %H:%M:%S'))
-        f.write('\n, Time'+',' + ','.join([str(AllArticleIDpool[x]) for x in range(0, len(AllArticleIDpool))]))
-        f.write('\n')
+        
         
        
     for dataDay in dataDays:
@@ -184,7 +178,7 @@ if __name__ == '__main__':
                         try:
                             articles_ucb1[AllArticleIDpool[x]].stats.CTR = articles_ucb1[AllArticleIDpool[x]].stats.clicks / articles_ucb1[AllArticleIDpool[x]].stats.accesses
                         except ZeroDivisionError:
-                            articles_ucb1[AllArticleIDpool[x]].stats.CTR = -0.01 # negative CTR means this article didn't appear in the time interval
+                            articles_ucb1[AllArticleIDpool[x]].stats.CTR = -0.02 # negative CTR means this article didn't appear in the time interval
                             
                         #articles_ucb1[AllArticleIDpool[x]].stats.accesses = 0.0
                         #articles_ucb1[AllArticleIDpool[x]].stats.clicks = 0.0

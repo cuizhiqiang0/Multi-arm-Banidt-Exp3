@@ -99,7 +99,7 @@ class simulateOnlineData():
 	# create user connectivity graph
 	def initializeW(self, epsilon):	
  		#W = self.constructAdjMatrix()
- 		W = self.constructSparseMatrix(20)   # sparse matrix top m users 
+ 		W = self.constructSparseMatrix(20)  # sparse matrix top m users 
  		print 'W.T', W.T
 		return W.T
 
@@ -282,7 +282,8 @@ class simulateOnlineData():
 					f.write(','+ ','.join([str(ThetaDiffList[alg_name][-1]) for alg_name in ThetaDiffList.iterkeys()]))
 					f.write(','+ ','.join([str(ThetaDiffList[alg_name][-1]) for alg_name in WDiffList.iterkeys()]))
 					f.write('\n')
-					
+		for alg_name in algorithms.iterkeys():
+                        print '%s: %.2f' % (alg_name, BatchAverageRegret[alg_name][-1])
 		# plot the results		
 		f, axa = plt.subplots(2, sharex=True)
 		for alg_name in algorithms.iterkeys():	
@@ -339,7 +340,7 @@ if __name__ == '__main__':
 	n_articles = 1000
 	ArticleGroups = 5
 
-	n_users = 80
+	n_users = 40
 	UserGroups = 5	
 
 	poolSize = 10
